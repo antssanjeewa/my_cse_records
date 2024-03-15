@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "951512509045",
+    "firebase_url": "https://booknotes-a9fcb.firebaseio.com",
+    "project_id": "booknotes-a9fcb",
+    "storage_bucket": "booknotes-a9fcb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:951512509045:android:addd950bf69c65c3a3a63c",
+        "android_client_info": {
+          "package_name": "com.example.firebase_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "951512509045-kkq9jto3jqahqvm87i2mmb0gcfenkmbo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkBiGcCh_dAygXj5mSjHaoVaKERmmgnEQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "951512509045-kkq9jto3jqahqvm87i2mmb0gcfenkmbo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
