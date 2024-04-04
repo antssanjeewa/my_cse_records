@@ -34,20 +34,35 @@ class CompanyService {
     }
   }
 
-  updateBook(Company book, String bookName, String authorName) {
-    try {
-      _instance.runTransaction((transaction) async {
-        await transaction.update(book.documentReference, {'bookName': bookName, 'autorName': authorName});
-      });
-    } catch (e) {
-      // ignore: avoid_print
-      print(e.toString());
-    }
-  }
+  // updateBook(Company book, String bookName, String authorName) {
+  //   try {
+  //     _instance.runTransaction((transaction) async {
+  //       await transaction.update(book.documentReference, {'bookName': bookName, 'autorName': authorName});
+  //     });
+  //   } catch (e) {
+  //     // ignore: avoid_print
+  //     print(e.toString());
+  //   }
+  // }
 
-  deleteBook(Company company) {
-    _instance.runTransaction((transaction) async {
-      await transaction.delete(company.documentReference);
-    });
+  // deleteBook(Company company) {
+  //   _instance.runTransaction((transaction) async {
+  //     await transaction.delete(company.documentReference);
+  //   });
+  // }
+
+  Future<void> deleteCompany(Company company) async {
+    if (company.documentReference != null) {
+      try {
+        await _instance.runTransaction((transaction) async {
+          await transaction.delete(company.documentReference!);
+        });
+        print("Document successfully deleted!");
+      } catch (e) {
+        print("Error deleting document: $e");
+      }
+    } else {
+      print("Document reference is null.");
+    }
   }
 }

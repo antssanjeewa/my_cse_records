@@ -1,4 +1,5 @@
 import 'package:firebase_app/app/provider/screenIndexProvider.dart';
+import 'package:firebase_app/app/views/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,9 +17,8 @@ class MainApp extends StatelessWidget {
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
-          backgroundColor: Colors.grey,
-          background:Colors.grey,
+          primarySwatch: Colors.amber,
+          backgroundColor: Colors.red,
         ),
         home: const HomePage(),
       ),

@@ -1,7 +1,7 @@
 import 'package:firebase_app/app/provider/screenIndexProvider.dart';
-import 'package:firebase_app/home/widgets/home.dart';
-import 'package:firebase_app/home/widgets/more.dart';
-import 'package:firebase_app/home/widgets/records.dart';
+import 'package:firebase_app/home/screens/home.dart';
+import 'package:firebase_app/more/screens/more.dart';
+import 'package:firebase_app/records/screens/record_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +19,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       // appBar: AppBar(title: const Text("Home")),
       body: SafeArea(child: pages[currentScreenIndex]),
+      backgroundColor: Colors.grey.shade200,
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

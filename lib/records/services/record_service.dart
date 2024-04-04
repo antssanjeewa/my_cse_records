@@ -9,6 +9,10 @@ class RecordService {
     return _db.snapshots();
   }
 
+  getCompanyRecords(String companyId) {
+    return _db.where('company_id', isEqualTo: companyId).snapshots();
+  }
+
   addNewRecord(Record record) {
     try {
       _instance.runTransaction((transaction) async {
