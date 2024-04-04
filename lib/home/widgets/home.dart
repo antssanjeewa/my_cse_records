@@ -1,22 +1,17 @@
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/company/models/company.dart';
+import 'package:firebase_app/company/services/companyService.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  getAllBooks() {
-    return FirebaseFirestore.instance.collection('company').snapshots();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final List<String> items = ["A", "B", "C"];
+    CompanyService service = CompanyService();
 
     return StreamBuilder<QuerySnapshot>(
-      stream: getAllBooks(),
+      stream: service.getAllBooks(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           print(snapshot.error);

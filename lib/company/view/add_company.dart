@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/company/models/company.dart';
+import 'package:firebase_app/company/services/companyService.dart';
 import 'package:flutter/material.dart';
 
 class AddCompany extends StatefulWidget {
@@ -14,16 +14,10 @@ class _AddCompanyState extends State<AddCompany> {
   TextEditingController authorNameController = TextEditingController();
 
   addCompany() async {
+    CompanyService service = CompanyService();
     Company company = Company(companyName: bookNameController.text, companyCode: authorNameController.text);
-    print(company);
-    try {
-      FirebaseFirestore.instance.runTransaction((transaction) async {
-        await FirebaseFirestore.instance.collection('company').doc().set(company.toJson());
-      });
-    } catch (e) {
-      // ignore: avoid_print
-      print(e.toString());
-    }
+
+    service.addCompany(company);
   }
 
   @override
