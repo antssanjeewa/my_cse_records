@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/company/models/company.dart';
+import 'package:flutter/material.dart';
 
 final FirebaseFirestore _instance = FirebaseFirestore.instance;
 final CollectionReference _db = _instance.collection('company');
@@ -7,6 +8,17 @@ final CollectionReference _db = _instance.collection('company');
 class CompanyService {
   getAllBooks() {
     return _db.snapshots();
+  }
+
+  itemList() {
+    return ['a', 'b'];
+    // QuerySnapshot snapshot = getlist();
+    // return snapshot.docs.map((doc) => doc['name']).toList();
+    // final company = Company.fromSnapshot(companies[index]);
+  }
+
+  getlist() async {
+    return await _db.get();
   }
 
   addCompany(Company company) async {
