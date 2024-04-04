@@ -1,5 +1,4 @@
 import 'package:firebase_app/app/provider/screenIndexProvider.dart';
-import 'package:firebase_app/home/views/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +18,7 @@ class MainApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
           backgroundColor: Colors.grey,
+          background:Colors.grey,
         ),
         home: const HomePage(),
       ),
