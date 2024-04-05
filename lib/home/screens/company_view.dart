@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/company/models/company.dart';
 import 'package:firebase_app/records/models/record.dart';
 import 'package:firebase_app/records/services/record_service.dart';
+import 'package:firebase_app/records/widgets/record_list_item.dart';
 import 'package:flutter/material.dart';
 
 class CompanyProfile extends StatelessWidget {
@@ -18,6 +19,7 @@ class CompanyProfile extends StatelessWidget {
         title: Text(company.companyName.toString()),
       ),
       body: Container(
+        padding: EdgeInsets.all(15),
         child: StreamBuilder<QuerySnapshot>(
           stream: service.getCompanyRecords(company.documentId.toString()),
           builder: (context, snapshot) {
@@ -30,17 +32,14 @@ class CompanyProfile extends StatelessWidget {
                 itemCount: records.length,
                 itemBuilder: (context, index) {
                   final record = Record.fromSnapshot(records[index]);
-                  return ListTile(
-                    title: Text(record.date.toString()),
-                    subtitle: Text(record.amount.toString()),
-                    trailing: Text('Date'),
-                    onTap: () => {},
+                  return RecordItem(
+                    record: record,
                   );
                 },
-                separatorBuilder: (context, index) => Divider(),
+                separatorBuilder: (context, index) => const Divider(),
               );
             }
-            return Text("End");
+            return const Text("End");
           },
         ),
       ),

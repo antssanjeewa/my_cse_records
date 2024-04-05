@@ -16,9 +16,15 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.system,
+        darkTheme: ThemeData(
+          primarySwatch: Colors.green,
+          backgroundColor: Colors.black,
+          brightness: Brightness.dark,
+        ),
         theme: ThemeData(
           primarySwatch: Colors.amber,
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.grey.shade200,
         ),
         home: const HomePage(),
       ),

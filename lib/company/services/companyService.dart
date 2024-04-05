@@ -10,15 +10,12 @@ class CompanyService {
     return _db.snapshots();
   }
 
-  itemList() {
-    return ['a', 'b'];
-    // QuerySnapshot snapshot = getlist();
-    // return snapshot.docs.map((doc) => doc['name']).toList();
-    // final company = Company.fromSnapshot(companies[index]);
-  }
+  Future<List<Company>> fetchCompanies() async {
+    QuerySnapshot querySnapshot = await _db.get();
 
-  getlist() async {
-    return await _db.get();
+    return querySnapshot.docs.map((doc) {
+      return Company.fromSnapshot(doc);
+    }).toList();
   }
 
   addCompany(Company company) async {
@@ -55,9 +52,8 @@ class CompanyService {
     if (company.documentReference != null) {
       try {
         await _instance.runTransaction((transaction) async {
-          await transaction.delete(company.documentReference!);
+          await transaction.delete(company.documentReference);
         });
-        print("Document successfully deleted!");
       } catch (e) {
         print("Error deleting document: $e");
       }

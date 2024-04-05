@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/records/models/record.dart';
 import 'package:firebase_app/records/screens/add_record.dart';
 import 'package:firebase_app/records/services/record_service.dart';
+import 'package:firebase_app/records/widgets/record_list_item.dart';
 import 'package:flutter/material.dart';
 
 class RecordScreen extends StatelessWidget {
@@ -14,12 +15,7 @@ class RecordScreen extends StatelessWidget {
     return Container(
       child: Column(
         children: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddRecord()));
-            },
-            child: Text('Add New'),
-          ),
+          SizedBox(height: 20),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: service.getRecords(),
@@ -34,11 +30,8 @@ class RecordScreen extends StatelessWidget {
                     itemCount: records.length,
                     itemBuilder: (context, index) {
                       final record = Record.fromSnapshot(records[index]);
-                      return ListTile(
-                        title: Text(record.date.toString()),
-                        subtitle: Text(record.amount.toString()),
-                        trailing: Text('Date'),
-                        onTap: () => {},
+                      return RecordItem(
+                        record: record,
                       );
                     },
                     separatorBuilder: (context, index) => Divider(),
@@ -47,6 +40,12 @@ class RecordScreen extends StatelessWidget {
                 return Text("End");
               },
             ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddRecord()));
+            },
+            child: Text('Add New'),
           ),
         ],
       ),

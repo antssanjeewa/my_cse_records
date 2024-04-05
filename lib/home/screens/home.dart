@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                         subtitle: Text(company.companyCode.toString()),
-                        tileColor: Colors.white,
+                        tileColor: Theme.of(context).backgroundColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

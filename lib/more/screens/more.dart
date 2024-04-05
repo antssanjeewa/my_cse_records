@@ -8,7 +8,7 @@ class MoreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
+        const Padding(
           padding: EdgeInsets.all(8.0),
           child: Text("More"),
         ),
@@ -16,9 +16,9 @@ class MoreScreen extends StatelessWidget {
           child: ListView(
             children: [
               ListTile(
-                title: Text("Company List"),
+                title: const Text("Add Company"),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddCompany()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AddCompany()));
                 },
               )
             ],
