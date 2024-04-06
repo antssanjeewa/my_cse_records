@@ -1,5 +1,6 @@
 import 'package:firebase_app/app/provider/screenIndexProvider.dart';
 import 'package:firebase_app/app/views/add_record_form.dart';
+import 'package:firebase_app/budget/screens/main_screen.dart';
 import 'package:firebase_app/home/screens/home.dart';
 import 'package:firebase_app/more/screens/more.dart';
 import 'package:firebase_app/records/screens/record_list.dart';
@@ -15,7 +16,12 @@ class HomePage extends StatelessWidget {
 
     int currentScreenIndex = screenIndexProvider.currentScreenIndex;
 
-    final pages = [const HomeScreen(), const RecordScreen(), const MoreScreen()];
+    final pages = [
+      const HomeScreen(),
+      const BudgetScreen(),
+      const RecordScreen(),
+      const MoreScreen(),
+    ];
 
     return Scaffold(
       // appBar: AppBar(title: const Text("Home")),
@@ -29,6 +35,10 @@ class HomePage extends StatelessWidget {
             label: 'Home',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.compare_arrows),
+            label: 'Budget',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'Records',
           ),
@@ -38,6 +48,8 @@ class HomePage extends StatelessWidget {
           ),
         ],
         currentIndex: currentScreenIndex,
+        // type: BottomNavigationBarType.fixed,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
         onTap: ((value) => screenIndexProvider.updateScreenIndex(value)),
       ),
       floatingActionButton: FloatingActionButton(
