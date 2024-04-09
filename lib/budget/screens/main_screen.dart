@@ -14,11 +14,13 @@ class BudgetScreen extends StatelessWidget {
       ),
       body: Container(
         width: double.infinity,
-        child: Column(
-          children: const [
-            HeroCard(),
-            ItemList(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: const [
+              HeroCard(),
+              ItemList(),
+            ],
+          ),
         ),
       ),
     );

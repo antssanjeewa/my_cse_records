@@ -25,9 +25,11 @@ class ItemList extends StatelessWidget {
               Text("View All"),
             ],
           ),
+          SizedBox(height: 15),
           ListView.builder(
-            // shrinkWrap: true,
-            // physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: 10,
             itemBuilder: (context, index) {
               return const ListItem();
             },
