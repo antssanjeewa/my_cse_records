@@ -21,7 +21,7 @@ class CompanyProfile extends StatelessWidget {
       body: Container(
         padding: EdgeInsets.all(15),
         child: StreamBuilder<QuerySnapshot>(
-          stream: service.getCompanyRecords(company.documentId.toString()),
+          stream: service.getCompanyRecords(company.companyCode.toString()),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Text(snapshot.error.toString());

@@ -1,5 +1,6 @@
 import 'package:firebase_app/app/provider/screenIndexProvider.dart';
 import 'package:firebase_app/app/views/home_page.dart';
+import 'package:firebase_app/utils/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,15 +24,8 @@ class MainApp extends StatelessWidget {
         },
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.system,
-        darkTheme: ThemeData(
-          primarySwatch: Colors.green,
-          backgroundColor: Colors.black,
-          brightness: Brightness.dark,
-        ),
-        theme: ThemeData(
-          primarySwatch: Colors.amber,
-          backgroundColor: Colors.grey.shade200,
-        ),
+        darkTheme: TAppTheme.darkTheme,
+        theme: TAppTheme.lightTheme,
         home: const HomePage(),
       ),
     );

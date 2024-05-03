@@ -9,14 +9,30 @@ class RecordService {
     return _db.snapshots();
   }
 
-  getCompanyRecords(String companyId) {
-    return _db.where('company_id', isEqualTo: companyId).snapshots();
+  getCompanyRecords(String companyCode) {
+    return _db.where('company_id', isEqualTo: companyCode).snapshots();
   }
 
   addNewRecord(Record record) {
     try {
       _instance.runTransaction((transaction) async {
         await _db.doc().set(record.toJson());
+
+        // Update the related company's outcome
+        var companyQuerySnapshot = await _instance.collection('company').where('companyCode', isEqualTo: record.companyId).get();
+
+        if (companyQuerySnapshot.docs.isNotEmpty) {
+          var companyDoc = companyQuerySnapshot.docs.first;
+          var companyReference = companyDoc.reference;
+
+          num price = double.tryParse(record.price ?? '0') ?? 0;
+          num quantity = double.tryParse(record.amount ?? '0') ?? 0;
+
+          await transaction.update(companyReference, {
+            'outcome': FieldValue.increment(price * quantity), // Increment the 'outcome' field by 100
+            'quantity': FieldValue.increment(quantity),
+          });
+        }
       });
     } catch (e) {
       // ignore: avoid_print
