@@ -1,36 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/app/records/models/record.dart';
+import 'package:firebase_app/app/records/screens/add_record.dart';
 import 'package:firebase_app/app/records/services/record_service.dart';
+import 'package:firebase_app/app/records/widgets/record_list_item.dart';
 import 'package:flutter/material.dart';
 
-import 'list_item.dart';
-
-class ItemList extends StatelessWidget {
-  const ItemList({super.key});
+class RecordScreen extends StatelessWidget {
+  const RecordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     RecordService service = RecordService();
 
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: const EdgeInsets.all(15),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
-                "Recent Transactions",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text("View All"),
-            ],
-          ),
-          SizedBox(height: 15),
+          SizedBox(height: 20),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: service.getRecords(),
@@ -45,7 +30,9 @@ class ItemList extends StatelessWidget {
                     itemCount: records.length,
                     itemBuilder: (context, index) {
                       final record = Record.fromSnapshot(records[index]);
-                      return ListItem(record: record);
+                      return RecordItem(
+                        record: record,
+                      );
                     },
                     separatorBuilder: (context, index) => Divider(),
                   );
@@ -54,14 +41,12 @@ class ItemList extends StatelessWidget {
               },
             ),
           ),
-          // ListView.builder(
-          //   shrinkWrap: true,
-          //   physics: NeverScrollableScrollPhysics(),
-          //   itemCount: 10,
-          //   itemBuilder: (context, index) {
-          //     return const ListItem();
-          //   },
-          // )
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddRecord()));
+            },
+            child: Text('Add New'),
+          ),
         ],
       ),
     );

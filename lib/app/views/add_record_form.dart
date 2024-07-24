@@ -1,4 +1,4 @@
-import 'package:firebase_app/records/screens/add_record_dialog.dart';
+import 'package:firebase_app/app/records/screens/add_record_dialog.dart';
 import 'package:flutter/material.dart';
 
 showBottomSheetForm(BuildContext context) {

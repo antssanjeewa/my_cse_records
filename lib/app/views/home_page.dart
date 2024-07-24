@@ -1,9 +1,9 @@
 import 'package:firebase_app/app/provider/screenIndexProvider.dart';
 import 'package:firebase_app/app/views/add_record_form.dart';
 import 'package:firebase_app/budget/screens/main_screen.dart';
-import 'package:firebase_app/home/screens/home.dart';
-import 'package:firebase_app/more/screens/more.dart';
-import 'package:firebase_app/records/screens/record_list.dart';
+import 'package:firebase_app/app/home/screens/home.dart';
+import 'package:firebase_app/app/more/screens/more.dart';
+import 'package:firebase_app/app/records/screens/record_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
