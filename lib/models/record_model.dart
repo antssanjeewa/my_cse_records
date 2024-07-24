@@ -24,8 +24,8 @@ class Record {
 
     return Record(
       id: doc.id,
-      // date: (data['date'] as Timestamp).toDate(),
-      date: DateTime.parse(data['date'] as String),
+      date: (data['date'] as Timestamp).toDate(),
+      // date: DateTime.parse(data['date'] as String),
       unitPrice: data['unitPrice'] ?? 0.0,
       total: data['total'] ?? 0.0,
       companyId: data['companyId'] ?? '',

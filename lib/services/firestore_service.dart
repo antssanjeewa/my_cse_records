@@ -8,7 +8,7 @@ class FirestoreService {
 
   // Fetch companies
   Stream<List<Company>> getCompanies() {
-    return _db.collection('company').snapshots().map((snapshot) => snapshot.docs.map((doc) => Company.fromFirestore(doc)).toList());
+    return _db.collection('companies').snapshots().map((snapshot) => snapshot.docs.map((doc) => Company.fromFirestore(doc)).toList());
   }
 
   // Fetch records for a specific company
