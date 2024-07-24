@@ -5,6 +5,7 @@ import '../screens/company/company_profile_screen.dart';
 import '../screens/company/company_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/profile/profile_screen.dart';
+import '../screens/records/add_record_screen.dart';
 import '../screens/records/records_screen.dart';
 import 'bottom_nav_bar.dart';
 import 'pages.dart';
@@ -59,6 +60,14 @@ class AppRouter {
           GoRoute(
             path: '/records',
             builder: (context, state) => RecordsScreen(),
+            routes: [
+              GoRoute(
+                path: 'add',
+                builder: (context, state) {
+                  return AddRecordScreen();
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/profile',

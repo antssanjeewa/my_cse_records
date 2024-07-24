@@ -21,9 +21,11 @@ class Record {
   // From Firestore document to model
   factory Record.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data() as Map;
+
     return Record(
       id: doc.id,
-      date: (data['date'] as Timestamp).toDate(),
+      // date: (data['date'] as Timestamp).toDate(),
+      date: DateTime.parse(data['date'] as String),
       unitPrice: data['unitPrice'] ?? 0.0,
       total: data['total'] ?? 0.0,
       companyId: data['companyId'] ?? '',

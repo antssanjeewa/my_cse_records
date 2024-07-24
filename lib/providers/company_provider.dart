@@ -5,7 +5,17 @@ import '../services/firestore_service.dart';
 class CompanyProvider with ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
 
-  Stream<List<Company>> get companies => _firestoreService.getCompanies();
+  List<Company> _companies = [];
+
+  List<Company> get companies => _companies;
+
+  void loadCompanies() {
+    _firestoreService.getCompanies().listen((companies) {
+      _companies = companies;
+      notifyListeners();
+    });
+  }
+
   Company? _company;
   Company? get company => _company;
 

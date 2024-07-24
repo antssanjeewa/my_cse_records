@@ -1,7 +1,9 @@
 // lib/screens/records/record_list_screen.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/record_provider.dart';
+import 'add_record_screen.dart';
 
 class RecordsScreen extends StatelessWidget {
   final String? companyId;
@@ -14,9 +16,14 @@ class RecordsScreen extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => RecordProvider()..loadRecords(companyId: companyId),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('$companyName - Records'),
-        ),
+        appBar: AppBar(title: Text('$companyName - Records'), actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              GoRouter.of(context).go('/records/add');
+            },
+          ),
+        ]),
         body: Consumer<RecordProvider>(
           builder: (context, provider, child) {
             if (provider.records.isEmpty) {

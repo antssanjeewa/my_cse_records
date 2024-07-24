@@ -12,15 +12,19 @@ class RecordProvider with ChangeNotifier {
 
   void loadRecords({String? companyId}) {
     if (companyId != null) {
+      print("inside");
       _firestoreService.getRecords(companyId).listen((records) {
         _records = records;
         notifyListeners();
       });
     } else {
+      print("out");
       _firestoreService.getAllRecords().listen((records) {
         _records = records;
+        print("ok");
         notifyListeners();
       });
+      print(_records);
     }
   }
 
