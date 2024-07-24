@@ -48,7 +48,7 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Record'),
+        title: const Text('Add Record'),
       ),
       body: Consumer<CompanyProvider>(builder: (context, companyProvider, child) {
         return Padding(
@@ -60,7 +60,7 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
               children: [
                 DropdownButtonFormField<String>(
                   value: _selectedCompanyId,
-                  decoration: InputDecoration(labelText: 'Company'),
+                  decoration: const InputDecoration(labelText: 'Company'),
                   onChanged: (value) {
                     setState(() {
                       _selectedCompanyId = value;
@@ -79,8 +79,9 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
                     return null;
                   },
                 ),
+                SizedBox(height: 15),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Date'),
+                  decoration: const InputDecoration(labelText: 'Date'),
                   initialValue: _date.toLocal().toString(),
                   onTap: () async {
                     FocusScope.of(context).requestFocus(FocusNode());
@@ -103,8 +104,9 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
                     return null;
                   },
                 ),
+                SizedBox(height: 15),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Unit Price'),
+                  decoration: const InputDecoration(labelText: 'Unit Price'),
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
                     _unitPrice = double.tryParse(value) ?? 0.0;
@@ -116,8 +118,9 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
                     return null;
                   },
                 ),
+                SizedBox(height: 15),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Total'),
+                  decoration: const InputDecoration(labelText: 'Total'),
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
                     _total = double.tryParse(value) ?? 0.0;
@@ -129,9 +132,10 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
                     return null;
                   },
                 ),
+                SizedBox(height: 15),
                 DropdownButtonFormField<String>(
                   value: _transactionType,
-                  decoration: InputDecoration(labelText: 'Transaction Type'),
+                  decoration: const InputDecoration(labelText: 'Transaction Type'),
                   onChanged: (value) {
                     if (value != null) {
                       setState(() {
@@ -152,10 +156,10 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _submit,
-                  child: Text('Add Record'),
+                  child: const Text('Add Record'),
                 ),
               ],
             ),

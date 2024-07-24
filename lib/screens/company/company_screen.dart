@@ -1,10 +1,13 @@
 // lib/screens/company/company_list_screen.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/company_provider.dart';
 import 'add_company_screen.dart';
 
 class CompanyScreen extends StatelessWidget {
+  const CompanyScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final recordProvider = Provider.of<CompanyProvider>(context, listen: false);
@@ -44,7 +47,7 @@ class CompanyScreen extends StatelessWidget {
                   title: Text(company.name),
                   subtitle: Text('ID: ${company.id}'),
                   onTap: () {
-                    // Navigate to company details or records screen
+                    GoRouter.of(context).go('/company/${company.id}');
                   },
                 ),
               );

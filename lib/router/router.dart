@@ -77,8 +77,7 @@ class AppRouter {
             path: '/company/:id',
             builder: (context, state) {
               final companyId = state.pathParameters['id']!;
-              final companyName = state.queryParameters['name']!;
-              return CompanyProfileScreen(companyId: companyId, companyName: companyName);
+              return CompanyProfileScreen(companyId: companyId);
             },
           ),
         ],
