@@ -19,8 +19,12 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     // print(location);
     if (location.startsWith(Pages.home.toPath())) {
       return 0;
-    } else {
+    } else if (location.startsWith('/companies')) {
       return 1;
+    } else if (location.startsWith('/records')) {
+      return 2;
+    } else {
+      return 3;
     }
   }
 
@@ -33,9 +37,14 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
           break;
         case 1:
           // Pages.productDetails.go(context);
-          context.go('/chat');
+          context.go('/companies');
+          break;
+        case 2:
+          // Pages.productDetails.go(context);
+          context.go('/records');
           break;
         default:
+          context.go('/profile');
           // Pages.home.go(context);
           break;
       }
@@ -51,7 +60,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         currentIndex: getCurrentIndex(),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.location_on_outlined), label: 'Locations'),
+          BottomNavigationBarItem(icon: Icon(Icons.local_post_office_outlined), label: 'Company'),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt_outlined), label: 'Records'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],

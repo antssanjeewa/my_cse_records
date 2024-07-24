@@ -1,5 +1,5 @@
-import 'package:firebase_app/budget/widgets/item_list.dart';
-import 'package:firebase_app/budget/widgets/summary_card.dart';
+import 'package:firebase_app/app/budget/widgets/item_list.dart';
+import 'package:firebase_app/app/budget/widgets/summary_card.dart';
 import 'package:flutter/material.dart';
 
 class BudgetScreen extends StatelessWidget {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../screens/company/company_profile_screen.dart';
+import '../screens/company/company_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/records/records_screen.dart';
@@ -15,7 +17,7 @@ class AppRouter {
 
 // GoRouter configuration
   final GoRouter _router = GoRouter(
-    initialLocation: '/chat',
+    // initialLocation: '/chat',
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     routes: [
@@ -35,6 +37,10 @@ class AppRouter {
         builder: (context, state, child) => BottomNavigationPage(child: child),
         routes: [
           GoRoute(
+            path: '/',
+            builder: (context, state) => HomeScreen(),
+          ),
+          GoRoute(
             path: Pages.home.toPath(),
             name: Pages.home.toPathName(),
             builder: (context, state) => HomeScreen(),
@@ -47,12 +53,24 @@ class AppRouter {
             ],
           ),
           GoRoute(
+            path: '/companies',
+            builder: (context, state) => CompanyScreen(),
+          ),
+          GoRoute(
             path: '/records',
             builder: (context, state) => RecordsScreen(),
           ),
           GoRoute(
             path: '/profile',
             builder: (context, state) => ProfileScreen(),
+          ),
+          GoRoute(
+            path: '/company/:id',
+            builder: (context, state) {
+              final companyId = state.pathParameters['id']!;
+              final companyName = state.queryParameters['name']!;
+              return CompanyProfileScreen(companyId: companyId, companyName: companyName);
+            },
           ),
         ],
       )
