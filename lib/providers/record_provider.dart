@@ -45,4 +45,12 @@ class RecordProvider with ChangeNotifier {
   //   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Company? getCompany(String companyId) => _companies[companyId];
   // Add other CRUD operations as needed
+
+  double getTotalInvestment() {
+    return _records.fold(0.0, (sum, record) => sum + record.total);
+  }
+
+  List<Record> getRecentRecords({int count = 5}) {
+    return _records.take(count).toList();
+  }
 }

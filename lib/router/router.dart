@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../screens/company/add_edit_company_screen.dart';
 import '../screens/company/company_profile_screen.dart';
 import '../screens/company/company_screen.dart';
 import '../screens/home/home_screen.dart';
@@ -56,6 +57,15 @@ class AppRouter {
           GoRoute(
             path: '/companies',
             builder: (context, state) => CompanyScreen(),
+            routes: [
+              GoRoute(
+                path: 'edit/:companyId',
+                builder: (context, state) {
+                  final companyId = state.pathParameters['companyId']!;
+                  return AddEditCompanyScreen(companyId: companyId);
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/records',
