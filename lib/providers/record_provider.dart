@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/company_model.dart';
 import '../models/record_model.dart';
 import '../services/firestore_service.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class RecordProvider with ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
@@ -52,5 +53,17 @@ class RecordProvider with ChangeNotifier {
 
   List<Record> getRecentRecords({int count = 5}) {
     return _records.take(count).toList();
+  }
+
+  List<charts.Series<Record, DateTime>> getInvestmentSeries() {
+    return [
+      charts.Series<Record, DateTime>(
+        id: 'Investments',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (Record record, _) => record.date,
+        measureFn: (Record record, _) => record.total,
+        data: _records,
+      )
+    ];
   }
 }

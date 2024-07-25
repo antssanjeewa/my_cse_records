@@ -72,16 +72,16 @@ class CompanyScreen extends StatelessWidget {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text('Confirm Deletion'),
+                title: const Text('Confirm Deletion'),
                 content: Text('Are you sure you want to delete ${company.name}?'),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(false),
-                    child: Text('Cancel'),
+                    child: const Text('Cancel'),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(true),
-                    child: Text('Delete'),
+                    child: const Text('Delete'),
                   ),
                 ],
               );
@@ -89,7 +89,7 @@ class CompanyScreen extends StatelessWidget {
           );
           return confirm ?? false;
         } else if (direction == DismissDirection.endToStart) {
-          GoRouter.of(context).go('/company/edit/${company.id}');
+          GoRouter.of(context).go('/companies/edit/${company.id}');
           return false; // Do not dismiss the item
         }
         return false;
@@ -103,7 +103,7 @@ class CompanyScreen extends StatelessWidget {
           );
         } else if (direction == DismissDirection.endToStart) {
           // Edit action
-          GoRouter.of(context).go('/company/edit/${company.id}');
+          GoRouter.of(context).go('/companies/edit/${company.id}');
         }
       },
       child: Card(

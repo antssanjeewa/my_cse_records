@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../providers/record_provider.dart';
+import 'widgets/investment_chart.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -51,6 +52,10 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(height: 16),
+
+                  // Investment Trend Chart
+                  InvestmentChart(),
                   SizedBox(height: 16),
 
                   // Recent Records Section

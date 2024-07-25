@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/record_provider.dart';
-import '../../models/company_model.dart';
 
 class AddEditCompanyScreen extends StatefulWidget {
   final String? companyId;
@@ -44,7 +43,7 @@ class _AddEditCompanyScreenState extends State<AddEditCompanyScreen> {
         title: Text(_isEditing ? 'Edit Company' : 'Add Company'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -52,7 +51,7 @@ class _AddEditCompanyScreenState extends State<AddEditCompanyScreen> {
             children: [
               TextFormField(
                 initialValue: _name,
-                decoration: InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the company name';
@@ -65,7 +64,7 @@ class _AddEditCompanyScreenState extends State<AddEditCompanyScreen> {
               ),
               TextFormField(
                 initialValue: _symbol,
-                decoration: InputDecoration(labelText: 'Symbol'),
+                decoration: const InputDecoration(labelText: 'Symbol'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the company symbol';
@@ -76,18 +75,18 @@ class _AddEditCompanyScreenState extends State<AddEditCompanyScreen> {
                   _symbol = value!;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  // if (_formKey.currentState!.validate()) {
-                  //   _formKey.currentState!.save();
-                  //   // if (_isEditing) {
-                  //   //   // provider.updateCompany(widget.companyId!, _name, _symbol);
-                  //   // } else {
-                  //   //   // provider.addCompany(_name, _symbol);
-                  //   // }
-                  //   GoRouter.of(context).pop();
-                  // }
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    // if (_isEditing) {
+                    //   // provider.updateCompany(widget.companyId!, _name, _symbol);
+                    // } else {
+                    //   // provider.addCompany(_name, _symbol);
+                    // }
+                    GoRouter.of(context).pop();
+                  }
                 },
                 child: Text(_isEditing ? 'Update' : 'Add'),
               ),
