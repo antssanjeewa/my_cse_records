@@ -13,27 +13,24 @@ class InvestmentChart extends StatelessWidget {
     final provider = Provider.of<RecordProvider>(context);
 
     return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Investment Trend',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      color: Colors.transparent,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      child: SizedBox(
+        height: 300,
+        child: charts.TimeSeriesChart(
+          provider.getInvestmentSeries(),
+          animate: true,
+          dateTimeFactory: const charts.LocalDateTimeFactory(),
+          primaryMeasureAxis: const charts.NumericAxisSpec(
+            renderSpec: charts.GridlineRendererSpec(
+              labelStyle: charts.TextStyleSpec(color: charts.MaterialPalette.white),
             ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 200,
-              child: charts.TimeSeriesChart(
-                provider.getInvestmentSeries(),
-                animate: true,
-                dateTimeFactory: const charts.LocalDateTimeFactory(),
-              ),
+          ),
+          domainAxis: const charts.DateTimeAxisSpec(
+            renderSpec: charts.GridlineRendererSpec(
+              labelStyle: charts.TextStyleSpec(color: charts.MaterialPalette.white),
             ),
-          ],
+          ),
         ),
       ),
     );

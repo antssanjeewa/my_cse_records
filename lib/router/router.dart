@@ -19,21 +19,10 @@ class AppRouter {
 
 // GoRouter configuration
   final GoRouter _router = GoRouter(
-    // initialLocation: '/chat',
+    initialLocation: '/records',
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     routes: [
-      // GoRoute(
-      //   name: 'home',
-      //   path: '/',
-      //   builder: (context, state) => HomeScreen(),
-      // ),
-      // GoRoute(
-      //   name: 'shope',
-      //   path: '/shope',
-      //   // builder: (context, state) => MoreScreen(),
-      // ),
-
       ShellRoute(
         // navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) => BottomNavigationPage(child: child),

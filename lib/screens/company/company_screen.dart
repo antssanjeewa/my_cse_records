@@ -1,4 +1,6 @@
 // lib/screens/company/company_list_screen.dart
+import 'dart:math';
+
 import 'package:firebase_app/models/company_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -106,17 +108,38 @@ class CompanyScreen extends StatelessWidget {
           GoRouter.of(context).go('/companies/edit/${company.id}');
         }
       },
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        elevation: 4,
-        child: ListTile(
-          contentPadding: const EdgeInsets.all(16),
-          title: Text(company.name),
-          subtitle: Text('ID: ${company.id}'),
-          onTap: () {
-            GoRouter.of(context).go('/company/${company.id}');
-          },
+      child: ItemContent(company, context),
+    );
+  }
+
+  Widget ItemContent(Company company, BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      elevation: 4,
+      child: ListTile(
+        leading: CircleAvatar(
+          radius: 30.0, // Radius of the circle
+          backgroundColor: Color.fromARGB(
+            255,
+            Random().nextInt(256),
+            Random().nextInt(256),
+            Random().nextInt(256),
+          ),
+          child: Text(
+            company.symbol.isNotEmpty ? company.symbol[0].toUpperCase() : '?',
+            style: const TextStyle(
+              color: Colors.white, // Color of the text
+              fontSize: 24.0, // Font size of the text
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
+        contentPadding: const EdgeInsets.all(16),
+        title: Text(company.symbol),
+        subtitle: Text(company.name),
+        onTap: () {
+          GoRouter.of(context).go('/company/${company.id}');
+        },
       ),
     );
   }

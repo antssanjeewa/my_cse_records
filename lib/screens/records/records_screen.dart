@@ -1,4 +1,6 @@
 // lib/screens/records/record_list_screen.dart
+import 'package:firebase_app/models/record_model.dart';
+import 'package:firebase_app/models/company_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -38,27 +40,31 @@ class RecordsScreen extends StatelessWidget {
               final record = provider.records[index];
               final company = provider.getCompany(record.companyId);
 
-              return Card(
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                elevation: 4,
-                child: ListTile(
-                  contentPadding: EdgeInsets.all(16),
-                  title: Text('Date: ${record.date.toLocal()}'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Unit Price: ${record.unitPrice.toStringAsFixed(2)}'),
-                      Text('Total: ${record.total.toStringAsFixed(2)}'),
-                      Text('Transaction Type: ${record.transactionType}'),
-                      if (company != null) Text('Company Code: ${company.symbol}'),
-                    ],
-                  ),
-                  isThreeLine: true,
-                ),
-              );
+              return recordItem(record, company);
             },
           );
         },
+      ),
+    );
+  }
+
+  Card recordItem(Record record, Company? company) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      elevation: 4,
+      child: ListTile(
+        contentPadding: EdgeInsets.all(16),
+        title: Text('Date: ${record.date.toLocal()}'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Unit Price: ${record.unitPrice.toStringAsFixed(2)}'),
+            Text('Total: ${record.total.toStringAsFixed(2)}'),
+            Text('Transaction Type: ${record.transactionType}'),
+            if (company != null) Text('Company Code: ${company.symbol}'),
+          ],
+        ),
+        isThreeLine: true,
       ),
     );
   }
