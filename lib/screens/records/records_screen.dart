@@ -23,7 +23,7 @@ class RecordsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('$companyName - Records'), actions: [
         IconButton(
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
           onPressed: () {
             GoRouter.of(context).go('/records/add');
           },
@@ -32,7 +32,7 @@ class RecordsScreen extends StatelessWidget {
       body: Consumer<RecordProvider>(
         builder: (context, provider, child) {
           if (provider.records.isEmpty) {
-            return Center(child: Text('No records available.'));
+            return const Center(child: Text('No records available.'));
           }
           return ListView.builder(
             itemCount: provider.records.length,
@@ -50,10 +50,41 @@ class RecordsScreen extends StatelessWidget {
 
   Card recordItem(Record record, Company? company) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       elevation: 4,
       child: ListTile(
-        contentPadding: EdgeInsets.all(16),
+        leading: const CircleAvatar(
+          radius: 30.0, // Radius of the circle
+          child: Text(
+            '?',
+            style: TextStyle(
+              color: Colors.white, // Color of the text
+              fontSize: 24.0, // Font size of the text
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        title: Text(record.transactionType),
+        subtitle: Text('Transaction Type: ${record.transactionType}'),
+        trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Unit Price: ${record.unitPrice.toStringAsFixed(2)}'),
+            // Text('Total: ${record.total.toStringAsFixed(2)}'),
+            if (company != null) Text('Company Code: ${company.symbol}'),
+          ],
+        ),
+        onTap: () {
+          // GoRouter.of(context).go('/company/${company.id}');
+        },
+      ),
+    );
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      elevation: 4,
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
         title: Text('Date: ${record.date.toLocal()}'),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

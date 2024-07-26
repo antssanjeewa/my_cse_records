@@ -2,7 +2,6 @@ import 'package:firebase_app/screens/company/add_company_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../screens/company/add_edit_company_screen.dart';
 import '../screens/company/company_profile_screen.dart';
 import '../screens/company/company_screen.dart';
 import '../screens/home/home_screen.dart';
@@ -20,7 +19,7 @@ class AppRouter {
 
 // GoRouter configuration
   final GoRouter _router = GoRouter(
-    initialLocation: '/companies',
+    initialLocation: '/records',
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     routes: [

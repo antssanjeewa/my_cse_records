@@ -106,11 +106,11 @@ class CompanyScreen extends StatelessWidget {
           GoRouter.of(context).go('/companies/edit/${company.id}');
         }
       },
-      child: ItemContent(company, context),
+      child: itemContent(company, context),
     );
   }
 
-  Widget ItemContent(Company company, BuildContext context) {
+  Widget itemContent(Company company, BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       elevation: 4,
@@ -127,7 +127,7 @@ class CompanyScreen extends StatelessWidget {
             ),
           ),
         ),
-        contentPadding: const EdgeInsets.all(16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         title: Text(company.symbol),
         subtitle: Text(company.name),
         onTap: () {

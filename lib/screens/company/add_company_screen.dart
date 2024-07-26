@@ -72,8 +72,8 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
                 bottomRight: Radius.circular(30),
               ),
             ),
-            child: const Text(
-              "Add New Company",
+            child: Text(
+              _isEditing ? 'Update Company' : 'Add New Company',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
@@ -136,7 +136,7 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: _submit,
-                          child: const Text('Add Company'),
+                          child: const Text('Save'),
                         ),
                       ),
                     ],
