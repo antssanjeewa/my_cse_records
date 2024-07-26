@@ -5,6 +5,7 @@ class Company {
   String id;
   String name;
   String symbol;
+  String color;
   double totalBuyShares;
   double totalSellShares;
   double availableShares;
@@ -15,6 +16,7 @@ class Company {
     required this.id,
     required this.name,
     required this.symbol,
+    required this.color,
     this.totalBuyShares = 0,
     this.totalSellShares = 0,
     this.availableShares = 0,
@@ -29,6 +31,7 @@ class Company {
       id: doc.id,
       name: data['name'] ?? '',
       symbol: data['symbol'] ?? '',
+      color: data['color'] ?? '',
       totalBuyShares: data['totalBuyShares'] ?? 0,
       totalSellShares: data['totalSellShares'] ?? 0,
       availableShares: data['availableShares'] ?? 0,
@@ -42,6 +45,7 @@ class Company {
     return {
       'name': name,
       'symbol': symbol,
+      'color': color,
       'totalBuyShares': totalBuyShares,
       'totalSellShares': totalSellShares,
       'availableShares': availableShares,

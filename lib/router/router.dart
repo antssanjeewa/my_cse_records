@@ -1,3 +1,4 @@
+import 'package:firebase_app/screens/company/add_company_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,7 +20,7 @@ class AppRouter {
 
 // GoRouter configuration
   final GoRouter _router = GoRouter(
-    initialLocation: '/records',
+    initialLocation: '/companies',
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     routes: [
@@ -29,12 +30,12 @@ class AppRouter {
         routes: [
           GoRoute(
             path: '/',
-            builder: (context, state) => HomeScreen(),
+            builder: (context, state) => const HomeScreen(),
           ),
           GoRoute(
             path: Pages.home.toPath(),
             name: Pages.home.toPathName(),
-            builder: (context, state) => HomeScreen(),
+            builder: (context, state) => const HomeScreen(),
             routes: [
               GoRoute(
                 path: Pages.productDetails.toPath(isSubRoute: true),
@@ -45,13 +46,19 @@ class AppRouter {
           ),
           GoRoute(
             path: '/companies',
-            builder: (context, state) => CompanyScreen(),
+            builder: (context, state) => const CompanyScreen(),
             routes: [
+              GoRoute(
+                path: 'add',
+                builder: (context, state) {
+                  return const AddCompanyScreen();
+                },
+              ),
               GoRoute(
                 path: 'edit/:companyId',
                 builder: (context, state) {
                   final companyId = state.pathParameters['companyId']!;
-                  return AddEditCompanyScreen(companyId: companyId);
+                  return AddCompanyScreen(companyId: companyId);
                 },
               ),
             ],

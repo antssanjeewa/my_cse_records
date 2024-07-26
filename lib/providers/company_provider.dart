@@ -23,6 +23,10 @@ class CompanyProvider with ChangeNotifier {
     await _firestoreService.addCompany(company);
   }
 
+  Future<void> updateCompany(Company company) async {
+    await _firestoreService.updateCompany(company);
+  }
+
   Future<void> fetchCompanyById(String companyId) async {
     _company = await _firestoreService.getCompanyById(companyId);
     notifyListeners();

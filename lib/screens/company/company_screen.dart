@@ -1,6 +1,4 @@
 // lib/screens/company/company_list_screen.dart
-import 'dart:math';
-
 import 'package:firebase_app/models/company_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -119,12 +117,7 @@ class CompanyScreen extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           radius: 30.0, // Radius of the circle
-          backgroundColor: Color.fromARGB(
-            255,
-            Random().nextInt(256),
-            Random().nextInt(256),
-            Random().nextInt(256),
-          ),
+          backgroundColor: _hexToColor(company.color),
           child: Text(
             company.symbol.isNotEmpty ? company.symbol[0].toUpperCase() : '?',
             style: const TextStyle(
@@ -142,5 +135,13 @@ class CompanyScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Color? _hexToColor(String hex) {
+    try {
+      return Color(int.parse(hex.substring(1), radix: 16) + 0xFF000000);
+    } catch (e) {
+      return null;
+    }
   }
 }
