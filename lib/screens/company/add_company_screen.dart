@@ -75,7 +75,7 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
             child: Text(
               _isEditing ? 'Update Company' : 'Add New Company',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
           ),
 
@@ -89,60 +89,64 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
                 borderRadius: BorderRadius.circular(15),
               ),
               child: SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const SizedBox(height: 50),
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(labelText: 'Company Name'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the company name';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        controller: _symbolController,
-                        decoration: const InputDecoration(labelText: 'Symbol'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the company symbol';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      const Text('Select Color:'),
-                      GestureDetector(
-                        onTap: () {
-                          _showColorPicker(context);
-                        },
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: _selectedColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 100),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _submit,
-                          child: const Text('Save'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: formContent(context),
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Form formContent(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _nameController,
+            decoration: const InputDecoration(labelText: 'Company Name'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the company name';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _symbolController,
+            decoration: const InputDecoration(labelText: 'Symbol'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the company symbol';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+          const Text('Select Color:'),
+          GestureDetector(
+            onTap: () {
+              _showColorPicker(context);
+            },
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: _selectedColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _submit,
+              child: const Text('Save'),
             ),
           ),
         ],

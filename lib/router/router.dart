@@ -19,7 +19,7 @@ class AppRouter {
 
 // GoRouter configuration
   final GoRouter _router = GoRouter(
-    initialLocation: '/records',
+    initialLocation: '/records/add',
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     routes: [

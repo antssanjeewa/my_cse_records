@@ -8,12 +8,14 @@ class Record {
   double total;
   String companyId;
   String transactionType;
+  int quantity;
 
   Record({
     required this.id,
     required this.date,
     required this.unitPrice,
     required this.total,
+    required this.quantity,
     required this.companyId,
     required this.transactionType,
   });
@@ -28,6 +30,7 @@ class Record {
       // date: DateTime.parse(data['date'] as String),
       unitPrice: data['unitPrice'] ?? 0.0,
       total: data['total'] ?? 0.0,
+      quantity: data['quantity'] ?? 0,
       companyId: data['companyId'] ?? '',
       transactionType: data['transactionType'] ?? '',
     );
@@ -39,6 +42,7 @@ class Record {
       'date': date,
       'unitPrice': unitPrice,
       'total': total,
+      'quantity': quantity,
       'companyId': companyId,
       'transactionType': transactionType,
     };
