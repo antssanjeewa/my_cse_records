@@ -10,7 +10,7 @@ class RecordItem extends StatelessWidget {
     return ListTile(
       title: Text(record.companyId.toString()),
       subtitle: Text(record.date.toString()),
-      tileColor: Theme.of(context).backgroundColor,
+      // tileColor: Theme.of(context).backgroundColor,
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

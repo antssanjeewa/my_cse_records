@@ -53,15 +53,17 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).bottomAppBarColor,
+        // backgroundColor: Theme.of(context).bottomAppBarColor,
         type: BottomNavigationBarType.fixed,
         elevation: 1,
         onTap: changeTab,
         currentIndex: getCurrentIndex(),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.local_post_office_outlined), label: 'Company'),
-          BottomNavigationBarItem(icon: Icon(Icons.list_alt_outlined), label: 'Records'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.local_post_office_outlined), label: 'Company'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.list_alt_outlined), label: 'Records'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
