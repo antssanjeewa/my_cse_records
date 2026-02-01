@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
+
 import '../../domain/entities/transaction.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text.dart';
+import '../../core/constants/app_sizes.dart';
+import '../../core/utils/formatters.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
   const TransactionHistoryScreen({super.key});
@@ -43,36 +47,32 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat =
-        NumberFormat.currency(locale: 'en_LK', symbol: 'LKR ');
-    final dateFormat = DateFormat('MMM dd • hh:mm a');
-
     final filteredTransactions = _filter == 'All'
         ? _transactions
         : _transactions.where((t) => t.type == _filter).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF101322),
+      backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
           // Sticky Top Bar
           SliverAppBar(
-            backgroundColor: const Color(0xFF101322).withOpacity(0.9),
+            backgroundColor: AppColors.background.withValues(alpha: 0.9),
             pinned: true,
             leading: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child:
-                  Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+              padding: EdgeInsets.all(AppSizes.p8),
+              child: Icon(Icons.arrow_back_ios_new,
+                  color: AppColors.textPrimary, size: AppSizes.iconMd),
             ),
-            title: Text('Transaction History',
+            title: Text(AppText.transactionHistory,
                 style: GoogleFonts.inter(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white)),
+                    color: AppColors.textPrimary)),
             centerTitle: true,
             actions: [
               IconButton(
-                icon: const Icon(Icons.search, color: Colors.white),
+                icon: const Icon(Icons.search, color: AppColors.textPrimary),
                 onPressed: () {},
               ),
             ],
@@ -80,7 +80,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(AppSizes.p16),
               child: Column(
                 children: [
                   // Segmented Control
@@ -88,8 +88,8 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                     height: 44,
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF232948),
-                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(AppSizes.r12),
                     ),
                     child: Row(
                       children: [
@@ -99,15 +99,15 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSizes.p16),
                   // Date Range
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                        horizontal: AppSizes.p16, vertical: AppSizes.p12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF191E33),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFF323B67)),
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppSizes.r12),
+                      border: Border.all(color: AppColors.border),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,21 +115,22 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                         Row(
                           children: [
                             const Icon(Icons.calendar_today,
-                                color: Color(0xFF1337EC), size: 20),
-                            const SizedBox(width: 12),
+                                color: AppColors.primary,
+                                size: AppSizes.iconMd),
+                            const SizedBox(width: AppSizes.p12),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('DATE RANGE',
                                     style: TextStyle(
-                                        color: Color(0xFF929BC9),
+                                        color: AppColors.textSecondary,
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 1.0)),
                                 const SizedBox(height: 2),
                                 Text('Oct 01, 2023 - Oct 31, 2023',
                                     style: GoogleFonts.inter(
-                                        color: Colors.white,
+                                        color: AppColors.textPrimary,
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold)),
                               ],
@@ -150,9 +151,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
               (context, index) {
                 final t = filteredTransactions[index];
                 return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                  child: _buildTransactionItem(t, currencyFormat, dateFormat),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSizes.p16, vertical: 0),
+                  child: _buildTransactionItem(t),
                 );
               },
               childCount: filteredTransactions.length,
@@ -161,11 +162,12 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(AppSizes.p24),
               child: Column(
                 children: [
-                  const Icon(Icons.history, color: Colors.white54, size: 32),
-                  const SizedBox(height: 8),
+                  const Icon(Icons.history,
+                      color: Colors.white54, size: AppSizes.iconXl),
+                  const SizedBox(height: AppSizes.p8),
                   Text(
                       'Showing ${filteredTransactions.length} transactions from Oct 2023',
                       style:
@@ -187,21 +189,22 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
         onTap: () => setState(() => _filter = label),
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected
-                ? const Color(0xFF101322)
-                : Colors.transparent, // "bg-white" equivalent darker
-            borderRadius: BorderRadius.circular(8),
+            color: isSelected ? AppColors.background : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppSizes.r8),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                        color: Colors.black.withOpacity(0.1), blurRadius: 2)
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 2)
                   ]
                 : [],
           ),
           alignment: Alignment.center,
           child: Text(label,
               style: TextStyle(
-                color: isSelected ? Colors.white : const Color(0xFF929BC9),
+                color: isSelected
+                    ? AppColors.textPrimary
+                    : AppColors.textSecondary,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               )),
@@ -210,8 +213,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     );
   }
 
-  Widget _buildTransactionItem(
-      Transaction t, NumberFormat currencyFmt, DateFormat dateFmt) {
+  Widget _buildTransactionItem(Transaction t) {
     final isBuy = t.type == 'Buy';
     return IntrinsicHeight(
       child: Row(
@@ -226,37 +228,35 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: isBuy ? const Color(0xFF1337EC) : Colors.grey[700],
+                    color: isBuy ? AppColors.primary : Colors.grey[700],
                     shape: BoxShape.circle,
                     boxShadow: isBuy
                         ? [
-                            const BoxShadow(
-                                color: Color(0xFF1337EC),
+                            BoxShadow(
+                                color: AppColors.primary,
                                 blurRadius: 10,
                                 spreadRadius: -2)
                           ]
                         : [],
                   ),
                   child: Icon(isBuy ? Icons.shopping_cart : Icons.sell,
-                      color: Colors.white, size: 20),
+                      color: Colors.white, size: AppSizes.iconMd),
                 ),
-                Expanded(
-                    child: Container(width: 2, color: const Color(0xFF323B67))),
+                Expanded(child: Container(width: 2, color: AppColors.border)),
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSizes.p8),
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(
                   bottom:
                       24), // Use margin instead of padding wrapper for spacing
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSizes.p16),
               decoration: BoxDecoration(
-                color: const Color(0xFF191E33),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                    color: const Color(0xFF323B67)), // default border
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSizes.r16),
+                border: Border.all(color: AppColors.border), // default border
               ),
               child: Column(
                 children: [
@@ -271,39 +271,38 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               color: isBuy
-                                  ? const Color(0xFF1337EC).withOpacity(0.1)
-                                  : Colors.grey.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(4),
+                                  ? AppColors.primary.withValues(alpha: 0.1)
+                                  : Colors.grey.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(AppSizes.r4),
                             ),
                             child: Text(t.type.toUpperCase(),
                                 style: TextStyle(
-                                    color: isBuy
-                                        ? const Color(0xFF1337EC)
-                                        : Colors.grey,
+                                    color:
+                                        isBuy ? AppColors.primary : Colors.grey,
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold)),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AppSizes.p4),
                           Text(t.name,
                               style: GoogleFonts.inter(
-                                  color: Colors.white,
+                                  color: AppColors.textPrimary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16)),
                           Text(t.ticker,
                               style: const TextStyle(
-                                  color: Color(0xFF929BC9),
+                                  color: AppColors.textSecondary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600)),
                         ],
                       ),
-                      Text(dateFmt.format(t.date),
+                      Text(AppFormatters.dateDetailed.format(t.date),
                           style: const TextStyle(
-                              color: Color(0xFF929BC9), fontSize: 10)),
+                              color: AppColors.textSecondary, fontSize: 10)),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  const Divider(color: Color(0xFF323B67), height: 1),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSizes.p12),
+                  const Divider(color: AppColors.border, height: 1),
+                  const SizedBox(height: AppSizes.p12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -312,13 +311,14 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                         children: [
                           const Text('QUANTITY',
                               style: TextStyle(
-                                  color: Color(0xFF929BC9),
+                                  color: AppColors.textSecondary,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold)),
                           const SizedBox(height: 2),
-                          Text('${t.quantity.toInt()} Shares',
+                          Text(
+                              '${AppFormatters.formatNumber(t.quantity)} Shares',
                               style: const TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.textPrimary,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600)),
                         ],
@@ -328,35 +328,35 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                         children: [
                           const Text('PRICE',
                               style: TextStyle(
-                                  color: Color(0xFF929BC9),
+                                  color: AppColors.textSecondary,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold)),
                           const SizedBox(height: 2),
-                          Text(currencyFmt.format(t.price),
+                          Text(AppFormatters.formatCurrency(t.price),
                               style: const TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.textPrimary,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600)),
                         ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  const Divider(color: Color(0xFF323B67), height: 1),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSizes.p12),
+                  const Divider(color: AppColors.border, height: 1),
+                  const SizedBox(height: AppSizes.p12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('Total Value',
                           style: TextStyle(
-                              color: Color(0xFF929BC9),
+                              color: AppColors.textSecondary,
                               fontSize: 12,
                               fontWeight: FontWeight.w500)),
-                      Text(currencyFmt.format(t.totalValue),
+                      Text(AppFormatters.formatCurrency(t.totalValue),
                           style: TextStyle(
                               color: isBuy
-                                  ? const Color(0xFF1337EC)
-                                  : Colors.white,
+                                  ? AppColors.primary
+                                  : AppColors.textPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 16)),
                     ],

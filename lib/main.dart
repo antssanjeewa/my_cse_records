@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/di/service_locator.dart';
 import 'core/routing/router_config.dart';
+import 'core/constants/app_colors.dart';
+import 'core/constants/app_text.dart';
 import 'presentation/viewmodels/auth_viewmodel.dart';
 import 'presentation/viewmodels/home_viewmodel.dart';
 import 'presentation/viewmodels/portfolio_viewmodel.dart';
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent, // transparent status bar
       statusBarIconBrightness: Brightness.light, // dark text for status bar
-      systemNavigationBarColor: Color(0xFF101322), // navigation bar color
+      systemNavigationBarColor: AppColors.background, // navigation bar color
       systemNavigationBarIconBrightness: Brightness.light,
     ));
 
@@ -33,18 +35,18 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => getIt<HomeViewModel>()),
       ],
       child: MaterialApp.router(
-        title: 'CSE Portfolio Tracker',
+        title: AppText.appName,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           brightness: Brightness.dark,
-          primaryColor: const Color(0xFF1337EC),
-          scaffoldBackgroundColor: const Color(0xFF101322),
+          primaryColor: AppColors.primary,
+          scaffoldBackgroundColor: AppColors.background,
           textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
           colorScheme: const ColorScheme.dark(
-            primary: Color(0xFF1337EC),
-            secondary: Color(0xFF1337EC),
-            background: Color(0xFF101322),
-            surface: Color(0xFF191E33),
+            primary: AppColors.primary,
+            secondary: AppColors.primary,
+            background: AppColors.background,
+            surface: AppColors.surface,
           ),
           useMaterial3: true,
         ),

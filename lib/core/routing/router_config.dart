@@ -7,58 +7,61 @@ import '../../presentation/screens/portfolio_screen.dart';
 import '../../presentation/screens/main_shell.dart';
 import '../../presentation/screens/profile_screen.dart';
 import '../../presentation/screens/transaction_history_screen.dart';
+import '../constants/app_routes.dart';
+import '../constants/app_colors.dart';
 
-// Placeholder screens
+// Placeholder screens - Updated to use Constants
 class PlaceholderScreen extends StatelessWidget {
   final String title;
   const PlaceholderScreen({super.key, required this.title});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF101322),
+      backgroundColor: AppColors.background,
       body: Center(
           child: Text(title,
-              style: const TextStyle(color: Colors.white, fontSize: 20))),
+              style:
+                  const TextStyle(color: AppColors.textPrimary, fontSize: 20))),
     );
   }
 }
 
 final GoRouter router = GoRouter(
-  initialLocation: '/',
+  initialLocation: AppRoutes.splash,
   routes: [
     GoRoute(
-      path: '/',
+      path: AppRoutes.splash,
       builder: (context, state) => const SplashScreen(),
     ),
     GoRoute(
-      path: '/login',
+      path: AppRoutes.login,
       builder: (context, state) => const LoginScreen(),
     ),
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),
       routes: [
         GoRoute(
-          path: '/home',
+          path: AppRoutes.home,
           builder: (context, state) => const HomeScreen(),
         ),
         GoRoute(
-          path: '/portfolio',
+          path: AppRoutes.portfolio,
           builder: (context, state) => const PortfolioScreen(),
         ),
         GoRoute(
-          path: '/watchlist',
+          path: AppRoutes.watchlist,
           builder: (context, state) => const TransactionHistoryScreen(),
         ),
         GoRoute(
-          path: '/transactions',
+          path: AppRoutes.transactions,
           builder: (context, state) => const TransactionHistoryScreen(),
         ),
         GoRoute(
-          path: '/settings',
+          path: AppRoutes.settings,
           builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
-          path: '/profile',
+          path: AppRoutes.profile,
           builder: (context, state) => const ProfileScreen(),
         ),
       ],

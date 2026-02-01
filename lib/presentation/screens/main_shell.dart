@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_routes.dart';
+
 class MainShell extends StatelessWidget {
   final Widget child;
   const MainShell({super.key, required this.child});
@@ -12,24 +15,38 @@ class MainShell extends StatelessWidget {
       body: child,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: Color(0xFF323B67), width: 0.5)),
+          border: Border(top: BorderSide(color: AppColors.border, width: 0.5)),
         ),
         child: BottomNavigationBar(
-          backgroundColor: const Color(0xFF101322), 
+          backgroundColor: AppColors.background,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF1337EC),
+          selectedItemColor: AppColors.primary,
           unselectedItemColor: Colors.grey, // Slate 400 equivalent
           showUnselectedLabels: true,
-          selectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-          unselectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          selectedLabelStyle:
+              const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          unselectedLabelStyle:
+              const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
           currentIndex: _calculateSelectedIndex(context),
           onTap: (index) => _onItemTapped(index, context),
           items: const [
-             BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
-             BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), activeIcon: Icon(Icons.account_balance_wallet), label: 'Portfolio'),
-             BottomNavigationBarItem(icon: Icon(Icons.show_chart), activeIcon: Icon(Icons.show_chart), label: 'Watchlist'),
-             BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'Profile'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home),
+                label: 'Home'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.account_balance_wallet_outlined),
+                activeIcon: Icon(Icons.account_balance_wallet),
+                label: 'Portfolio'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.show_chart),
+                activeIcon: Icon(Icons.show_chart),
+                label: 'Watchlist'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.person_outline),
+                activeIcon: Icon(Icons.person),
+                label: 'Profile'),
           ],
         ),
       ),
@@ -38,26 +55,27 @@ class MainShell extends StatelessWidget {
 
   static int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
-    if (location.startsWith('/home')) return 0;
-    if (location.startsWith('/portfolio')) return 1;
-    if (location.startsWith('/watchlist')) return 2;
-    if (location.startsWith('/profile')) return 3;
+    if (location.startsWith(AppRoutes.home)) return 0;
+    if (location.startsWith(AppRoutes.portfolio)) return 1;
+    if (location.startsWith(AppRoutes.watchlist)) return 2;
+    if (location.startsWith(AppRoutes.profile) ||
+        location.startsWith(AppRoutes.settings)) return 3;
     return 0;
   }
 
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0:
-        context.go('/home');
+        context.go(AppRoutes.home);
         break;
       case 1:
-        context.go('/portfolio');
+        context.go(AppRoutes.portfolio);
         break;
       case 2:
-        context.go('/watchlist'); // Placeholder
+        context.go(AppRoutes.watchlist);
         break;
       case 3:
-        context.go('/settings'); // User requested /settings in router config request, mapping Profile to Settings for now or just settings
+        context.go(AppRoutes.settings);
         break;
     }
   }

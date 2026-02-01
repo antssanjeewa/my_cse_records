@@ -1,25 +1,27 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text.dart';
+import '../../core/constants/app_sizes.dart';
+import '../../core/utils/formatters.dart';
 import '../viewmodels/home_viewmodel.dart';
+import '../../domain/entities/holding.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat =
-        NumberFormat.currency(locale: 'en_LK', symbol: 'LKR ');
-
     return Scaffold(
-      backgroundColor: const Color(0xFF101322),
+      backgroundColor: AppColors.background,
       body: Consumer<HomeViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.isLoading || viewModel.summary == null) {
             return const Center(
-                child: CircularProgressIndicator(color: Color(0xFF1337EC)));
+                child: CircularProgressIndicator(color: AppColors.primary));
           }
 
           final summary = viewModel.summary!;
@@ -28,18 +30,18 @@ class HomeScreen extends StatelessWidget {
             slivers: [
               // App Bar
               SliverAppBar(
-                backgroundColor: const Color(0xFF101322).withOpacity(0.9),
+                backgroundColor: AppColors.background.withValues(alpha: 0.9),
                 floating: true,
                 pinned: true,
                 elevation: 0,
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('CSE Portfolio',
+                    Text(AppText.appName,
                         style: GoogleFonts.inter(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white)),
+                            color: AppColors.textPrimary)),
                     Text('MARKET OPEN',
                         style: GoogleFonts.inter(
                             fontSize: 10,
@@ -50,13 +52,13 @@ class HomeScreen extends StatelessWidget {
                 ),
                 actions: [
                   Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
+                    padding: const EdgeInsets.only(right: AppSizes.p16),
                     child: CircleAvatar(
-                      backgroundColor: const Color(0xFF232948),
+                      backgroundColor: AppColors.surfaceLight,
                       child: Stack(
                         children: [
                           const Icon(Icons.notifications,
-                              color: Colors.white, size: 20),
+                              color: Colors.white, size: AppSizes.iconMd),
                           Positioned(
                               top: 2,
                               right: 2,
@@ -75,21 +77,20 @@ class HomeScreen extends StatelessWidget {
 
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(AppSizes.p16),
                   child: Column(
                     children: [
                       // Hero Card
-                      _buildHeroCard(
-                          summary.totalValue, summary.load, currencyFormat),
-                      const SizedBox(height: 24),
+                      _buildHeroCard(summary.totalValue, summary.load),
+                      const SizedBox(height: AppSizes.p24),
                       // Chart
                       _buildChartSection(),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSizes.p24),
                       // Asset Allocation
                       _buildAssetAllocation(),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSizes.p24),
                       // Top Holdings (Using the list from summary)
-                      _buildTopHoldings(summary.holdings, currencyFormat),
+                      _buildTopHoldings(summary.holdings),
                     ],
                   ),
                 ),
@@ -101,15 +102,15 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroCard(double value, double load, NumberFormat fmt) {
+  Widget _buildHeroCard(double value, double load) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AppSizes.p24),
       decoration: BoxDecoration(
-        color: const Color(0xFF1337EC),
-        borderRadius: BorderRadius.circular(24),
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(AppSizes.r24),
         boxShadow: [
           BoxShadow(
-              color: const Color(0xFF1337EC).withOpacity(0.3),
+              color: AppColors.primary.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 10)),
         ],
@@ -117,37 +118,37 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Total Portfolio Value',
+          Text(AppText.totalPortfolioValue,
               style: GoogleFonts.inter(color: Colors.white70, fontSize: 14)),
-          const SizedBox(height: 8),
-          Text(fmt.format(value),
+          const SizedBox(height: AppSizes.p8),
+          Text(AppFormatters.formatCurrency(value),
               style: GoogleFonts.inter(
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                   fontSize: 32,
                   fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSizes.p16),
           Row(
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8)),
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(AppSizes.r8)),
                 child: Row(
                   children: [
                     const Icon(Icons.trending_up,
-                        color: Colors.greenAccent, size: 16),
-                    const SizedBox(width: 4),
+                        color: AppColors.success, size: AppSizes.iconSm),
+                    const SizedBox(width: AppSizes.p4),
                     Text('+LKR ${load.toStringAsFixed(2)} (2.5%)',
                         style: GoogleFonts.inter(
-                            color: Colors.greenAccent,
+                            color: AppColors.success,
                             fontSize: 12,
                             fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              Text('Today',
+              const SizedBox(width: AppSizes.p8),
+              Text(AppText.today,
                   style:
                       GoogleFonts.inter(color: Colors.white60, fontSize: 12)),
             ],
@@ -159,20 +160,21 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildChartSection() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSizes.p16),
       decoration: BoxDecoration(
-        color: const Color(0xFF191E33),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF323B67)),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.r16),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Performance History',
+              Text(AppText.performanceHistory,
                   style: GoogleFonts.inter(
-                      color: Colors.white, fontWeight: FontWeight.bold)),
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold)),
               Row(
                 children: [
                   _buildChartTab('30D', true),
@@ -182,7 +184,7 @@ class HomeScreen extends StatelessWidget {
               )
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSizes.p24),
           SizedBox(
             height: 150,
             child: LineChart(
@@ -237,7 +239,7 @@ class HomeScreen extends StatelessWidget {
                       const FlSpot(11, 4),
                     ],
                     isCurved: true,
-                    color: const Color(0xFF1337EC),
+                    color: AppColors.primary,
                     barWidth: 3,
                     isStrokeCapRound: true,
                     dotData: FlDotData(show: false),
@@ -245,8 +247,8 @@ class HomeScreen extends StatelessWidget {
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFF1337EC).withOpacity(0.3),
-                          const Color(0xFF1337EC).withOpacity(0.0),
+                          AppColors.primary.withValues(alpha: 0.3),
+                          AppColors.primary.withValues(alpha: 0.0),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -267,8 +269,8 @@ class HomeScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       margin: const EdgeInsets.only(left: 4),
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFF323B67) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
+        color: isSelected ? AppColors.border : Colors.transparent,
+        borderRadius: BorderRadius.circular(AppSizes.r8),
       ),
       child: Text(text,
           style: TextStyle(
@@ -280,19 +282,19 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildAssetAllocation() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSizes.p16),
       decoration: BoxDecoration(
-        color: const Color(0xFF191E33),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF323B67)),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.r16),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Asset Allocation',
+          Text(AppText.assetAllocation,
               style: GoogleFonts.inter(
-                  color: Colors.white, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
+                  color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+          const SizedBox(height: AppSizes.p16),
           Row(
             children: [
               SizedBox(
@@ -303,7 +305,7 @@ class HomeScreen extends StatelessWidget {
                     sections: [
                       PieChartSectionData(
                           value: 75,
-                          color: const Color(0xFF1337EC),
+                          color: AppColors.primary,
                           radius: 15,
                           showTitle: false),
                       PieChartSectionData(
@@ -322,14 +324,12 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 24),
+              const SizedBox(width: AppSizes.p24),
               Expanded(
                 child: Column(
                   children: [
                     _buildLegendItem(
-                        color: const Color(0xFF1337EC),
-                        label: 'Stocks',
-                        pct: '75%'),
+                        color: AppColors.primary, label: 'Stocks', pct: '75%'),
                     _buildLegendItem(
                         color: Colors.grey, label: 'Cash', pct: '20%'),
                     _buildLegendItem(
@@ -353,13 +353,13 @@ class HomeScreen extends StatelessWidget {
         children: [
           Row(children: [
             CircleAvatar(radius: 4, backgroundColor: color),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSizes.p8),
             Text(label,
                 style: const TextStyle(color: Colors.grey, fontSize: 12)),
           ]),
           Text(pct,
               style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                   fontSize: 12,
                   fontWeight: FontWeight.bold)),
         ],
@@ -367,31 +367,31 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopHoldings(List<dynamic> holdings, NumberFormat fmt) {
+  Widget _buildTopHoldings(List<Holding> holdings) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Top 5 Holdings',
+            Text(AppText.topHoldings,
                 style: GoogleFonts.inter(
-                    color: Colors.white, fontWeight: FontWeight.bold)),
-            Text('VIEW ALL',
+                    color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+            Text(AppText.viewAll,
                 style: GoogleFonts.inter(
-                    color: const Color(0xFF1337EC),
+                    color: AppColors.primary,
                     fontSize: 12,
                     fontWeight: FontWeight.bold)),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSizes.p12),
         ...holdings.take(5).map((h) => Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(bottom: AppSizes.p8),
+              padding: const EdgeInsets.all(AppSizes.p12),
               decoration: BoxDecoration(
-                color: const Color(0xFF191E33),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF323B67)),
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSizes.r12),
+                border: Border.all(color: AppColors.border),
               ),
               child: Row(
                 children: [
@@ -399,23 +399,23 @@ class HomeScreen extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                        color: const Color(0xFF232948),
-                        borderRadius: BorderRadius.circular(8)),
+                        color: AppColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(AppSizes.r8)),
                     alignment: Alignment.center,
                     child: Text(h.ticker.split('.')[0],
                         style: const TextStyle(
-                            color: Color(0xFF1337EC),
+                            color: AppColors.primary,
                             fontSize: 10,
                             fontWeight: FontWeight.bold)),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppSizes.p12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(h.name,
                             style: const TextStyle(
-                                color: Colors.white,
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14)),
                         Text('${h.quantity.toInt()} Shares',
@@ -427,17 +427,17 @@ class HomeScreen extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(fmt.format(h.marketPrice),
+                      Text(AppFormatters.formatCurrency(h.marketPrice),
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 14)),
                       Text(
                           '${h.profitPercent > 0 ? '+' : ''}${h.profitPercent.toStringAsFixed(1)}%',
                           style: TextStyle(
                               color: h.profitPercent >= 0
-                                  ? Colors.greenAccent
-                                  : Colors.redAccent,
+                                  ? AppColors.success
+                                  : AppColors.error,
                               fontSize: 10,
                               fontWeight: FontWeight.bold)),
                     ],
