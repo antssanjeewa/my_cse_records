@@ -14,7 +14,7 @@ class HomeViewModel extends ChangeNotifier {
   PortfolioSummary? get summary => _summary;
 
   // Also need holdings for Top 5 list
-  List<Holding> _topHoldings = [];
+  final List<Holding> _topHoldings = [];
   List<Holding> get topHoldings => _topHoldings;
 
   bool _isLoading = false;

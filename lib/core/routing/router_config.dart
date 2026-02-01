@@ -7,10 +7,10 @@ import '../../presentation/screens/portfolio_screen.dart';
 import '../../presentation/screens/main_shell.dart';
 import '../../presentation/screens/profile_screen.dart';
 import '../../presentation/screens/transaction_history_screen.dart';
-import '../constants/app_routes.dart';
+import 'pages.dart';
 import '../constants/app_colors.dart';
 
-// Placeholder screens - Updated to use Constants
+// Placeholder screens
 class PlaceholderScreen extends StatelessWidget {
   final String title;
   const PlaceholderScreen({super.key, required this.title});
@@ -27,41 +27,49 @@ class PlaceholderScreen extends StatelessWidget {
 }
 
 final GoRouter router = GoRouter(
-  initialLocation: AppRoutes.splash,
+  initialLocation: Pages.splash.toPath(),
   routes: [
     GoRoute(
-      path: AppRoutes.splash,
+      path: Pages.splash.toPath(),
+      name: Pages.splash.toPathName(),
       builder: (context, state) => const SplashScreen(),
     ),
     GoRoute(
-      path: AppRoutes.login,
+      path: Pages.login.toPath(),
+      name: Pages.login.toPathName(),
       builder: (context, state) => const LoginScreen(),
     ),
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),
       routes: [
         GoRoute(
-          path: AppRoutes.home,
+          path: Pages.home.toPath(),
+          name: Pages.home.toPathName(),
           builder: (context, state) => const HomeScreen(),
         ),
         GoRoute(
-          path: AppRoutes.portfolio,
+          path: Pages.portfolio.toPath(),
+          name: Pages.portfolio.toPathName(),
           builder: (context, state) => const PortfolioScreen(),
         ),
         GoRoute(
-          path: AppRoutes.watchlist,
+          path: Pages.watchlist.toPath(),
+          name: Pages.watchlist.toPathName(),
           builder: (context, state) => const TransactionHistoryScreen(),
         ),
         GoRoute(
-          path: AppRoutes.transactions,
+          path: Pages.transactions.toPath(),
+          name: Pages.transactions.toPathName(),
           builder: (context, state) => const TransactionHistoryScreen(),
         ),
         GoRoute(
-          path: AppRoutes.settings,
+          path: Pages.settings.toPath(),
+          name: Pages.settings.toPathName(),
           builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
-          path: AppRoutes.profile,
+          path: Pages.profile.toPath(),
+          name: Pages.profile.toPathName(),
           builder: (context, state) => const ProfileScreen(),
         ),
       ],

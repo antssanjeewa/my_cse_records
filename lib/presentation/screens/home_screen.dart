@@ -7,6 +7,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/routing/pages.dart';
 import '../viewmodels/home_viewmodel.dart';
 import '../../domain/entities/holding.dart';
 
@@ -90,7 +91,7 @@ class HomeScreen extends StatelessWidget {
                       _buildAssetAllocation(),
                       const SizedBox(height: AppSizes.p24),
                       // Top Holdings (Using the list from summary)
-                      _buildTopHoldings(summary.holdings),
+                      _buildTopHoldings(summary.holdings, context),
                     ],
                   ),
                 ),
@@ -189,15 +190,15 @@ class HomeScreen extends StatelessWidget {
             height: 150,
             child: LineChart(
               LineChartData(
-                gridData: FlGridData(show: false),
+                gridData: const FlGridData(show: false),
                 titlesData: FlTitlesData(
                   show: true,
-                  rightTitles:
-                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles:
-                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  leftTitles:
-                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -242,7 +243,7 @@ class HomeScreen extends StatelessWidget {
                     color: AppColors.primary,
                     barWidth: 3,
                     isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
+                    dotData: const FlDotData(show: false),
                     belowBarData: BarAreaData(
                       show: true,
                       gradient: LinearGradient(
@@ -367,7 +368,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopHoldings(List<Holding> holdings) {
+  Widget _buildTopHoldings(List<Holding> holdings, context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -377,11 +378,14 @@ class HomeScreen extends StatelessWidget {
             Text(AppText.topHoldings,
                 style: GoogleFonts.inter(
                     color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
-            Text(AppText.viewAll,
-                style: GoogleFonts.inter(
-                    color: AppColors.primary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold)),
+            GestureDetector(
+              onTap: () => Pages.portfolio.go(context),
+              child: Text(AppText.viewAll,
+                  style: GoogleFonts.inter(
+                      color: AppColors.primary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold)),
+            ),
           ],
         ),
         const SizedBox(height: AppSizes.p12),

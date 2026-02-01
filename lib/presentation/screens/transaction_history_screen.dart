@@ -232,7 +232,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                     shape: BoxShape.circle,
                     boxShadow: isBuy
                         ? [
-                            BoxShadow(
+                            const BoxShadow(
                                 color: AppColors.primary,
                                 blurRadius: 10,
                                 spreadRadius: -2)

@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
 import '../../core/constants/app_sizes.dart';
-import '../../core/constants/app_routes.dart';
+import '../../core/routing/pages.dart';
 import '../../core/constants/app_assets.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -39,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               if (context.canPop()) {
                 context.pop();
               } else {
-                context.go(AppRoutes.home);
+                Pages.home.go(context);
               }
             },
           ),
@@ -93,8 +93,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: TextStyle(
                                 color: AppColors.textSecondary, fontSize: 14)),
                         const SizedBox(height: 4),
-                        Row(
-                          children: const [
+                        const Row(
+                          children: [
                             Icon(Icons.verified,
                                 color: AppColors.primary, size: 16),
                             SizedBox(width: 4),
@@ -266,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
             activeTrackColor: AppColors.surfaceLight,
           ),
         ],

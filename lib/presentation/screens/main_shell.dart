@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_routes.dart';
+import '../../core/routing/pages.dart';
 
 class MainShell extends StatelessWidget {
   final Widget child;
@@ -55,27 +55,29 @@ class MainShell extends StatelessWidget {
 
   static int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
-    if (location.startsWith(AppRoutes.home)) return 0;
-    if (location.startsWith(AppRoutes.portfolio)) return 1;
-    if (location.startsWith(AppRoutes.watchlist)) return 2;
-    if (location.startsWith(AppRoutes.profile) ||
-        location.startsWith(AppRoutes.settings)) return 3;
+    if (location.startsWith(Pages.home.toPath())) return 0;
+    if (location.startsWith(Pages.portfolio.toPath())) return 1;
+    if (location.startsWith(Pages.watchlist.toPath())) return 2;
+    if (location.startsWith(Pages.profile.toPath()) ||
+        location.startsWith(Pages.settings.toPath())) {
+      return 3;
+    }
     return 0;
   }
 
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0:
-        context.go(AppRoutes.home);
+        Pages.home.go(context);
         break;
       case 1:
-        context.go(AppRoutes.portfolio);
+        Pages.portfolio.go(context);
         break;
       case 2:
-        context.go(AppRoutes.watchlist);
+        Pages.watchlist.go(context);
         break;
       case 3:
-        context.go(AppRoutes.settings);
+        Pages.settings.go(context);
         break;
     }
   }

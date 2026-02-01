@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/holding.dart';
 import '../viewmodels/portfolio_viewmodel.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
 import '../../core/constants/app_sizes.dart';
-import '../../core/constants/app_routes.dart';
+import '../../core/routing/pages.dart';
 import '../../core/utils/formatters.dart';
 
 class PortfolioScreen extends StatelessWidget {
@@ -36,7 +34,7 @@ class PortfolioScreen extends StatelessWidget {
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_ios,
                     color: Colors.white, size: AppSizes.iconMd),
-                onPressed: () => context.go(AppRoutes.home),
+                onPressed: () => Pages.home.go(context),
               ),
               title: Text(AppText.portfolioHoldings,
                   style: GoogleFonts.inter(
@@ -179,12 +177,12 @@ class PortfolioScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(AppSizes.r20)),
-                child: Row(
+                child: const Row(
                   children: [
-                    const Icon(Icons.trending_up,
+                    Icon(Icons.trending_up,
                         color: Colors.white, size: AppSizes.iconSm),
-                    const SizedBox(width: AppSizes.p4),
-                    const Text('+2.4% Today',
+                    SizedBox(width: AppSizes.p4),
+                    Text('+2.4% Today',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,

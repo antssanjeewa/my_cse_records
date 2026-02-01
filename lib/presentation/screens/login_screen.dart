@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
 import '../../core/constants/app_sizes.dart';
-import '../../core/constants/app_routes.dart';
+import '../../core/routing/pages.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -107,7 +106,7 @@ class LoginScreen extends StatelessWidget {
 
                 ElevatedButton(
                   onPressed: () {
-                    context.go(AppRoutes.home);
+                    Pages.home.go(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -154,10 +153,10 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(height: AppSizes.p32),
                 Center(
                     child: RichText(
-                        text: TextSpan(
-                            style: const TextStyle(color: AppColors.textHint),
+                        text: const TextSpan(
+                            style: TextStyle(color: AppColors.textHint),
                             children: [
-                      const TextSpan(text: AppText.noAccount),
+                      TextSpan(text: AppText.noAccount),
                       TextSpan(
                           text: AppText.signUp,
                           style: TextStyle(
