@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/routing/pages.dart';
 import '../../core/constants/app_assets.dart';
+import '../viewmodels/auth_viewmodel.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -21,6 +23,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authViewModel = context.watch<AuthViewModel>();
+    final user = authViewModel.currentUser;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -83,15 +88,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Nimal Perera',
+                        Text(user?.email?.split('@').first ?? 'User',
                             style: GoogleFonts.inter(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary)),
                         const SizedBox(height: 2),
-                        const Text('Primary Currency: LKR',
-                            style: TextStyle(
-                                color: AppColors.textSecondary, fontSize: 14)),
+                        Text(user?.email ?? 'investor@cse.lk',
+                            style: const TextStyle(
+                                color: AppColors.textSecondary, fontSize: 13)),
                         const SizedBox(height: 4),
                         const Row(
                           children: [
@@ -144,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // Data Management
             const SizedBox(height: 24),
-            _buildSectionHeader('Data Management'),
+            _buildSectionHeader('Account & Data'),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
               decoration: BoxDecoration(
@@ -169,10 +174,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       label: 'Export to CSV',
                       onTap: () {},
                       isLast: true,
-                      isPrimary: true,
-                      iconCode:
-                          Icons.table_chart), // Using compatible icon for CSV
+                      isPrimary: false,
+                      iconCode: Icons.table_chart),
                 ],
+              ),
+            ),
+
+            const SizedBox(height: AppSizes.p32),
+            Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    await authViewModel.logout();
+                    if (mounted) {
+                      Pages.login.go(context);
+                    }
+                  },
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  label: const Text('Logout',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent.withValues(alpha: 0.9),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppSizes.r12)),
+                    elevation: 0,
+                  ),
+                ),
               ),
             ),
 
@@ -280,7 +312,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       required VoidCallback onTap,
       required bool isLast,
       bool isPrimary = false,
+      bool isDestructive = false,
       IconData? iconCode}) {
+    final Color color = isDestructive
+        ? Colors.redAccent
+        : (isPrimary ? AppColors.primary : AppColors.textPrimary);
+
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -296,25 +333,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                  color: isPrimary
-                      ? AppColors.primary.withValues(alpha: 0.1)
-                      : AppColors.surfaceLight,
+                  color: isDestructive
+                      ? Colors.redAccent.withValues(alpha: 0.1)
+                      : (isPrimary
+                          ? AppColors.primary.withValues(alpha: 0.1)
+                          : AppColors.surfaceLight),
                   borderRadius: BorderRadius.circular(AppSizes.r8)),
-              child: Icon(iconCode ?? icon,
-                  color: isPrimary ? AppColors.primary : AppColors.textPrimary,
-                  size: AppSizes.iconMd),
+              child:
+                  Icon(iconCode ?? icon, color: color, size: AppSizes.iconMd),
             ),
             const SizedBox(width: AppSizes.p16),
             Expanded(
                 child: Text(label,
                     style: TextStyle(
-                        color: isPrimary
-                            ? AppColors.primary
-                            : AppColors.textPrimary,
+                        color: color,
                         fontSize: 16,
                         fontWeight: FontWeight.w500))),
             Icon(isPrimary ? Icons.download : Icons.chevron_right,
-                color: isPrimary ? AppColors.primary : Colors.grey),
+                color: isDestructive ? Colors.redAccent : Colors.grey),
           ],
         ),
       ),
