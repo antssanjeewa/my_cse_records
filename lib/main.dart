@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/di/service_locator.dart';
 import 'core/routing/router_config.dart';
 import 'core/constants/app_colors.dart';
@@ -10,7 +11,15 @@ import 'presentation/viewmodels/auth_viewmodel.dart';
 import 'presentation/viewmodels/home_viewmodel.dart';
 import 'presentation/viewmodels/portfolio_viewmodel.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://koevusjggapfimievpld.supabase.co',
+    anonKey: 'sb_publishable_KENbWDLkCcVVtsDr7MuZAg_ojvqONUk',
+    // db pass= 3WWQg/Atg/z%i@+
+  );
+
   setupLocator();
   runApp(const MyApp());
 }

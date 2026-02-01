@@ -16,6 +16,8 @@ dependencies:
   google_fonts: ^5.0.0
   intl: ^0.18.0
   cupertino_icons: ^1.0.2
+  flutter_launcher_icons: ^0.14.4
+  supabase_flutter: ^2.12.0
 
 dev_dependencies:
   flutter_test:
@@ -26,3 +28,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/logo.png"
+  adaptive_icon_background: "#0B162C"
