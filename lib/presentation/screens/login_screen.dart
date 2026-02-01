@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../core/services/secure_storage_service.dart';
+import '../../core/di/service_locator.dart';
+import '../../core/services/biometric_service.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
 import '../../core/constants/app_sizes.dart';
@@ -18,6 +23,20 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _biometricEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBiometricPreference();
+  }
+
+  Future<void> _loadBiometricPreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _biometricEnabled = prefs.getBool('biometric_enabled') ?? false;
+    });
+  }
 
   @override
   void dispose() {
@@ -125,11 +144,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: authViewModel.isLoading
                       ? null
                       : () async {
-                          await authViewModel.login(
-                            _emailController.text.trim(),
-                            _passwordController.text.trim(),
-                          );
+                          final email = _emailController.text.trim();
+                          final password = _passwordController.text.trim();
+
+                          await authViewModel.login(email, password);
+
                           if (mounted && authViewModel.isAuthenticated) {
+                            // Save credentials for future biometric login
+                            await getIt<SecureStorageService>()
+                                .saveCredentials(email, password);
                             Pages.home.go(context);
                           }
                         },
@@ -152,30 +175,77 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: AppSizes.p32),
 
                 // Biometric
-                Column(
-                  children: [
-                    const Text(AppText.quickAccess,
-                        style:
-                            TextStyle(color: AppColors.textHint, fontSize: 14)),
-                    const SizedBox(height: AppSizes.p16),
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.3)),
-                        shape: BoxShape.circle,
+                if (_biometricEnabled)
+                  Column(
+                    children: [
+                      const Text(AppText.quickAccess,
+                          style: TextStyle(
+                              color: AppColors.textHint, fontSize: 14)),
+                      const SizedBox(height: AppSizes.p16),
+                      InkWell(
+                        onTap: () async {
+                          final biometricService = getIt<BiometricService>();
+                          final secureStorage = getIt<SecureStorageService>();
+
+                          final isAvailable =
+                              await biometricService.isBiometricAvailable();
+
+                          if (!isAvailable) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Biometric authentication is not available on this device.')),
+                              );
+                            }
+                            return;
+                          }
+
+                          final authenticated =
+                              await biometricService.authenticate();
+                          if (authenticated) {
+                            // Check if we have stored credentials
+                            final creds = await secureStorage.getCredentials();
+                            if (creds != null) {
+                              await authViewModel.login(
+                                creds['email']!,
+                                creds['password']!,
+                              );
+                              if (mounted && authViewModel.isAuthenticated) {
+                                Pages.home.go(context);
+                              }
+                            } else {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Please sign in with your email and password once to enable quick access.')),
+                                );
+                              }
+                            }
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(32),
+                        child: Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            border: Border.all(
+                                color:
+                                    AppColors.primary.withValues(alpha: 0.3)),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.fingerprint,
+                              size: 36, color: AppColors.primary),
+                        ),
                       ),
-                      child: const Icon(Icons.fingerprint,
-                          size: 36, color: AppColors.primary),
-                    ),
-                    const SizedBox(height: AppSizes.p8),
-                    const Text(AppText.biometricLogin,
-                        style:
-                            TextStyle(color: AppColors.textHint, fontSize: 12)),
-                  ],
-                ),
+                      const SizedBox(height: AppSizes.p8),
+                      const Text(AppText.biometricLogin,
+                          style: TextStyle(
+                              color: AppColors.textHint, fontSize: 12)),
+                    ],
+                  ),
 
                 const SizedBox(height: AppSizes.p32),
                 Center(

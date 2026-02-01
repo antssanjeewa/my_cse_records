@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
@@ -26,6 +27,16 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
+    final prefs = await SharedPreferences.getInstance();
+    final biometricEnabled = prefs.getBool('biometric_enabled') ?? false;
+
+    // If biometric is enabled, we ALWAYS show the login page first for quick access
+    if (biometricEnabled) {
+      Pages.login.go(context);
+      return;
+    }
+
+    // Otherwise, check if a session exists to skip login
     final session = Supabase.instance.client.auth.currentSession;
     if (session != null) {
       Pages.home.go(context);

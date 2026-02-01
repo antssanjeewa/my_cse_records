@@ -6,6 +6,8 @@ import '../../domain/repositories/portfolio_repository.dart';
 import '../../domain/usecases/get_holdings.dart';
 import '../../domain/usecases/get_portfolio_summary.dart';
 import '../../domain/usecases/get_transactions.dart';
+import '../services/biometric_service.dart';
+import '../services/secure_storage_service.dart';
 import '../../presentation/viewmodels/home_viewmodel.dart';
 import '../../presentation/viewmodels/portfolio_viewmodel.dart';
 import '../../presentation/viewmodels/transaction_history_viewmodel.dart';
@@ -16,6 +18,11 @@ final getIt = GetIt.instance;
 void setupLocator() {
   // Supabase Client
   getIt.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
+
+  // Services
+  getIt.registerLazySingleton<BiometricService>(() => BiometricService());
+  getIt.registerLazySingleton<SecureStorageService>(
+      () => SecureStorageService());
 
   // Data Sources
   getIt.registerLazySingleton<RemoteDataSource>(

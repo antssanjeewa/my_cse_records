@@ -3,11 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/routing/pages.dart';
 import '../../core/constants/app_assets.dart';
+import '../../core/services/biometric_service.dart';
+import '../../core/services/secure_storage_service.dart';
+import '../../core/di/service_locator.dart';
 import '../viewmodels/auth_viewmodel.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -20,6 +25,43 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _darkMode = true;
   bool _displayPct = false;
+  bool _biometricEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _biometricEnabled = prefs.getBool('biometric_enabled') ?? false;
+    });
+  }
+
+  Future<void> _toggleBiometrics(bool value) async {
+    if (value) {
+      final biometricService = BiometricService();
+      final isAvailable = await biometricService.isBiometricAvailable();
+      if (!isAvailable) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text(
+                    'Biometric authentication is not supported on this device.')),
+          );
+        }
+        return;
+      }
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('biometric_enabled', value);
+    setState(() {
+      _biometricEnabled = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +189,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
+            // Security
+            const SizedBox(height: 24),
+            _buildSectionHeader('Security'),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSizes.r16),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Column(
+                children: [
+                  _buildToggleItem(
+                    icon: Icons.fingerprint,
+                    label: 'Biometric Login',
+                    value: _biometricEnabled,
+                    onChanged: _toggleBiometrics,
+                    isLast: true,
+                  ),
+                ],
+              ),
+            ),
+
             // Data Management
             const SizedBox(height: 24),
             _buildSectionHeader('Account & Data'),
@@ -186,6 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: ElevatedButton.icon(
                   onPressed: () async {
+                    await getIt<SecureStorageService>().clearCredentials();
                     await authViewModel.logout();
                     if (mounted) {
                       Pages.login.go(context);
