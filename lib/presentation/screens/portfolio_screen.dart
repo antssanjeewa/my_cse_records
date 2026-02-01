@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../models/holding.dart';
+import '../../domain/entities/holding.dart';
 import '../viewmodels/portfolio_viewmodel.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,122 +11,135 @@ class PortfolioScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<PortfolioViewModel>(context);
+    // We can assume the provider is fetching data on init or we might need to trigger it.
+    // The ViewModel logic I wrote calls fetchHoldings in constructor.
     final currencyFormat =
         NumberFormat.currency(locale: 'en_LK', symbol: 'Rs. ');
     final defaultNumberFormat = NumberFormat('#,##0');
 
     return Scaffold(
       backgroundColor: const Color(0xFF101322),
-      body: CustomScrollView(
-        slivers: [
-          // App Bar
-          SliverAppBar(
-            backgroundColor: const Color(0xFF101322).withOpacity(0.9),
-            pinned: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios,
-                  color: Colors.white, size: 20),
-              onPressed: () => context.go('/home'),
-            ),
-            title: Text('Portfolio Holdings',
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white)),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                  icon: const Icon(Icons.more_vert, color: Colors.white),
-                  onPressed: () {}),
-            ],
-            expandedHeight: 220,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Padding(
-                padding: const EdgeInsets.only(
-                    top: 100, left: 16, right: 16, bottom: 16),
-                child: _buildSummaryCard(viewModel, currencyFormat),
-              ),
-            ),
-          ),
+      body: Consumer<PortfolioViewModel>(builder: (context, viewModel, child) {
+        if (viewModel.isLoading) {
+          return const Center(
+              child: CircularProgressIndicator(color: Color(0xFF1337EC)));
+        }
 
-          // Sticky Search & Filter
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _StickyHeaderDelegate(
-              minHeight: 130,
-              maxHeight: 130,
-              child: Container(
-                color: const Color(0xFF101322),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Column(
-                  children: [
-                    // Search
-                    TextField(
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: const Color(0xFF191E33),
-                        hintText: 'Search ticker or company...',
-                        hintStyle: const TextStyle(color: Color(0xFF929BC9)),
-                        prefixIcon:
-                            const Icon(Icons.search, color: Color(0xFF929BC9)),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide:
-                                const BorderSide(color: Color(0xFF323B67))),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide:
-                                const BorderSide(color: Color(0xFF323B67))),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide:
-                                const BorderSide(color: Color(0xFF1337EC))),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    // Chips
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildChip('Sort: Profit %', true),
-                          _buildChip('Market Value', false),
-                          _buildChip('Sector', false),
-                        ],
-                      ),
-                    ),
-                  ],
+        return CustomScrollView(
+          slivers: [
+            // App Bar
+            SliverAppBar(
+              backgroundColor: const Color(0xFF101322).withOpacity(0.9),
+              pinned: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios,
+                    color: Colors.white, size: 20),
+                onPressed: () => context.go('/home'),
+              ),
+              title: Text('Portfolio Holdings',
+                  style: GoogleFonts.inter(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.white)),
+              centerTitle: true,
+              actions: [
+                IconButton(
+                    icon: const Icon(Icons.more_vert, color: Colors.white),
+                    onPressed: () {}),
+              ],
+              expandedHeight: 220,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 100, left: 16, right: 16, bottom: 16),
+                  child: _buildSummaryCard(viewModel, currencyFormat),
                 ),
               ),
             ),
-          ),
 
-          // List
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final holding = viewModel.holdings[index];
-                  return _buildHoldingCard(
-                      holding, currencyFormat, defaultNumberFormat);
-                },
-                childCount: viewModel.holdings.length,
+            // Sticky Search & Filter
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _StickyHeaderDelegate(
+                minHeight: 130,
+                maxHeight: 130,
+                child: Container(
+                  color: const Color(0xFF101322),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    children: [
+                      // Search
+                      TextField(
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: const Color(0xFF191E33),
+                          hintText: 'Search ticker or company...',
+                          hintStyle: const TextStyle(color: Color(0xFF929BC9)),
+                          prefixIcon: const Icon(Icons.search,
+                              color: Color(0xFF929BC9)),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide:
+                                  const BorderSide(color: Color(0xFF323B67))),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide:
+                                  const BorderSide(color: Color(0xFF323B67))),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide:
+                                  const BorderSide(color: Color(0xFF1337EC))),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Chips
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildChip('Sort: Profit %', true),
+                            _buildChip('Market Value', false),
+                            _buildChip('Sector', false),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
 
-          const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
-        ],
-      ),
+            // List
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final holding = viewModel.holdings[index];
+                    return _buildHoldingCard(
+                        holding, currencyFormat, defaultNumberFormat);
+                  },
+                  childCount: viewModel.holdings.length,
+                ),
+              ),
+            ),
+
+            const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+          ],
+        );
+      }),
     );
   }
 
   Widget _buildSummaryCard(PortfolioViewModel vm, NumberFormat fmt) {
+    // Calculations needs to be done here or in VM.
+    // PortfolioViewModel currently only fetches list.
+    // I should calculate total inside VM or here. For now here.
+    double totalValue = vm.holdings.fold(0, (sum, h) => sum + h.value);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -150,7 +163,7 @@ class PortfolioScreen extends StatelessWidget {
                   fontSize: 14,
                   fontWeight: FontWeight.w500)),
           const SizedBox(height: 4),
-          Text(fmt.format(vm.totalValue),
+          Text(fmt.format(totalValue),
               style: GoogleFonts.inter(
                   color: Colors.white,
                   fontSize: 28,
