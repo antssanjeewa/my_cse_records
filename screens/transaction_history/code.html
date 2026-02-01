@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Transaction History - CSE Portfolio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1337ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101322",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #232948;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+<!-- Top App Bar -->
+<nav class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center p-4 justify-between">
+<div class="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">Transaction History</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="max-w-md mx-auto pb-24">
+<!-- Filter & Date Section -->
+<section class="px-4 py-4 space-y-4">
+<!-- Segmented Control -->
+<div class="flex h-11 items-center justify-center rounded-xl bg-slate-200 dark:bg-[#232948] p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm text-slate-500 dark:text-[#929bc9] has-[:checked]:text-primary dark:has-[:checked]:text-white text-sm font-semibold transition-all">
+<span>All</span>
+<input checked="" class="hidden" name="filter" type="radio" value="All"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm text-slate-500 dark:text-[#929bc9] has-[:checked]:text-primary dark:has-[:checked]:text-white text-sm font-semibold transition-all">
+<span>Buy</span>
+<input class="hidden" name="filter" type="radio" value="Buy"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm text-slate-500 dark:text-[#929bc9] has-[:checked]:text-primary dark:has-[:checked]:text-white text-sm font-semibold transition-all">
+<span>Sell</span>
+<input class="hidden" name="filter" type="radio" value="Sell"/>
+</label>
+</div>
+<!-- Date Range Display/Selector -->
+<button class="flex w-full items-center justify-between px-4 py-3 bg-white dark:bg-[#191e33] border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+<div class="text-left">
+<p class="text-xs text-slate-500 dark:text-[#929bc9] font-medium uppercase tracking-wider">Date Range</p>
+<p class="text-sm font-bold dark:text-white">Oct 01, 2023 - Oct 31, 2023</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</button>
+</section>
+<!-- Timeline Section -->
+<section class="px-4 mt-2">
+<div class="space-y-0">
+<!-- Entry 1 -->
+<div class="grid grid-cols-[48px_1fr] gap-x-2">
+<div class="flex flex-col items-center">
+<div class="z-10 flex size-10 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+</div>
+<div class="w-[2px] bg-slate-200 dark:bg-[#323b67] grow"></div>
+</div>
+<div class="pb-6">
+<div class="bg-white dark:bg-[#191e33] p-4 rounded-xl border border-slate-200 dark:border-transparent shadow-sm dark:shadow-none hover:border-primary/30 transition-colors">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="inline-block px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase mb-1">BUY</span>
+<h3 class="text-base font-bold dark:text-white leading-tight">John Keells Holdings PLC</h3>
+<p class="text-xs font-semibold text-slate-500 dark:text-[#929bc9]">JKH.N0000</p>
+</div>
+<div class="text-right">
+<p class="text-xs text-slate-400 dark:text-[#929bc9] mb-1">Oct 24 • 10:15 AM</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 py-3 border-t border-slate-100 dark:border-slate-800">
+<div>
+<p class="text-[10px] text-slate-400 dark:text-[#929bc9] uppercase font-bold tracking-tight">Quantity</p>
+<p class="text-sm font-semibold dark:text-white">100 Shares</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-400 dark:text-[#929bc9] uppercase font-bold tracking-tight">Price</p>
+<p class="text-sm font-semibold dark:text-white">LKR 192.50</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+<span class="text-xs font-medium text-slate-500 dark:text-[#929bc9]">Total Value</span>
+<span class="text-base font-bold text-primary dark:text-white">LKR 19,250.00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Entry 2 -->
+<div class="grid grid-cols-[48px_1fr] gap-x-2">
+<div class="flex flex-col items-center">
+<div class="z-10 flex size-10 items-center justify-center rounded-full bg-slate-400 dark:bg-slate-700 text-white">
+<span class="material-symbols-outlined text-[20px]">sell</span>
+</div>
+<div class="w-[2px] bg-slate-200 dark:bg-[#323b67] grow"></div>
+</div>
+<div class="pb-6">
+<div class="bg-white dark:bg-[#191e33] p-4 rounded-xl border border-slate-200 dark:border-transparent shadow-sm dark:shadow-none">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="inline-block px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase mb-1">SELL</span>
+<h3 class="text-base font-bold dark:text-white leading-tight">Sampath Bank PLC</h3>
+<p class="text-xs font-semibold text-slate-500 dark:text-[#929bc9]">SAMP.N0000</p>
+</div>
+<div class="text-right">
+<p class="text-xs text-slate-400 dark:text-[#929bc9] mb-1">Oct 22 • 02:30 PM</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 py-3 border-t border-slate-100 dark:border-slate-800">
+<div>
+<p class="text-[10px] text-slate-400 dark:text-[#929bc9] uppercase font-bold tracking-tight">Quantity</p>
+<p class="text-sm font-semibold dark:text-white">500 Shares</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-400 dark:text-[#929bc9] uppercase font-bold tracking-tight">Price</p>
+<p class="text-sm font-semibold dark:text-white">LKR 74.20</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+<span class="text-xs font-medium text-slate-500 dark:text-[#929bc9]">Total Value</span>
+<span class="text-base font-bold dark:text-white">LKR 37,100.00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Entry 3 -->
+<div class="grid grid-cols-[48px_1fr] gap-x-2">
+<div class="flex flex-col items-center">
+<div class="z-10 flex size-10 items-center justify-center rounded-full bg-primary text-white">
+<span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+</div>
+<div class="w-[2px] bg-slate-200 dark:bg-[#323b67] h-10"></div>
+</div>
+<div class="pb-6">
+<div class="bg-white dark:bg-[#191e33] p-4 rounded-xl border border-slate-200 dark:border-transparent shadow-sm dark:shadow-none">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="inline-block px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase mb-1">BUY</span>
+<h3 class="text-base font-bold dark:text-white leading-tight">Hayleys PLC</h3>
+<p class="text-xs font-semibold text-slate-500 dark:text-[#929bc9]">HAYL.N0000</p>
+</div>
+<div class="text-right">
+<p class="text-xs text-slate-400 dark:text-[#929bc9] mb-1">Oct 20 • 11:00 AM</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 py-3 border-t border-slate-100 dark:border-slate-800">
+<div>
+<p class="text-[10px] text-slate-400 dark:text-[#929bc9] uppercase font-bold tracking-tight">Quantity</p>
+<p class="text-sm font-semibold dark:text-white">250 Shares</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-400 dark:text-[#929bc9] uppercase font-bold tracking-tight">Price</p>
+<p class="text-sm font-semibold dark:text-white">LKR 82.50</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+<span class="text-xs font-medium text-slate-500 dark:text-[#929bc9]">Total Value</span>
+<span class="text-base font-bold text-primary dark:text-white">LKR 20,625.00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Summary Footer -->
+<div class="px-6 py-4 flex flex-col items-center justify-center space-y-2 opacity-60">
+<span class="material-symbols-outlined text-3xl">history</span>
+<p class="text-xs font-medium text-center text-slate-500 dark:text-[#929bc9]">Showing 12 transactions from Oct 2023</p>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Floating iOS Style) -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm h-16 bg-white/80 dark:bg-[#191e33]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-full shadow-2xl z-[100] flex items-center justify-around px-6">
+<button class="flex flex-col items-center gap-0.5 text-slate-400">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Summary</span>
+</button>
+<button class="flex flex-col items-center gap-0.5 text-primary">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-[10px] font-bold">History</span>
+</button>
+<button class="flex flex-col items-center gap-0.5 text-slate-400">
+<span class="material-symbols-outlined">insights</span>
+<span class="text-[10px] font-bold">Stocks</span>
+</button>
+<button class="flex flex-col items-center gap-0.5 text-slate-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</button>
+</div>
+<!-- Hidden Date Picker Overlay (Concept) -->
+<div class="hidden fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm items-end justify-center">
+<div class="bg-background-dark w-full max-w-md rounded-t-3xl p-6 border-t border-white/10">
+<div class="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mb-6"></div>
+<div class="flex items-center justify-between mb-4 px-2">
+<button class="text-white"><span class="material-symbols-outlined">chevron_left</span></button>
+<p class="text-white font-bold">October 2023</p>
+<button class="text-white"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+<!-- Grid representation of calendar from components list -->
+<div class="grid grid-cols-7 gap-1 text-center mb-6">
+<div class="text-[11px] font-bold text-[#929bc9] py-2">S</div>
+<div class="text-[11px] font-bold text-[#929bc9] py-2">M</div>
+<div class="text-[11px] font-bold text-[#929bc9] py-2">T</div>
+<div class="text-[11px] font-bold text-[#929bc9] py-2">W</div>
+<div class="text-[11px] font-bold text-[#929bc9] py-2">T</div>
+<div class="text-[11px] font-bold text-[#929bc9] py-2">F</div>
+<div class="text-[11px] font-bold text-[#929bc9] py-2">S</div>
+<!-- ... calendar dates ... -->
+</div>
+<button class="w-full h-12 bg-primary text-white rounded-xl font-bold">Apply Date Range</button>
+</div>
+</div>
+</body></html>

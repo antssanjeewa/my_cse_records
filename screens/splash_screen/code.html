@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CSE Portfolio Splash Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1337ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101322",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden">
+<!-- Logo and Title Section -->
+<div class="flex flex-col items-center justify-center gap-6 mb-24">
+<!-- Professional Logo: Shield and Bar Chart concept -->
+<div class="relative flex items-center justify-center w-24 h-24 bg-primary/10 rounded-xl">
+<span class="material-symbols-outlined text-primary text-[64px]" data-icon="shield_with_heart">
+                    security
+                </span>
+<div class="absolute inset-0 flex items-center justify-center pt-2">
+<span class="material-symbols-outlined text-white text-[32px]" data-icon="bar_chart">
+                        bar_chart
+                    </span>
+</div>
+</div>
+<!-- HeadlineText component style -->
+<div class="text-center">
+<h1 class="text-white tracking-tight text-[32px] font-bold leading-tight px-4">
+                    CSE Portfolio
+                </h1>
+<p class="text-white/60 text-sm mt-1 font-medium tracking-widest uppercase">
+                    Secure Market Tracking
+                </p>
+</div>
+</div>
+<!-- Footer / Loading Section -->
+<div class="absolute bottom-12 w-full max-w-[280px] px-6">
+<!-- ProgressBar component style -->
+<div class="flex flex-col gap-3">
+<div class="flex gap-6 justify-center">
+<p class="text-white/40 text-xs font-medium leading-normal tracking-wide">
+                        Synchronizing Market Data...
+                    </p>
+</div>
+<div class="h-1 rounded-full bg-[#323b67] overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 45%;"></div>
+</div>
+</div>
+</div>
+<!-- Subtle Background Detail (optional image-like element) -->
+<div class="absolute inset-0 -z-10 opacity-20 pointer-events-none">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" data-alt="Abstract deep blue geometric network pattern" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAIc0rAaMId1bF0BmXaHVG_xo6kIh_LMjgEfU2Gw3vZnwSloloGEXh8ZmhLtk1CZMAzSJkiSOMY64H2Ca1bsgL0QWQ2N_fwCs0OKEdDWtY6PTGbYCLwey4wzi2Zbp70QrOQEl0cFhNhfCPz0IHOqYzH9fUaX5qb-bTa-oA84CIOWrhODZwJTQ5Sj_fDNG9mIyddVeZhX1-9Hr_mZYWH7QxTSxZEjWsvmgOF4Aq8Qajz6suf3KgWAYswGWu-JUw8CjIUV0C36XEC4VE");'>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1337ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101322",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen pb-24">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md flex items-center p-4 justify-between border-b border-slate-200 dark:border-slate-800">
+<div class="flex size-10 shrink-0 items-center overflow-hidden rounded-full border border-slate-200 dark:border-slate-700">
+<img class="w-full h-full object-cover" data-alt="User profile avatar smiling man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkCedqbiYDVLXmiW4qtI8EH0i-qPTsZG6obxBXdpUn3Xdhqvgah79odAxhDF_0uD5x6EtVsjPjKSH3ibTm4CHWbSZGzeqjIujvEcJjceTtlW7byGXgV9RPqoj6ry6ZMrrDqsqCOf6ToxyJ45tKtb2iyZ81UmVTVfAw3IWgNk1NsjhUK9eneIpbxK01Bf6URkJnaRQqoqoyWEPN_7bqxP5HOFP_akO5EKo73iGCih2_6hs7uKa4LFyx82azaXkl0oarYmnK0Dgrs14"/>
+</div>
+<div class="flex flex-col items-center">
+<h2 class="text-slate-900 dark:text-white text-base font-bold leading-tight tracking-tight">CSE Portfolio</h2>
+<p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest">Market Open</p>
+</div>
+<div class="flex w-10 items-center justify-end">
+<button class="relative flex size-10 cursor-pointer items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-white">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-red-500"></span>
+</button>
+</div>
+</div>
+<main class="max-w-md mx-auto">
+<!-- Portfolio Hero Card -->
+<div class="p-4">
+<div class="relative overflow-hidden bg-primary rounded-xl p-6 shadow-2xl shadow-primary/20">
+<div class="absolute -right-10 -top-10 size-40 rounded-full bg-white/10 blur-3xl"></div>
+<div class="relative z-10 flex flex-col gap-1">
+<p class="text-white/70 text-sm font-medium">Total Portfolio Value</p>
+<h1 class="text-white tracking-tight text-3xl font-bold leading-none py-1">LKR 1,250,580.00</h1>
+<div class="flex items-center gap-2 mt-2">
+<div class="flex items-center gap-1 bg-green-500/20 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-green-400 text-sm">trending_up</span>
+<span class="text-green-400 text-xs font-bold">+LKR 15,200.50 (2.5%)</span>
+</div>
+<p class="text-white/60 text-xs font-medium">Today</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Chart Section -->
+<div class="px-4 py-2">
+<div class="bg-white dark:bg-slate-900/50 rounded-xl p-4 border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<p class="text-slate-900 dark:text-white text-sm font-bold">Performance History</p>
+<div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+<button class="px-3 py-1 text-[11px] font-bold rounded-md bg-white dark:bg-slate-700 shadow-sm text-primary dark:text-white">30D</button>
+<button class="px-3 py-1 text-[11px] font-bold rounded-md text-slate-500 dark:text-slate-400">6M</button>
+<button class="px-3 py-1 text-[11px] font-bold rounded-md text-slate-500 dark:text-slate-400">1Y</button>
+</div>
+</div>
+<div class="flex min-h-[160px] flex-col gap-4 py-2">
+<svg fill="none" height="120" preserveaspectratio="none" viewbox="0 0 478 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25V149H326.769H0V109Z" fill="url(#paint0_linear)"></path>
+<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25" stroke="#1337ec" stroke-linecap="round" stroke-width="3"></path>
+<defs>
+<lineargradient gradientunits="userSpaceOnUse" id="paint0_linear" x1="236" x2="236" y1="1" y2="149">
+<stop stop-color="#1337ec" stop-opacity="0.2"></stop>
+<stop offset="1" stop-color="#1337ec" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="flex justify-between px-2">
+<p class="text-slate-400 dark:text-slate-500 text-[10px] font-bold tracking-wider">MAY 01</p>
+<p class="text-slate-400 dark:text-slate-500 text-[10px] font-bold tracking-wider">MAY 15</p>
+<p class="text-slate-400 dark:text-slate-500 text-[10px] font-bold tracking-wider">TODAY</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Asset Allocation & Summary -->
+<div class="px-4 py-4 grid grid-cols-1 gap-4">
+<div class="bg-white dark:bg-slate-900/50 rounded-xl p-4 border border-slate-200 dark:border-slate-800">
+<h3 class="text-slate-900 dark:text-white text-sm font-bold mb-4">Asset Allocation</h3>
+<div class="flex items-center gap-6">
+<div class="relative size-24 shrink-0">
+<!-- Simple CSS Donut Chart representation -->
+<div class="size-24 rounded-full border-[12px] border-slate-100 dark:border-slate-800"></div>
+<div class="absolute inset-0 size-24 rounded-full border-[12px] border-transparent border-t-primary border-r-primary rotate-45"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Diversified</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 flex-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-primary"></div>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-400">Stocks</span>
+</div>
+<span class="text-xs font-bold">75%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-400">Cash</span>
+</div>
+<span class="text-xs font-bold">20%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-400">Other</span>
+</div>
+<span class="text-xs font-bold">5%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Top 5 Holdings -->
+<div class="px-4 pb-8">
+<div class="flex items-center justify-between mb-3 px-1">
+<h3 class="text-slate-900 dark:text-white text-sm font-bold">Top 5 Holdings</h3>
+<button class="text-primary text-xs font-bold uppercase tracking-wide">View All</button>
+</div>
+<div class="flex flex-col gap-2">
+<!-- Holding Item 1 -->
+<div class="flex items-center justify-between p-4 bg-white dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="size-10 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg text-primary font-bold text-xs">JKH</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold">John Keells</span>
+<span class="text-[10px] text-slate-500 font-medium">1,250 Shares</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-sm font-bold">LKR 192.50</span>
+<span class="text-xs font-bold text-green-500">+1.2%</span>
+</div>
+</div>
+<!-- Holding Item 2 -->
+<div class="flex items-center justify-between p-4 bg-white dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="size-10 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg text-primary font-bold text-xs">SAMP</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold">Sampath Bank</span>
+<span class="text-[10px] text-slate-500 font-medium">3,000 Shares</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-sm font-bold">LKR 78.40</span>
+<span class="text-xs font-bold text-red-500">-0.4%</span>
+</div>
+</div>
+<!-- Holding Item 3 -->
+<div class="flex items-center justify-between p-4 bg-white dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="size-10 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg text-primary font-bold text-xs">COMB</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold">Commercial Bank</span>
+<span class="text-[10px] text-slate-500 font-medium">850 Shares</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-sm font-bold">LKR 102.75</span>
+<span class="text-xs font-bold text-green-500">+2.1%</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-background-dark/90 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 px-6 py-3 pb-8">
+<div class="max-w-md mx-auto flex items-center justify-between">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined font-variation-fill-1">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-[10px] font-bold">Portfolio</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="text-[10px] font-bold">Watchlist</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</button>
+</div>
+</div>
+</body></html>
