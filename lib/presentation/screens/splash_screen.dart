@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
@@ -18,9 +19,19 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) Pages.login.go(context);
-    });
+    _checkAuth();
+  }
+
+  Future<void> _checkAuth() async {
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session != null) {
+      Pages.home.go(context);
+    } else {
+      Pages.login.go(context);
+    }
   }
 
   @override
@@ -30,47 +41,41 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Stack(
         children: [
           // Background Image
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.background,
+                    AppColors.backgroundGradientEnd
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Fallback check if background image is available
           SizedBox.expand(
             child: Image.asset(
               AppAssets.background,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                // Fallback if image not found
-                return Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        AppColors.background,
-                        AppColors.backgroundGradientEnd
-                      ],
-                    ),
-                  ),
-                );
-              },
+              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
             ),
           ),
-          // Dark Overlay for readibility
-          Container(
-            color: AppColors.overlayDark,
-          ),
+          Container(color: AppColors.overlayDark),
 
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo Asset
                 Image.asset(
                   AppAssets.logo,
                   width: 120,
                   height: 120,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                      width: 120,
-                      height: 120,
-                      color: Colors.white10,
-                      child:
-                          const Icon(Icons.broken_image, color: Colors.white)),
+                  errorBuilder: (_, __, ___) => const Icon(Icons.trending_up,
+                      color: AppColors.primary, size: 80),
                 ),
                 const SizedBox(height: AppSizes.p24),
                 Text(
@@ -83,12 +88,12 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ),
                 const SizedBox(height: AppSizes.p4),
-                Text(
-                  AppText.appTagline,
-                  style: GoogleFonts.inter(
+                const Text(
+                  'Your CSE Records',
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary.withValues(alpha: 0.8),
+                    color: Colors.white70,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -102,51 +107,26 @@ class _SplashScreenState extends State<SplashScreen> {
             right: 24,
             child: Column(
               children: [
-                Text(
+                const Text(
                   'Synchronizing Market Data...',
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
                     fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary.withValues(alpha: 0.8),
+                    color: Colors.white54,
                     letterSpacing: 0.5,
                   ),
                 ),
                 const SizedBox(height: AppSizes.p12),
-                // Animated Loading Bar
                 Container(
-                  height: AppSizes.p4,
+                  height: 4,
                   width: 200,
                   decoration: BoxDecoration(
                     color: AppColors.border,
-                    borderRadius: BorderRadius.circular(AppSizes.r4 / 2),
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0.0, end: 1.0),
-                        duration: const Duration(seconds: 3), // Match nav delay
-                        curve: Curves.easeInOut,
-                        builder: (context, value, child) {
-                          return Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              width: constraints.maxWidth * value,
-                              decoration: BoxDecoration(
-                                  color: AppColors.primary,
-                                  borderRadius: BorderRadius.circular(2),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primary
-                                          .withValues(alpha: 0.6),
-                                      blurRadius: 6,
-                                      spreadRadius: 1,
-                                    )
-                                  ]),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  child: const LinearProgressIndicator(
+                    backgroundColor: Colors.transparent,
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppColors.primary),
                   ),
                 )
               ],

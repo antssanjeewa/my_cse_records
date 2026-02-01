@@ -7,7 +7,6 @@ import '../viewmodels/portfolio_viewmodel.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
 import '../../core/constants/app_sizes.dart';
-import '../../core/routing/pages.dart';
 import '../../core/utils/formatters.dart';
 
 class PortfolioScreen extends StatelessWidget {
@@ -31,11 +30,6 @@ class PortfolioScreen extends StatelessWidget {
             SliverAppBar(
               backgroundColor: AppColors.background.withValues(alpha: 0.9),
               pinned: true,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios,
-                    color: Colors.white, size: AppSizes.iconMd),
-                onPressed: () => Pages.home.go(context),
-              ),
               title: Text(AppText.portfolioHoldings,
                   style: GoogleFonts.inter(
                       fontWeight: FontWeight.bold,
@@ -51,7 +45,7 @@ class PortfolioScreen extends StatelessWidget {
               flexibleSpace: FlexibleSpaceBar(
                 background: Padding(
                   padding: const EdgeInsets.only(
-                      top: 100,
+                      top: 120,
                       left: AppSizes.p16,
                       right: AppSizes.p16,
                       bottom: AppSizes.p16),
@@ -64,8 +58,8 @@ class PortfolioScreen extends StatelessWidget {
             SliverPersistentHeader(
               pinned: true,
               delegate: _StickyHeaderDelegate(
-                minHeight: 130,
-                maxHeight: 130,
+                minHeight: 120,
+                maxHeight: 120,
                 child: Container(
                   color: AppColors.background,
                   padding: const EdgeInsets.symmetric(
@@ -118,7 +112,7 @@ class PortfolioScreen extends StatelessWidget {
 
             // List
             SliverPadding(
-              padding: const EdgeInsets.all(AppSizes.p16),
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
@@ -303,7 +297,7 @@ class PortfolioScreen extends StatelessWidget {
                           const TextSpan(
                               text: ' @ ',
                               style: TextStyle(color: Colors.grey)),
-                          TextSpan(text: h.avgCost.toStringAsFixed(2)),
+                          TextSpan(text: h.avgPrice.toStringAsFixed(2)),
                         ]),
                   ),
                 ],

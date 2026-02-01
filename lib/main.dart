@@ -10,6 +10,7 @@ import 'core/constants/app_text.dart';
 import 'presentation/viewmodels/auth_viewmodel.dart';
 import 'presentation/viewmodels/home_viewmodel.dart';
 import 'presentation/viewmodels/portfolio_viewmodel.dart';
+import 'presentation/viewmodels/transaction_history_viewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => getIt<AuthViewModel>()),
         ChangeNotifierProvider(create: (_) => getIt<PortfolioViewModel>()),
         ChangeNotifierProvider(create: (_) => getIt<HomeViewModel>()),
+        ChangeNotifierProvider(
+            create: (_) => getIt<TransactionHistoryViewModel>()),
       ],
       child: MaterialApp.router(
         title: AppText.appName,

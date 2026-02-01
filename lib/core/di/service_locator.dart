@@ -1,30 +1,41 @@
 import 'package:get_it/get_it.dart';
-import '../../data/datasources/local_datasource.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../data/datasources/supabase_datasource.dart';
 import '../../data/repositories/portfolio_repository_impl.dart';
 import '../../domain/repositories/portfolio_repository.dart';
 import '../../domain/usecases/get_holdings.dart';
 import '../../domain/usecases/get_portfolio_summary.dart';
+import '../../domain/usecases/get_transactions.dart';
 import '../../presentation/viewmodels/home_viewmodel.dart';
 import '../../presentation/viewmodels/portfolio_viewmodel.dart';
+import '../../presentation/viewmodels/transaction_history_viewmodel.dart';
 import '../../presentation/viewmodels/auth_viewmodel.dart';
 
 final getIt = GetIt.instance;
 
 void setupLocator() {
+  // Supabase Client
+  getIt.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
+
   // Data Sources
-  getIt.registerLazySingleton<LocalDataSource>(() => LocalDataSourceImpl());
+  getIt.registerLazySingleton<RemoteDataSource>(
+    () => SupabaseDataSourceImpl(supabase: getIt()),
+  );
 
   // Repositories
   getIt.registerLazySingleton<PortfolioRepository>(
-    () => PortfolioRepositoryImpl(localDataSource: getIt()),
+    () => PortfolioRepositoryImpl(remoteDataSource: getIt()),
   );
 
   // Use Cases
   getIt.registerLazySingleton(() => GetHoldings(getIt()));
   getIt.registerLazySingleton(() => GetPortfolioSummary(getIt()));
+  getIt.registerLazySingleton(() => GetTransactions(getIt()));
 
   // ViewModels
-  getIt.registerFactory(() => AuthViewModel());
+  getIt.registerFactory(() => AuthViewModel(supabase: getIt()));
   getIt.registerFactory(() => HomeViewModel(getPortfolioSummary: getIt()));
   getIt.registerFactory(() => PortfolioViewModel(getHoldings: getIt()));
+  getIt.registerFactory(
+      () => TransactionHistoryViewModel(getTransactions: getIt()));
 }

@@ -1,16 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/routing/pages.dart';
+import '../viewmodels/auth_viewmodel.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authViewModel = context.watch<AuthViewModel>();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -20,28 +39,6 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: AppSizes.p16),
-                // Top Bar
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back_ios,
-                          color: AppColors.primary),
-                      onPressed: () {},
-                    ),
-                    const Expanded(
-                        child: Text(
-                      AppText.loginTitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    )),
-                    const SizedBox(width: AppSizes.p48), // balance space
-                  ],
-                ),
-
                 const SizedBox(height: AppSizes.p32),
 
                 // Icon
@@ -78,13 +75,33 @@ class LoginScreen extends StatelessWidget {
 
                 const SizedBox(height: AppSizes.p48),
 
+                if (authViewModel.error != null)
+                  Container(
+                    padding: const EdgeInsets.all(AppSizes.p12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppSizes.r8),
+                      border:
+                          Border.all(color: Colors.red.withValues(alpha: 0.5)),
+                    ),
+                    child: Text(
+                      authViewModel.error!,
+                      style: const TextStyle(color: Colors.red, fontSize: 13),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                const SizedBox(height: AppSizes.p16),
+
                 // Form
                 _buildTextField(
+                    controller: _emailController,
                     label: AppText.emailLabel,
                     hint: 'e.g. investor@cse.lk',
                     icon: null),
                 const SizedBox(height: AppSizes.p16),
                 _buildTextField(
+                    controller: _passwordController,
                     label: AppText.passwordLabel,
                     hint: 'Enter your password',
                     icon: Icons.visibility,
@@ -105,9 +122,17 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(height: AppSizes.p16),
 
                 ElevatedButton(
-                  onPressed: () {
-                    Pages.home.go(context);
-                  },
+                  onPressed: authViewModel.isLoading
+                      ? null
+                      : () async {
+                          await authViewModel.login(
+                            _emailController.text.trim(),
+                            _passwordController.text.trim(),
+                          );
+                          if (mounted && authViewModel.isAuthenticated) {
+                            Pages.home.go(context);
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.textPrimary,
@@ -119,7 +144,9 @@ class LoginScreen extends StatelessWidget {
                     elevation: 4,
                     shadowColor: AppColors.primary.withValues(alpha: 0.2),
                   ),
-                  child: const Text(AppText.signIn),
+                  child: authViewModel.isLoading
+                      ? const CircularProgressIndicator(color: Colors.black)
+                      : const Text(AppText.signIn),
                 ),
 
                 const SizedBox(height: AppSizes.p32),
@@ -189,7 +216,8 @@ class LoginScreen extends StatelessWidget {
   }
 
   Widget _buildTextField(
-      {required String label,
+      {required TextEditingController controller,
+      required String label,
       required String hint,
       IconData? icon,
       bool isPassword = false}) {
@@ -203,6 +231,7 @@ class LoginScreen extends StatelessWidget {
                 fontWeight: FontWeight.w500)),
         const SizedBox(height: AppSizes.p8),
         TextField(
+          controller: controller,
           obscureText: isPassword,
           style: const TextStyle(color: AppColors.textPrimary),
           decoration: InputDecoration(
