@@ -48,10 +48,21 @@ class CashViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
+      if (amount <= 0) {
+        debugPrint('Amount must be positive');
+        return;
+      }
+      const allowedTypes = {'DEPOSIT', 'WITHDRAWAL'};
+      if (!allowedTypes.contains(type)) {
+        debugPrint('Unsupported transaction type: $type');
+        return;
+      }
+      final normalizedAmount = amount.abs();
+
       final transaction = CashTransaction(
         id: const Uuid().v4(),
         userId: userId,
-        amount: type == 'DEPOSIT' ? amount : -amount,
+        amount: type == 'DEPOSIT' ? normalizedAmount : -normalizedAmount,
         type: type,
         description: description,
         createdAt: DateTime.now(),

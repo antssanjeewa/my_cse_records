@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/constants.dart';
 import '../../core/utils/formatters.dart';
+import '../../domain/entities/cash_transaction.dart';
 import '../viewmodels/cash_viewmodel.dart';
 
 class CashScreen extends StatelessWidget {
@@ -145,7 +146,7 @@ class CashScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionItem(dynamic tx) {
+  Widget _buildTransactionItem(CashTransaction tx) {
     final bool isCredit = tx.amount > 0;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -161,7 +162,7 @@ class CashScreen extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: (isCredit ? AppColors.success : AppColors.error)
-                  .withOpacity(0.1),
+                  .withAlpha(25),
               shape: BoxShape.circle,
             ),
             child: Icon(

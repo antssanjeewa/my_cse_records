@@ -12,8 +12,8 @@ class CashTransactionModel extends CashTransaction {
 
   factory CashTransactionModel.fromJson(Map<String, dynamic> json) {
     return CashTransactionModel(
-      id: json['id'].toString(),
-      userId: json['user_id'].toString(),
+      id: json['id']?.toString() ?? '',
+      userId: json['user_id']?.toString() ?? '',
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
       type: json['type']?.toString() ?? 'DEPOSIT',
       description: json['description']?.toString(),

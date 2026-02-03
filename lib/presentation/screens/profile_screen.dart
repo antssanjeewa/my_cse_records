@@ -405,7 +405,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         fontSize: 16,
                         fontWeight: FontWeight.w500))),
             Icon(
-                isPrimary && iconCode == Icons.table_chart
+                iconCode == Icons.table_chart
                     ? Icons.download
                     : Icons.chevron_right,
                 color: isDestructive ? Colors.redAccent : Colors.grey),

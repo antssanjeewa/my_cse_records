@@ -92,24 +92,27 @@ class HomeScreen extends StatelessWidget {
                             _buildLoadingSkeleton(),
                           ],
                         )
-                      : Opacity(
-                          opacity: viewModel.isLoading ? 0.6 : 1.0,
-                          child: Column(
-                            children: [
-                              // Hero Card
-                              _buildHeroCard(summary!.totalValue, summary.load),
-                              const SizedBox(height: AppSizes.p24),
-                              // Chart
-                              _buildChartSection(),
-                              const SizedBox(height: AppSizes.p24),
-                              // Asset Allocation
-                              _buildAssetAllocation(),
-                              const SizedBox(height: AppSizes.p24),
-                              // Top Holdings
-                              _buildTopHoldings(summary.holdings, context),
-                            ],
-                          ),
-                        ),
+                      : summary == null
+                          ? const Center(
+                              child: Text('Unable to load summary',
+                                  style: TextStyle(
+                                      color: AppColors.textSecondary)),
+                            )
+                          : Opacity(
+                              opacity: viewModel.isLoading ? 0.6 : 1.0,
+                              child: Column(
+                                children: [
+                                  _buildHeroCard(
+                                      summary.totalValue, summary.load),
+                                  const SizedBox(height: AppSizes.p24),
+                                  _buildChartSection(),
+                                  const SizedBox(height: AppSizes.p24),
+                                  _buildAssetAllocation(),
+                                  const SizedBox(height: AppSizes.p24),
+                                  _buildTopHoldings(summary.holdings, context),
+                                ],
+                              ),
+                            ),
                 ),
               ),
             ],

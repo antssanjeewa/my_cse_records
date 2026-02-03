@@ -20,6 +20,20 @@ abstract class RemoteDataSource {
   Future<void> upsertHolding(HoldingModel holding);
   Future<HoldingModel?> getHoldingByStock(String userId, int stockId);
 
+  // Stock Management
+  Future<StockModel> addStock({
+    required String ticker,
+    required String name,
+    String? sector,
+    required double lastPrice,
+  });
+  Future<void> updateStock({
+    required int stockId,
+    String? sector,
+    required double lastPrice,
+  });
+  Future<void> deleteStock(int stockId);
+
   // Cash Management
   Future<List<CashTransactionModel>> getCashTransactions();
   Future<void> addCashTransaction(CashTransactionModel transaction);
@@ -89,7 +103,9 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
         query = query.gte('date', startDate.toIso8601String());
       }
       if (endDate != null) {
-        query = query.lte('date', endDate.toIso8601String());
+        final endOfDay =
+            DateTime(endDate.year, endDate.month, endDate.day, 23, 59, 59);
+        query = query.lte('date', endOfDay.toIso8601String());
       }
 
       query = query.order('date', ascending: false);
@@ -169,6 +185,63 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<StockModel> addStock({
+    required String ticker,
+    required String name,
+    String? sector,
+    required double lastPrice,
+  }) async {
+    final data = {
+      'ticker': ticker,
+      'name': name,
+      'sector': sector,
+      'last_price': lastPrice,
+    };
+    _log('INSERT', 'stocks', data);
+    try {
+      final response =
+          await supabase.from('stocks').insert(data).select().single();
+      _log('RESPONSE', 'stocks_insert', response);
+      return StockModel.fromJson(response);
+    } catch (e) {
+      _log('ERROR', 'stocks_insert', e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updateStock({
+    required int stockId,
+    String? sector,
+    required double lastPrice,
+  }) async {
+    final data = {
+      'sector': sector,
+      'last_price': lastPrice,
+    };
+    _log('UPDATE', 'stocks', data);
+    try {
+      await supabase.from('stocks').update(data).eq('id', stockId);
+      _log('RESPONSE', 'stocks_update', 'Success');
+    } catch (e) {
+      _log('ERROR', 'stocks_update', e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteStock(int stockId) async {
+    _log('DELETE', 'stocks', {'id': stockId});
+    try {
+      await supabase.from('stocks').delete().eq('id', stockId);
+      _log('RESPONSE', 'stocks_delete', 'Success');
+    } catch (e) {
+      _log('ERROR', 'stocks_delete', e);
+      rethrow;
+    }
+  }
+
+  @override
   Future<List<CashTransactionModel>> getCashTransactions() async {
     _log('GET', 'cash_transactions');
     try {
@@ -203,15 +276,13 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
     _log('GET_AGGREGATE', 'cash_transactions_balance');
     try {
       final response =
-          await supabase.from('cash_transactions').select('amount');
-      final total = (response as List).fold(0.0, (sum, item) {
-        return sum + (item['amount'] as num).toDouble();
-      });
+          await supabase.from('cash_transactions').select('amount.sum()');
+      final total = (response[0]['sum'] as num?)?.toDouble() ?? 0.0;
       _log('RESPONSE', 'cash_balance', total);
       return total;
     } catch (e) {
       _log('ERROR', 'cash_balance', e);
-      return 0.0;
+      rethrow;
     }
   }
 

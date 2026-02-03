@@ -83,13 +83,19 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: Pages.cash.toPath(),
           name: Pages.cash.toPathName(),
-          builder: (context, state) => ChangeNotifierProvider(
-            create: (context) => CashViewModel(
-              repository: getIt(),
-              userId: getIt<SupabaseClient>().auth.currentUser!.id,
-            ),
-            child: const CashScreen(),
-          ),
+          builder: (context, state) {
+            final user = getIt<SupabaseClient>().auth.currentUser;
+            if (user == null) {
+              return const LoginScreen(); // or redirect via GoRouter
+            }
+            return ChangeNotifierProvider(
+              create: (context) => CashViewModel(
+                repository: getIt(),
+                userId: user.id,
+              ),
+              child: const CashScreen(),
+            );
+          },
         ),
         GoRoute(
           path: Pages.manageStocks.toPath(),

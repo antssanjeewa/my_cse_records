@@ -59,15 +59,24 @@ class ManageStocksViewModel extends ChangeNotifier {
     String? sector,
     required double lastPrice,
   }) async {
+    _isLoading = true;
+    notifyListeners();
+
     try {
-      // In a real app, you'd call an API endpoint to add the stock
-      // For now, we'll just add it locally and refresh
-      debugPrint('Adding stock: $ticker - $name');
+      await repository.addStock(
+        ticker: ticker,
+        name: name,
+        sector: sector,
+        lastPrice: lastPrice,
+      );
 
       // Refresh the list after adding
       await fetchStocks();
     } catch (e) {
       debugPrint('Error adding stock: $e');
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
     }
   }
 
@@ -76,32 +85,43 @@ class ManageStocksViewModel extends ChangeNotifier {
     String? sector,
     required double lastPrice,
   }) async {
+    _isLoading = true;
+    notifyListeners();
+
     try {
-      // In a real app, you'd call an API endpoint to update the stock
-      debugPrint('Updating stock ID: $stockId with price: $lastPrice');
+      await repository.updateStock(
+        stockId: stockId,
+        sector: sector,
+        lastPrice: lastPrice,
+      );
 
       // Refresh the list after updating
       await fetchStocks();
     } catch (e) {
       debugPrint('Error updating stock: $e');
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
     }
   }
 
   Future<void> deleteStock(int stockId) async {
     try {
-      // In a real app, you'd call an API endpoint to delete the stock
-      debugPrint('Deleting stock ID: $stockId');
+      // Delete from database first
+      await repository.deleteStock(stockId);
 
-      // Optimistically remove from local list
+      // Update local state after successful deletion
       _stocks.removeWhere((stock) => stock.id == stockId);
       _applyFilters();
 
-      // Refresh the list after deleting
+      // Optional: Refresh from database to ensure consistency
+      // Comment out if you trust the local state after deletion
       await fetchStocks();
     } catch (e) {
       debugPrint('Error deleting stock: $e');
-      // Refresh to restore the list if deletion failed
+      // Refresh to restore correct state if deletion failed
       await fetchStocks();
+      rethrow;
     }
   }
 }

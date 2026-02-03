@@ -21,8 +21,9 @@ class TransactionModel extends Transaction {
       type: json['type'] == 'BUY' ? TransactionType.buy : TransactionType.sell,
       qty: (json['qty'] as num?)?.toDouble() ?? 0.0,
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
-      date:
-          json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
+      date: json['date'] != null
+          ? DateTime.parse(json['date'])
+          : DateTime.fromMillisecondsSinceEpoch(0),
       stock:
           json['stocks'] != null ? StockModel.fromJson(json['stocks']) : null,
     );

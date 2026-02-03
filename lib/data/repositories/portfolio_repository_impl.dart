@@ -29,6 +29,39 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   }
 
   @override
+  Future<Stock> addStock({
+    required String ticker,
+    required String name,
+    String? sector,
+    required double lastPrice,
+  }) async {
+    return await remoteDataSource.addStock(
+      ticker: ticker,
+      name: name,
+      sector: sector,
+      lastPrice: lastPrice,
+    );
+  }
+
+  @override
+  Future<void> updateStock({
+    required int stockId,
+    String? sector,
+    required double lastPrice,
+  }) async {
+    await remoteDataSource.updateStock(
+      stockId: stockId,
+      sector: sector,
+      lastPrice: lastPrice,
+    );
+  }
+
+  @override
+  Future<void> deleteStock(int stockId) async {
+    await remoteDataSource.deleteStock(stockId);
+  }
+
+  @override
   Future<List<Holding>> getHoldings() async {
     return await remoteDataSource.getHoldings();
   }

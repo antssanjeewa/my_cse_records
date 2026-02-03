@@ -7,6 +7,18 @@ abstract class PortfolioRepository {
   // Stocks
   Future<List<Stock>> getStocks();
   Future<Stock?> getStockById(int id);
+  Future<Stock> addStock({
+    required String ticker,
+    required String name,
+    String? sector,
+    required double lastPrice,
+  });
+  Future<void> updateStock({
+    required int stockId,
+    String? sector,
+    required double lastPrice,
+  });
+  Future<void> deleteStock(int stockId);
 
   // Holdings
   Future<List<Holding>> getHoldings();
