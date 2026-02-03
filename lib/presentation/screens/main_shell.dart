@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/app_colors.dart';
+import '../../core/constants/constants.dart';
 import '../../core/routing/pages.dart';
 
 class MainShell extends StatelessWidget {

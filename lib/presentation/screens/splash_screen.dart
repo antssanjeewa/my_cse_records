@@ -3,11 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text.dart';
-import '../../core/constants/app_assets.dart';
+import '../../core/constants/constants.dart';
 import '../../core/routing/pages.dart';
-import '../../core/constants/app_sizes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

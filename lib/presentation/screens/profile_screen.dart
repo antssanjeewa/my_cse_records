@@ -5,11 +5,8 @@ import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text.dart';
-import '../../core/constants/app_sizes.dart';
+import '../../core/constants/constants.dart';
 import '../../core/routing/pages.dart';
-import '../../core/constants/app_assets.dart';
 import '../../core/services/biometric_service.dart';
 import '../../core/services/secure_storage_service.dart';
 import '../../core/di/service_locator.dart';
