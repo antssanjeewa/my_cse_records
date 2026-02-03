@@ -9,7 +9,9 @@ import '../../presentation/screens/profile_screen.dart';
 import '../../presentation/screens/transaction_history_screen.dart';
 import '../../presentation/screens/add_transaction_screen.dart';
 import '../../presentation/screens/cash_screen.dart';
+import '../../presentation/screens/manage_stocks_screen.dart';
 import '../../presentation/viewmodels/cash_viewmodel.dart';
+import '../../presentation/viewmodels/manage_stocks_viewmodel.dart';
 import '../di/service_locator.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
@@ -87,6 +89,16 @@ final GoRouter router = GoRouter(
               userId: getIt<SupabaseClient>().auth.currentUser!.id,
             ),
             child: const CashScreen(),
+          ),
+        ),
+        GoRoute(
+          path: Pages.manageStocks.toPath(),
+          name: Pages.manageStocks.toPathName(),
+          builder: (context, state) => ChangeNotifierProvider(
+            create: (context) => ManageStocksViewModel(
+              repository: getIt(),
+            ),
+            child: const ManageStocksScreen(),
           ),
         ),
         GoRoute(

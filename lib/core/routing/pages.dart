@@ -12,6 +12,7 @@ enum Pages {
   profile,
   addTransaction,
   cash,
+  manageStocks,
 }
 
 extension PageExtention on Pages {

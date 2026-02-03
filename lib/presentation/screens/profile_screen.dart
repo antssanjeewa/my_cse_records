@@ -210,9 +210,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                       isLast: false),
                   _buildActionItem(
-                      icon: Icons.sync,
-                      label: 'Manual Price Update',
-                      onTap: () {},
+                      icon: Icons.add_business,
+                      label: 'Manage Stocks',
+                      onTap: () {
+                        Pages.manageStocks.push(context);
+                      },
                       isLast: false),
                   _buildActionItem(
                       icon: Icons.cloud_upload,
