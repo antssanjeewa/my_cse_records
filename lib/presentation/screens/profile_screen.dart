@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,24 +69,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.all(AppSizes.p8),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(AppSizes.r20),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new,
-                color: AppColors.textPrimary, size: AppSizes.iconMd),
-            onPressed: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                Pages.home.go(context);
-              }
-            },
-          ),
-        ),
         title: Text(AppText.settings,
             style: GoogleFonts.inter(
                 fontSize: 20,

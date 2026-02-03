@@ -29,6 +29,9 @@ class HoldingModel extends Holding {
       'stock_id': stockId,
       'avg_price': avgPrice,
       'quantity': quantity,
+      'total_price': 0,
+      'profit': 0,
+      'dividend': 0,
     };
   }
 }

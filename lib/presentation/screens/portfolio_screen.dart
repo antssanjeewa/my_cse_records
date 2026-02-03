@@ -8,13 +8,24 @@ import '../../core/constants/constants.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/routing/pages.dart';
 
-class PortfolioScreen extends StatelessWidget {
+class PortfolioScreen extends StatefulWidget {
   const PortfolioScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // We using AppFormatters now but for inline flexibility we might re-instantiate or use helpers
+  State<PortfolioScreen> createState() => _PortfolioScreenState();
+}
 
+class _PortfolioScreenState extends State<PortfolioScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Consumer<PortfolioViewModel>(builder: (context, viewModel, child) {
@@ -57,8 +68,8 @@ class PortfolioScreen extends StatelessWidget {
             SliverPersistentHeader(
               pinned: true,
               delegate: _StickyHeaderDelegate(
-                minHeight: 120,
-                maxHeight: 120,
+                minHeight: 130,
+                maxHeight: 130,
                 child: Container(
                   color: AppColors.background,
                   padding: const EdgeInsets.symmetric(
@@ -67,6 +78,8 @@ class PortfolioScreen extends StatelessWidget {
                     children: [
                       // Search
                       TextField(
+                        controller: _searchController,
+                        onChanged: (value) => viewModel.setSearchQuery(value),
                         style: const TextStyle(color: AppColors.textPrimary),
                         decoration: InputDecoration(
                           filled: true,
@@ -76,6 +89,16 @@ class PortfolioScreen extends StatelessWidget {
                               const TextStyle(color: AppColors.textSecondary),
                           prefixIcon: const Icon(Icons.search,
                               color: AppColors.textSecondary),
+                          suffixIcon: _searchController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear,
+                                      color: AppColors.textSecondary),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    viewModel.setSearchQuery('');
+                                  },
+                                )
+                              : null,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppSizes.r12),
                               borderSide:
@@ -92,16 +115,33 @@ class PortfolioScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: AppSizes.p12),
-                      // Chips
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _buildChip('Sort: Profit %', true),
-                            _buildChip('Market Value', false),
-                            _buildChip('Sector', false),
-                          ],
-                        ),
+                      // Filter Dropdowns
+                      Row(
+                        children: [
+                          // Sort Dropdown
+                          Expanded(
+                            child: _buildDropdownHeader(
+                              label: 'Sort: ${viewModel.sortBy}',
+                              icon: Icons.sort,
+                              onTap: () {
+                                _showSortPicker(context, viewModel);
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: AppSizes.p12),
+                          // Sector Dropdown
+                          Expanded(
+                            child: _buildDropdownHeader(
+                              label: viewModel.sectorFilter == 'All'
+                                  ? 'All Sectors'
+                                  : viewModel.sectorFilter,
+                              icon: Icons.category,
+                              onTap: () {
+                                _showSectorPicker(context, viewModel);
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -115,10 +155,10 @@ class PortfolioScreen extends StatelessWidget {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                    final holding = viewModel.holdings[index];
+                    final holding = viewModel.filteredHoldings[index];
                     return _buildHoldingCard(holding);
                   },
-                  childCount: viewModel.holdings.length,
+                  childCount: viewModel.filteredHoldings.length,
                 ),
               ),
             ),
@@ -198,26 +238,120 @@ class PortfolioScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChip(String label, bool active) {
-    return Container(
-      margin: const EdgeInsets.only(right: AppSizes.p8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: active ? AppColors.primary : AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.r20),
-        border: active ? null : Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          Text(label,
-              style: TextStyle(
-                  color: active ? AppColors.textPrimary : Colors.white70,
+  Widget _buildDropdownHeader({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizes.r12),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: AppColors.primary),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
                   fontSize: 12,
-                  fontWeight: FontWeight.w500)),
-          const SizedBox(width: AppSizes.p4),
-          Icon(Icons.expand_more,
-              size: 16, color: active ? AppColors.textPrimary : Colors.white70),
-        ],
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const Icon(Icons.expand_more, size: 16, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSortPicker(BuildContext context, PortfolioViewModel viewModel) {
+    final options = ['Name', 'Price', 'Quantity', 'Profit %'];
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSizes.r20)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(vertical: AppSizes.p20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Sort By',
+                style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: AppSizes.p12),
+            ...options.map((opt) => ListTile(
+                  title: Text(opt,
+                      style: const TextStyle(color: AppColors.textPrimary)),
+                  trailing: viewModel.sortBy == opt
+                      ? const Icon(Icons.check, color: AppColors.primary)
+                      : null,
+                  onTap: () {
+                    viewModel.setSortBy(opt);
+                    Navigator.pop(context);
+                  },
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSectorPicker(BuildContext context, PortfolioViewModel viewModel) {
+    final sectors = viewModel.availableSectors;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSizes.r20)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(vertical: AppSizes.p20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Filter by Sector',
+                style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: AppSizes.p12),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: sectors
+                    .map((sec) => ListTile(
+                          title: Text(sec,
+                              style: const TextStyle(
+                                  color: AppColors.textPrimary)),
+                          trailing: viewModel.sectorFilter == sec
+                              ? const Icon(Icons.check,
+                                  color: AppColors.primary)
+                              : null,
+                          onTap: () {
+                            viewModel.setSectorFilter(sec);
+                            Navigator.pop(context);
+                          },
+                        ))
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -396,5 +530,5 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   double get minExtent => minHeight;
   @override
-  bool shouldRebuild(_StickyHeaderDelegate oldDelegate) => false;
+  bool shouldRebuild(_StickyHeaderDelegate oldDelegate) => true;
 }

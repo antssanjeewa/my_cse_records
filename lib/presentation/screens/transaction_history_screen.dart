@@ -18,12 +18,6 @@ class TransactionHistoryScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: Consumer<TransactionHistoryViewModel>(
         builder: (context, viewModel, child) {
-          if (viewModel.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            );
-          }
-
           final filteredTransactions = viewModel.filteredTransactions;
 
           return CustomScrollView(
@@ -32,11 +26,6 @@ class TransactionHistoryScreen extends StatelessWidget {
               SliverAppBar(
                 backgroundColor: AppColors.background.withValues(alpha: 0.9),
                 pinned: true,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new,
-                      color: AppColors.textPrimary, size: AppSizes.iconMd),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
                 title: Text(AppText.transactionHistory,
                     style: GoogleFonts.inter(
                         fontSize: 18,
@@ -192,7 +181,23 @@ class TransactionHistoryScreen extends StatelessWidget {
                 ),
               ),
 
-              if (filteredTransactions.isEmpty)
+              // Loading Indicator
+              if (viewModel.isLoading && filteredTransactions.isNotEmpty)
+                const SliverToBoxAdapter(
+                  child: LinearProgressIndicator(
+                    backgroundColor: Colors.transparent,
+                    color: AppColors.primary,
+                    minHeight: 2,
+                  ),
+                ),
+
+              if (viewModel.isLoading && filteredTransactions.isEmpty)
+                const SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  ),
+                )
+              else if (filteredTransactions.isEmpty)
                 const SliverFillRemaining(
                   child: Center(
                     child: Text('No transactions found',
@@ -204,10 +209,13 @@ class TransactionHistoryScreen extends StatelessWidget {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final t = filteredTransactions[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AppSizes.p16, vertical: 0),
-                        child: _buildTransactionItem(t),
+                      return Opacity(
+                        opacity: viewModel.isLoading ? 0.6 : 1.0,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.p16, vertical: 0),
+                          child: _buildTransactionItem(t),
+                        ),
                       );
                     },
                     childCount: filteredTransactions.length,
@@ -377,6 +385,8 @@ class TransactionHistoryScreen extends StatelessWidget {
 
   Widget _buildTransactionItem(Transaction t) {
     final isBuy = t.type == TransactionType.buy;
+    final color = isBuy ? AppColors.success : AppColors.error;
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -414,10 +424,9 @@ class TransactionHistoryScreen extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 24),
               padding: const EdgeInsets.all(AppSizes.p16),
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(AppSizes.r16),
-                border: Border.all(color: AppColors.border),
-              ),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppSizes.r16),
+                  border: Border.all(color: color.withAlpha(100))),
               child: Column(
                 children: [
                   Row(
@@ -428,18 +437,16 @@ class TransactionHistoryScreen extends StatelessWidget {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                                horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: isBuy
-                                  ? AppColors.primary.withValues(alpha: 0.1)
+                                  ? AppColors.success.withValues(alpha: 0.1)
                                   : Colors.grey.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(AppSizes.r4),
                             ),
                             child: Text(t.typeString.toUpperCase(),
                                 style: TextStyle(
-                                    color: isBuy
-                                        ? AppColors.success
-                                        : AppColors.error,
+                                    color: color,
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold)),
                           ),
@@ -462,7 +469,7 @@ class TransactionHistoryScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AppSizes.p12),
-                  const Divider(color: AppColors.border, height: 1),
+                  Divider(color: color.withAlpha(100), height: 1),
                   const SizedBox(height: AppSizes.p12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -503,7 +510,7 @@ class TransactionHistoryScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AppSizes.p12),
-                  const Divider(color: AppColors.border, height: 1),
+                  Divider(color: color.withAlpha(100), height: 1),
                   const SizedBox(height: AppSizes.p12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
