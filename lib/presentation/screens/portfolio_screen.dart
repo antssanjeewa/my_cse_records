@@ -29,10 +29,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Consumer<PortfolioViewModel>(builder: (context, viewModel, child) {
-        if (viewModel.isLoading) {
-          return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary));
-        }
+        final filteredHoldings = viewModel.filteredHoldings;
 
         return CustomScrollView(
           slivers: [
@@ -149,19 +146,57 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               ),
             ),
 
-            // List
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final holding = viewModel.filteredHoldings[index];
-                    return _buildHoldingCard(holding);
-                  },
-                  childCount: viewModel.filteredHoldings.length,
+            // Loading Indicator
+            if (viewModel.isLoading && filteredHoldings.isNotEmpty)
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppSizes.p16),
+                  child: LinearProgressIndicator(
+                    backgroundColor: Colors.transparent,
+                    color: AppColors.primary,
+                    minHeight: 2,
+                  ),
                 ),
               ),
-            ),
+
+            if (viewModel.isLoading && filteredHoldings.isEmpty)
+              const SliverFillRemaining(
+                child: Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                ),
+              )
+            else if (filteredHoldings.isEmpty)
+              SliverFillRemaining(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.inventory_2_outlined,
+                          size: 64, color: Colors.grey.withAlpha(50)),
+                      const SizedBox(height: 16),
+                      const Text('No holdings found',
+                          style: TextStyle(
+                              color: AppColors.textSecondary, fontSize: 16)),
+                    ],
+                  ),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final holding = filteredHoldings[index];
+                      return Opacity(
+                        opacity: viewModel.isLoading ? 0.6 : 1.0,
+                        child: _buildHoldingCard(holding),
+                      );
+                    },
+                    childCount: filteredHoldings.length,
+                  ),
+                ),
+              ),
           ],
         );
       }),

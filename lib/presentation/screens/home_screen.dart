@@ -366,7 +366,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopHoldings(List<Holding> holdings, context) {
+  Widget _buildTopHoldings(List<Holding> holdings, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -376,77 +376,106 @@ class HomeScreen extends StatelessWidget {
             Text(AppText.topHoldings,
                 style: GoogleFonts.inter(
                     color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
-            GestureDetector(
-              onTap: () => Pages.portfolio.go(context),
-              child: Text(AppText.viewAll,
-                  style: GoogleFonts.inter(
-                      color: AppColors.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold)),
-            ),
+            if (holdings.isNotEmpty)
+              GestureDetector(
+                onTap: () => Pages.portfolio.go(context),
+                child: Text(AppText.viewAll,
+                    style: GoogleFonts.inter(
+                        color: AppColors.primary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold)),
+              ),
           ],
         ),
         const SizedBox(height: AppSizes.p12),
-        ...holdings.take(5).map((h) => Container(
-              margin: const EdgeInsets.only(bottom: AppSizes.p8),
-              padding: const EdgeInsets.all(AppSizes.p12),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(AppSizes.r12),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        color: AppColors.surfaceLight,
-                        borderRadius: BorderRadius.circular(AppSizes.r8)),
-                    alignment: Alignment.center,
-                    child: Text(h.ticker.split('.')[0],
-                        style: const TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold)),
-                  ),
-                  const SizedBox(width: AppSizes.p12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        if (holdings.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(AppSizes.p24),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppSizes.r16),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Column(
+              children: [
+                Icon(Icons.inventory_2_outlined,
+                    size: 40, color: Colors.grey.withAlpha(50)),
+                const SizedBox(height: AppSizes.p12),
+                const Text('No holdings yet',
+                    style: TextStyle(
+                        color: AppColors.textSecondary, fontSize: 13)),
+                const SizedBox(height: AppSizes.p12),
+                TextButton(
+                  onPressed: () => Pages.addTransaction.push(context),
+                  child: const Text('Add your first stock',
+                      style: TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          )
+        else
+          ...holdings.take(5).map((h) => Container(
+                margin: const EdgeInsets.only(bottom: AppSizes.p8),
+                padding: const EdgeInsets.all(AppSizes.p12),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppSizes.r12),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          color: AppColors.surfaceLight,
+                          borderRadius: BorderRadius.circular(AppSizes.r8)),
+                      alignment: Alignment.center,
+                      child: Text(h.ticker.split('.')[0],
+                          style: const TextStyle(
+                              color: AppColors.primary,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                    const SizedBox(width: AppSizes.p12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(h.name,
+                              style: const TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14)),
+                          Text('${h.quantity.toInt()} Shares',
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 10)),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(h.name,
+                        Text(AppFormatters.formatCurrency(h.marketPrice),
                             style: const TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14)),
-                        Text('${h.quantity.toInt()} Shares',
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 10)),
+                        Text(
+                            '${h.profitPercent > 0 ? '+' : ''}${h.profitPercent.toStringAsFixed(1)}%',
+                            style: TextStyle(
+                                color: h.profitPercent >= 0
+                                    ? AppColors.success
+                                    : AppColors.error,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold)),
                       ],
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(AppFormatters.formatCurrency(h.marketPrice),
-                          style: const TextStyle(
-                              color: AppColors.textPrimary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14)),
-                      Text(
-                          '${h.profitPercent > 0 ? '+' : ''}${h.profitPercent.toStringAsFixed(1)}%',
-                          style: TextStyle(
-                              color: h.profitPercent >= 0
-                                  ? AppColors.success
-                                  : AppColors.error,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold)),
-                    ],
-                  )
-                ],
-              ),
-            )),
+                    )
+                  ],
+                ),
+              )),
       ],
     );
   }
