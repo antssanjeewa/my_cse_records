@@ -10,6 +10,7 @@ enum Pages {
   transactions,
   settings,
   profile,
+  addTransaction,
 }
 
 extension PageExtention on Pages {

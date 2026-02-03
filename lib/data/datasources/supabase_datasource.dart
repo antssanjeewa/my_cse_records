@@ -9,6 +9,8 @@ abstract class RemoteDataSource {
   Future<List<TransactionModel>> getTransactions();
   Future<void> addTransaction(TransactionModel transaction);
   Future<void> updateHolding(HoldingModel holding);
+  Future<void> upsertHolding(HoldingModel holding);
+  Future<HoldingModel?> getHoldingByStock(String userId, int stockId);
 }
 
 class SupabaseDataSourceImpl implements RemoteDataSource {
@@ -52,5 +54,28 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
         .from('holdings')
         .update(holding.toJson())
         .eq('id', holding.id);
+  }
+
+  @override
+  Future<void> upsertHolding(HoldingModel holding) async {
+    await supabase.from('holdings').upsert(
+          holding.toJson(),
+          onConflict: 'user_id, stock_id',
+        );
+  }
+
+  @override
+  Future<HoldingModel?> getHoldingByStock(String userId, int stockId) async {
+    final response = await supabase
+        .from('holdings')
+        .select('*, stocks(*)')
+        .eq('user_id', userId)
+        .eq('stock_id', stockId)
+        .maybeSingle();
+
+    if (response == null) {
+      return null;
+    }
+    return HoldingModel.fromJson(response);
   }
 }

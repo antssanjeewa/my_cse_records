@@ -4,10 +4,9 @@ import 'package:provider/provider.dart';
 
 import '../../domain/entities/holding.dart';
 import '../viewmodels/portfolio_viewmodel.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text.dart';
-import '../../core/constants/app_sizes.dart';
+import '../../core/constants/constants.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/routing/pages.dart';
 
 class PortfolioScreen extends StatelessWidget {
   const PortfolioScreen({super.key});
@@ -128,6 +127,11 @@ class PortfolioScreen extends StatelessWidget {
           ],
         );
       }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Pages.addTransaction.push(context),
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
     );
   }
 

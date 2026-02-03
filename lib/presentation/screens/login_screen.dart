@@ -7,9 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/secure_storage_service.dart';
 import '../../core/di/service_locator.dart';
 import '../../core/services/biometric_service.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text.dart';
-import '../../core/constants/app_sizes.dart';
+import '../../core/constants/constants.dart';
 import '../../core/routing/pages.dart';
 import '../viewmodels/auth_viewmodel.dart';
 

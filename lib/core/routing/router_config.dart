@@ -4,9 +4,10 @@ import '../../presentation/screens/splash_screen.dart';
 import '../../presentation/screens/login_screen.dart';
 import '../../presentation/screens/home_screen.dart';
 import '../../presentation/screens/portfolio_screen.dart';
-import '../../presentation/screens/main_shell.dart';
+import '../app/main_shell.dart';
 import '../../presentation/screens/profile_screen.dart';
 import '../../presentation/screens/transaction_history_screen.dart';
+import '../../presentation/screens/add_transaction_screen.dart';
 import 'pages.dart';
 import '../constants/app_colors.dart';
 
@@ -38,6 +39,11 @@ final GoRouter router = GoRouter(
       path: Pages.login.toPath(),
       name: Pages.login.toPathName(),
       builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: Pages.addTransaction.toPath(),
+      name: Pages.addTransaction.toPathName(),
+      builder: (context, state) => const AddTransactionScreen(),
     ),
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),
