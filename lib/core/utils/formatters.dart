@@ -12,6 +12,7 @@ class AppFormatters {
 
   static final DateFormat dateDetailed = DateFormat('MMM dd • hh:mm a');
   static final DateFormat dateSimple = DateFormat('MMM dd, yyyy');
+  static final DateFormat dateOnly = DateFormat('MMM dd, yyyy');
 
   static String formatCurrency(double value) => currency.format(value);
   static String formatNumber(num value) => number.format(value);

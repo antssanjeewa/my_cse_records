@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/holding_model.dart';
 import '../models/stock_model.dart';
 import '../models/transaction_model.dart';
+import '../models/cash_transaction_model.dart';
 
 abstract class RemoteDataSource {
   Future<List<StockModel>> getStocks();
@@ -18,6 +19,11 @@ abstract class RemoteDataSource {
   Future<void> updateHolding(HoldingModel holding);
   Future<void> upsertHolding(HoldingModel holding);
   Future<HoldingModel?> getHoldingByStock(String userId, int stockId);
+
+  // Cash Management
+  Future<List<CashTransactionModel>> getCashTransactions();
+  Future<void> addCashTransaction(CashTransactionModel transaction);
+  Future<double> getCashBalance();
 }
 
 class SupabaseDataSourceImpl implements RemoteDataSource {
@@ -159,6 +165,53 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
     } catch (e) {
       _log('ERROR', 'holdings_single', e);
       rethrow;
+    }
+  }
+
+  @override
+  Future<List<CashTransactionModel>> getCashTransactions() async {
+    _log('GET', 'cash_transactions');
+    try {
+      final response = await supabase
+          .from('cash_transactions')
+          .select()
+          .order('created_at', ascending: false);
+      _log('RESPONSE', 'cash_transactions', (response as List).length);
+      return response
+          .map((json) => CashTransactionModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      _log('ERROR', 'cash_transactions', e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> addCashTransaction(CashTransactionModel transaction) async {
+    final data = transaction.toJson();
+    _log('INSERT', 'cash_transactions', data);
+    try {
+      await supabase.from('cash_transactions').insert(data);
+    } catch (e) {
+      _log('ERROR', 'cash_transactions', e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<double> getCashBalance() async {
+    _log('GET_AGGREGATE', 'cash_transactions_balance');
+    try {
+      final response =
+          await supabase.from('cash_transactions').select('amount');
+      final total = (response as List).fold(0.0, (sum, item) {
+        return sum + (item['amount'] as num).toDouble();
+      });
+      _log('RESPONSE', 'cash_balance', total);
+      return total;
+    } catch (e) {
+      _log('ERROR', 'cash_balance', e);
+      return 0.0;
     }
   }
 

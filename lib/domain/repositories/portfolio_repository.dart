@@ -1,6 +1,7 @@
 import '../entities/holding.dart';
 import '../entities/stock.dart';
 import '../entities/transaction.dart';
+import '../entities/cash_transaction.dart';
 
 abstract class PortfolioRepository {
   // Stocks
@@ -22,4 +23,9 @@ abstract class PortfolioRepository {
     int? limit,
   });
   Future<void> addTransaction(Transaction transaction);
+
+  // Cash Management
+  Future<List<CashTransaction>> getCashTransactions();
+  Future<void> addCashTransaction(CashTransaction transaction);
+  Future<double> getCashBalance();
 }

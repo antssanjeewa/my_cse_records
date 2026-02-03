@@ -203,6 +203,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   _buildActionItem(
+                      icon: Icons.account_balance_wallet,
+                      label: 'My Wallet',
+                      onTap: () {
+                        Pages.cash.push(context);
+                      },
+                      isLast: false),
+                  _buildActionItem(
                       icon: Icons.sync,
                       label: 'Manual Price Update',
                       onTap: () {},
@@ -395,7 +402,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: color,
                         fontSize: 16,
                         fontWeight: FontWeight.w500))),
-            Icon(isPrimary ? Icons.download : Icons.chevron_right,
+            Icon(
+                isPrimary && iconCode == Icons.table_chart
+                    ? Icons.download
+                    : Icons.chevron_right,
                 color: isDestructive ? Colors.redAccent : Colors.grey),
           ],
         ),

@@ -5,6 +5,8 @@ import '../../domain/repositories/portfolio_repository.dart';
 import '../datasources/supabase_datasource.dart';
 import '../models/transaction_model.dart';
 import '../models/holding_model.dart';
+import '../../domain/entities/cash_transaction.dart';
+import '../models/cash_transaction_model.dart';
 
 class PortfolioRepositoryImpl implements PortfolioRepository {
   final RemoteDataSource remoteDataSource;
@@ -86,5 +88,27 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       price: transaction.price,
       date: transaction.date,
     ));
+  }
+
+  @override
+  Future<List<CashTransaction>> getCashTransactions() async {
+    return await remoteDataSource.getCashTransactions();
+  }
+
+  @override
+  Future<void> addCashTransaction(CashTransaction transaction) async {
+    await remoteDataSource.addCashTransaction(CashTransactionModel(
+      id: transaction.id,
+      userId: transaction.userId,
+      amount: transaction.amount,
+      type: transaction.type,
+      description: transaction.description,
+      createdAt: transaction.createdAt,
+    ));
+  }
+
+  @override
+  Future<double> getCashBalance() async {
+    return await remoteDataSource.getCashBalance();
   }
 }
