@@ -10,6 +10,8 @@ abstract class PortfolioRepository {
   // Holdings
   Future<List<Holding>> getHoldings();
   Future<void> updateHolding(Holding holding);
+  Future<void> upsertHolding(Holding holding);
+  Future<Holding?> getHoldingByStock(String userId, int stockId);
 
   // Transactions
   Future<List<Transaction>> getTransactions();

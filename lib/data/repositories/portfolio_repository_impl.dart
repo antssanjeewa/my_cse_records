@@ -43,6 +43,22 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   }
 
   @override
+  Future<void> upsertHolding(Holding holding) async {
+    await remoteDataSource.upsertHolding(HoldingModel(
+      id: holding.id,
+      userId: holding.userId,
+      stockId: holding.stockId,
+      avgPrice: holding.avgPrice,
+      quantity: holding.quantity,
+    ));
+  }
+
+  @override
+  Future<Holding?> getHoldingByStock(String userId, int stockId) async {
+    return await remoteDataSource.getHoldingByStock(userId, stockId);
+  }
+
+  @override
   Future<List<Transaction>> getTransactions() async {
     return await remoteDataSource.getTransactions();
   }
