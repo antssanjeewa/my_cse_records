@@ -8,10 +8,13 @@ import '../../domain/usecases/get_portfolio_summary.dart';
 import '../../domain/usecases/get_transactions.dart';
 import '../services/biometric_service.dart';
 import '../services/secure_storage_service.dart';
+import '../../domain/usecases/get_stocks.dart';
+import '../../domain/usecases/add_transaction.dart';
 import '../../presentation/viewmodels/home_viewmodel.dart';
 import '../../presentation/viewmodels/portfolio_viewmodel.dart';
 import '../../presentation/viewmodels/transaction_history_viewmodel.dart';
 import '../../presentation/viewmodels/auth_viewmodel.dart';
+import '../../presentation/viewmodels/add_transaction_viewmodel.dart';
 
 final getIt = GetIt.instance;
 
@@ -38,6 +41,8 @@ void setupLocator() {
   getIt.registerLazySingleton(() => GetHoldings(getIt()));
   getIt.registerLazySingleton(() => GetPortfolioSummary(getIt()));
   getIt.registerLazySingleton(() => GetTransactions(getIt()));
+  getIt.registerLazySingleton(() => GetStocks(getIt()));
+  getIt.registerLazySingleton(() => AddTransaction(getIt()));
 
   // ViewModels
   getIt.registerFactory(() => AuthViewModel(supabase: getIt()));
@@ -45,4 +50,9 @@ void setupLocator() {
   getIt.registerFactory(() => PortfolioViewModel(getHoldings: getIt()));
   getIt.registerFactory(
       () => TransactionHistoryViewModel(getTransactions: getIt()));
+  getIt.registerFactory(() => AddTransactionViewModel(
+        getStocks: getIt(),
+        addTransaction: getIt(),
+        userId: getIt<AuthViewModel>().currentUser?.id ?? '',
+      ));
 }

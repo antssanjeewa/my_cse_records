@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../domain/entities/transaction.dart';
 import '../viewmodels/transaction_history_viewmodel.dart';
+import '../../core/routing/pages.dart';
 import '../../core/constants/constants.dart';
 import '../../core/utils/formatters.dart';
 
@@ -161,6 +162,11 @@ class TransactionHistoryScreen extends StatelessWidget {
             ],
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Pages.addTransaction.push(context),
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
