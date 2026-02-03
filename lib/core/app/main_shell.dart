@@ -11,7 +11,7 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // For transparency if needed
+      extendBody: false,
       body: child,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(

@@ -243,9 +243,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
 
             const SizedBox(height: AppSizes.p32),
-            Center(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
+                width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () async {
                     await getIt<SecureStorageService>().clearCredentials();
@@ -254,17 +255,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Pages.login.go(context);
                     }
                   },
-                  icon: const Icon(Icons.logout, color: Colors.white),
+                  icon: const Icon(Icons.logout, color: Colors.redAccent),
                   label: const Text('Logout',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.redAccent,
                           fontWeight: FontWeight.bold,
                           fontSize: 16)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent.withValues(alpha: 0.9),
+                    backgroundColor: AppColors.surface,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppSizes.r12)),
+                        borderRadius: BorderRadius.circular(AppSizes.r12),
+                        side: const BorderSide(color: AppColors.border)),
                     elevation: 0,
                   ),
                 ),
