@@ -14,6 +14,12 @@ abstract class PortfolioRepository {
   Future<Holding?> getHoldingByStock(String userId, int stockId);
 
   // Transactions
-  Future<List<Transaction>> getTransactions();
+  Future<List<Transaction>> getTransactions({
+    int? stockId,
+    String? type,
+    DateTime? startDate,
+    DateTime? endDate,
+    int? limit,
+  });
   Future<void> addTransaction(Transaction transaction);
 }

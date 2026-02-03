@@ -59,8 +59,20 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   }
 
   @override
-  Future<List<Transaction>> getTransactions() async {
-    return await remoteDataSource.getTransactions();
+  Future<List<Transaction>> getTransactions({
+    int? stockId,
+    String? type,
+    DateTime? startDate,
+    DateTime? endDate,
+    int? limit,
+  }) async {
+    return await remoteDataSource.getTransactions(
+      stockId: stockId,
+      type: type,
+      startDate: startDate,
+      endDate: endDate,
+      limit: limit,
+    );
   }
 
   @override

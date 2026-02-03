@@ -121,7 +121,7 @@ class TransactionHistoryScreen extends StatelessWidget {
                                   icon: const Icon(Icons.close,
                                       size: 16, color: Colors.grey),
                                   onPressed: () =>
-                                      viewModel.setTickerFilter(null),
+                                      viewModel.setStockFilter(null, null),
                                 )
                               else
                                 const Icon(Icons.expand_more,
@@ -226,6 +226,24 @@ class TransactionHistoryScreen extends StatelessWidget {
                           'Showing ${filteredTransactions.length} transactions',
                           style: const TextStyle(
                               color: Colors.white54, fontSize: 12)),
+                      if (viewModel.hasMore) ...[
+                        const SizedBox(height: AppSizes.p16),
+                        TextButton(
+                          onPressed: viewModel.isLoading
+                              ? null
+                              : () => viewModel.loadMore(),
+                          child: viewModel.isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: AppColors.primary))
+                              : const Text('Load More',
+                                  style: TextStyle(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.bold)),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -305,7 +323,7 @@ class TransactionHistoryScreen extends StatelessWidget {
 
   void _showCompanyFilter(
       BuildContext context, TransactionHistoryViewModel viewModel) {
-    final tickers = viewModel.availableTickers;
+    final uniqueStocks = viewModel.uniqueStocks;
 
     showModalBottomSheet(
       context: context,
@@ -328,17 +346,17 @@ class TransactionHistoryScreen extends StatelessWidget {
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: tickers.length + 1,
+                  itemCount: uniqueStocks.length + 1,
                   itemBuilder: (context, index) {
-                    final item = index == 0 ? null : tickers[index - 1];
+                    final item = index == 0 ? null : uniqueStocks[index - 1];
                     return ListTile(
-                      title: Text(item ?? 'All Companies',
+                      title: Text(item?['ticker'] ?? 'All Companies',
                           style: const TextStyle(color: Colors.white)),
                       onTap: () {
-                        viewModel.setTickerFilter(item);
+                        viewModel.setStockFilter(item?['id'], item?['ticker']);
                         Navigator.pop(context);
                       },
-                      trailing: viewModel.tickerFilter == item
+                      trailing: viewModel.tickerFilter == item?['ticker']
                           ? const Icon(Icons.check, color: AppColors.primary)
                           : null,
                     );

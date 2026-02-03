@@ -7,7 +7,13 @@ import '../models/transaction_model.dart';
 abstract class RemoteDataSource {
   Future<List<StockModel>> getStocks();
   Future<List<HoldingModel>> getHoldings();
-  Future<List<TransactionModel>> getTransactions();
+  Future<List<TransactionModel>> getTransactions({
+    int? stockId,
+    String? type,
+    DateTime? startDate,
+    DateTime? endDate,
+    int? limit,
+  });
   Future<void> addTransaction(TransactionModel transaction);
   Future<void> updateHolding(HoldingModel holding);
   Future<void> upsertHolding(HoldingModel holding);
@@ -50,17 +56,45 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<TransactionModel>> getTransactions() async {
-    _log('GET', 'transactions');
+  Future<List<TransactionModel>> getTransactions({
+    int? stockId,
+    String? type,
+    DateTime? startDate,
+    DateTime? endDate,
+    int? limit,
+  }) async {
+    _log('GET_FILTERED', 'transactions', {
+      'stockId': stockId,
+      'type': type,
+      'startDate': startDate,
+      'endDate': endDate,
+      'limit': limit
+    });
     try {
-      final response = await supabase
-          .from('transactions')
-          .select('*, stocks(*)')
-          .order('date', ascending: false);
-      _log('RESPONSE', 'transactions', response);
-      return (response as List)
-          .map((json) => TransactionModel.fromJson(json))
-          .toList();
+      dynamic query = supabase.from('transactions').select('*, stocks(*)');
+
+      if (stockId != null) {
+        query = query.eq('stock_id', stockId);
+      }
+      if (type != null) {
+        query = query.eq('type', type.toUpperCase());
+      }
+      if (startDate != null) {
+        query = query.gte('date', startDate.toIso8601String());
+      }
+      if (endDate != null) {
+        query = query.lte('date', endDate.toIso8601String());
+      }
+
+      query = query.order('date', ascending: false);
+
+      if (limit != null) {
+        query = query.limit(limit);
+      }
+
+      final response = await query;
+      _log('RESPONSE', 'transactions', 'Count: ${(response as List).length}');
+      return (response).map((json) => TransactionModel.fromJson(json)).toList();
     } catch (e) {
       _log('ERROR', 'transactions', e);
       rethrow;
