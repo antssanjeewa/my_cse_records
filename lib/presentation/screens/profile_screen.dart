@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,24 +69,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.all(AppSizes.p8),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(AppSizes.r20),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new,
-                color: AppColors.textPrimary, size: AppSizes.iconMd),
-            onPressed: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                Pages.home.go(context);
-              }
-            },
-          ),
-        ),
         title: Text(AppText.settings,
             style: GoogleFonts.inter(
                 fontSize: 20,
@@ -222,9 +203,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   _buildActionItem(
-                      icon: Icons.sync,
-                      label: 'Manual Price Update',
-                      onTap: () {},
+                      icon: Icons.account_balance_wallet,
+                      label: 'My Wallet',
+                      onTap: () {
+                        Pages.cash.push(context);
+                      },
+                      isLast: false),
+                  _buildActionItem(
+                      icon: Icons.add_business,
+                      label: 'Manage Stocks',
+                      onTap: () {
+                        Pages.manageStocks.push(context);
+                      },
                       isLast: false),
                   _buildActionItem(
                       icon: Icons.cloud_upload,
@@ -414,7 +404,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: color,
                         fontSize: 16,
                         fontWeight: FontWeight.w500))),
-            Icon(isPrimary ? Icons.download : Icons.chevron_right,
+            Icon(
+                iconCode == Icons.table_chart
+                    ? Icons.download
+                    : Icons.chevron_right,
                 color: isDestructive ? Colors.redAccent : Colors.grey),
           ],
         ),

@@ -5,6 +5,8 @@ import '../../domain/repositories/portfolio_repository.dart';
 import '../datasources/supabase_datasource.dart';
 import '../models/transaction_model.dart';
 import '../models/holding_model.dart';
+import '../../domain/entities/cash_transaction.dart';
+import '../models/cash_transaction_model.dart';
 
 class PortfolioRepositoryImpl implements PortfolioRepository {
   final RemoteDataSource remoteDataSource;
@@ -24,6 +26,39 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
     } catch (e) {
       return null;
     }
+  }
+
+  @override
+  Future<Stock> addStock({
+    required String ticker,
+    required String name,
+    String? sector,
+    required double lastPrice,
+  }) async {
+    return await remoteDataSource.addStock(
+      ticker: ticker,
+      name: name,
+      sector: sector,
+      lastPrice: lastPrice,
+    );
+  }
+
+  @override
+  Future<void> updateStock({
+    required int stockId,
+    String? sector,
+    required double lastPrice,
+  }) async {
+    await remoteDataSource.updateStock(
+      stockId: stockId,
+      sector: sector,
+      lastPrice: lastPrice,
+    );
+  }
+
+  @override
+  Future<void> deleteStock(int stockId) async {
+    await remoteDataSource.deleteStock(stockId);
   }
 
   @override
@@ -59,8 +94,20 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   }
 
   @override
-  Future<List<Transaction>> getTransactions() async {
-    return await remoteDataSource.getTransactions();
+  Future<List<Transaction>> getTransactions({
+    int? stockId,
+    String? type,
+    DateTime? startDate,
+    DateTime? endDate,
+    int? limit,
+  }) async {
+    return await remoteDataSource.getTransactions(
+      stockId: stockId,
+      type: type,
+      startDate: startDate,
+      endDate: endDate,
+      limit: limit,
+    );
   }
 
   @override
@@ -74,5 +121,27 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       price: transaction.price,
       date: transaction.date,
     ));
+  }
+
+  @override
+  Future<List<CashTransaction>> getCashTransactions() async {
+    return await remoteDataSource.getCashTransactions();
+  }
+
+  @override
+  Future<void> addCashTransaction(CashTransaction transaction) async {
+    await remoteDataSource.addCashTransaction(CashTransactionModel(
+      id: transaction.id,
+      userId: transaction.userId,
+      amount: transaction.amount,
+      type: transaction.type,
+      description: transaction.description,
+      createdAt: transaction.createdAt,
+    ));
+  }
+
+  @override
+  Future<double> getCashBalance() async {
+    return await remoteDataSource.getCashBalance();
   }
 }

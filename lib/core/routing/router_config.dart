@@ -8,6 +8,13 @@ import '../app/main_shell.dart';
 import '../../presentation/screens/profile_screen.dart';
 import '../../presentation/screens/transaction_history_screen.dart';
 import '../../presentation/screens/add_transaction_screen.dart';
+import '../../presentation/screens/cash_screen.dart';
+import '../../presentation/screens/manage_stocks_screen.dart';
+import '../../presentation/viewmodels/cash_viewmodel.dart';
+import '../../presentation/viewmodels/manage_stocks_viewmodel.dart';
+import '../di/service_locator.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
 import 'pages.dart';
 import '../constants/app_colors.dart';
 
@@ -72,6 +79,33 @@ final GoRouter router = GoRouter(
           path: Pages.settings.toPath(),
           name: Pages.settings.toPathName(),
           builder: (context, state) => const ProfileScreen(),
+        ),
+        GoRoute(
+          path: Pages.cash.toPath(),
+          name: Pages.cash.toPathName(),
+          builder: (context, state) {
+            final user = getIt<SupabaseClient>().auth.currentUser;
+            if (user == null) {
+              return const LoginScreen(); // or redirect via GoRouter
+            }
+            return ChangeNotifierProvider(
+              create: (context) => CashViewModel(
+                repository: getIt(),
+                userId: user.id,
+              ),
+              child: const CashScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: Pages.manageStocks.toPath(),
+          name: Pages.manageStocks.toPathName(),
+          builder: (context, state) => ChangeNotifierProvider(
+            create: (context) => ManageStocksViewModel(
+              repository: getIt(),
+            ),
+            child: const ManageStocksScreen(),
+          ),
         ),
         GoRoute(
           path: Pages.profile.toPath(),

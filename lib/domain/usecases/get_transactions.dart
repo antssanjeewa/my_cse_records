@@ -6,7 +6,19 @@ class GetTransactions {
 
   GetTransactions(this.repository);
 
-  Future<List<Transaction>> call() async {
-    return await repository.getTransactions();
+  Future<List<Transaction>> call({
+    int? stockId,
+    String? type,
+    DateTime? startDate,
+    DateTime? endDate,
+    int? limit,
+  }) async {
+    return await repository.getTransactions(
+      stockId: stockId,
+      type: type,
+      startDate: startDate,
+      endDate: endDate,
+      limit: limit,
+    );
   }
 }

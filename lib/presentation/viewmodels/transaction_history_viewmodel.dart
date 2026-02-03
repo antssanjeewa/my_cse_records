@@ -18,6 +18,8 @@ class TransactionHistoryViewModel extends ChangeNotifier {
   String _typeFilter = 'All';
   String get typeFilter => _typeFilter;
 
+  // Track the actual Stock ID for server-side filtering
+  int? _stockIdFilter;
   String? _tickerFilter;
   String? get tickerFilter => _tickerFilter;
 
@@ -27,56 +29,67 @@ class TransactionHistoryViewModel extends ChangeNotifier {
   DateTime? _endDate;
   DateTime? get endDate => _endDate;
 
+  int _limit = 20; // Default limit
+  int get limit => _limit;
+
+  bool _hasMore = true;
+  bool get hasMore => _hasMore;
+
   void setTypeFilter(String filter) {
+    if (_typeFilter == filter) return;
     _typeFilter = filter;
-    notifyListeners();
+    fetchTransactions();
   }
 
-  void setTickerFilter(String? ticker) {
+  void setStockFilter(int? stockId, String? ticker) {
+    if (_stockIdFilter == stockId) return;
+    _stockIdFilter = stockId;
     _tickerFilter = ticker;
-    notifyListeners();
+    fetchTransactions();
   }
 
   void setDateFilter(DateTime? start, DateTime? end) {
     _startDate = start;
     _endDate = end;
-    notifyListeners();
+    fetchTransactions();
   }
 
-  List<String> get availableTickers {
-    return _transactions.map((t) => t.ticker).toSet().toList()..sort();
+  void loadMore() {
+    _limit += 20;
+    fetchTransactions();
   }
 
-  List<Transaction> get filteredTransactions {
-    return _transactions.where((t) {
-      final matchesType = _typeFilter == 'All' || t.typeString == _typeFilter;
-      final matchesTicker = _tickerFilter == null || t.ticker == _tickerFilter;
-
-      bool matchesDate = true;
-      if (_startDate != null) {
-        matchesDate = matchesDate &&
-            (t.date.isAfter(_startDate!) ||
-                t.date.isAtSameMomentAs(_startDate!));
-      }
-      if (_endDate != null) {
-        // End date should be inclusive till end of day
-        final inclusiveEnd = DateTime(
-            _endDate!.year, _endDate!.month, _endDate!.day, 23, 59, 59);
-        matchesDate = matchesDate && t.date.isBefore(inclusiveEnd);
-      }
-
-      return matchesType && matchesTicker && matchesDate;
-    }).toList();
+  // We still need all tickers for the filter UI, but filtering should happen on server
+  // This can be optimized by a separate GetTickers usecase if list is huge
+  List<Map<String, dynamic>> get uniqueStocks {
+    final seen = <int>{};
+    return _transactions
+        .where((t) => seen.add(t.stockId))
+        .map((t) => {'id': t.stockId, 'ticker': t.ticker})
+        .toList()
+      ..sort(
+          (a, b) => (a['ticker'] as String).compareTo(b['ticker'] as String));
   }
+
+  List<Transaction> get filteredTransactions => _transactions;
 
   Future<void> fetchTransactions() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _transactions = await getTransactions();
+      final results = await getTransactions(
+        stockId: _stockIdFilter,
+        type: _typeFilter == 'All' ? null : _typeFilter,
+        startDate: _startDate,
+        endDate: _endDate,
+        limit: _limit,
+      );
+
+      _hasMore = results.length >= _limit;
+      _transactions = results;
     } catch (e) {
-      // Handle error
+      debugPrint('Error fetching transactions: $e');
     }
 
     _isLoading = false;
