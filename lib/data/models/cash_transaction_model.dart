@@ -19,7 +19,7 @@ class CashTransactionModel extends CashTransaction {
       description: json['description']?.toString(),
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
-          : DateTime.now(),
+          : DateTime.fromMillisecondsSinceEpoch(0),
     );
   }
 

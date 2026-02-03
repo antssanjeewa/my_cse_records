@@ -302,7 +302,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
             child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               final ticker = tickerController.text.trim();
               final name = nameController.text.trim();
               final sector = sectorController.text.trim();
@@ -312,13 +312,24 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                   name.isNotEmpty &&
                   price != null &&
                   price > 0) {
-                context.read<ManageStocksViewModel>().addStock(
-                      ticker: ticker,
-                      name: name,
-                      sector: sector.isEmpty ? null : sector,
-                      lastPrice: price,
-                    );
-                Navigator.pop(context);
+                try {
+                  await context.read<ManageStocksViewModel>().addStock(
+                        ticker: ticker,
+                        name: name,
+                        sector: sector.isEmpty ? null : sector,
+                        lastPrice: price,
+                      );
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                } catch (_) {
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Failed to add stock'),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                }
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
@@ -372,17 +383,28 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
             child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               final price = double.tryParse(priceController.text);
               final sector = sectorController.text.trim();
 
               if (price != null && price > 0) {
-                viewModel.updateStock(
-                  stockId: stock.id,
-                  sector: sector.isEmpty ? null : sector,
-                  lastPrice: price,
-                );
-                Navigator.pop(context);
+                try {
+                  await viewModel.updateStock(
+                    stockId: stock.id,
+                    sector: sector.isEmpty ? null : sector,
+                    lastPrice: price,
+                  );
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                } catch (_) {
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Failed to update stock'),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                }
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
