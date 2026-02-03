@@ -17,11 +17,12 @@ class TransactionModel extends Transaction {
     return TransactionModel(
       id: json['id'].toString(),
       userId: json['user_id'].toString(),
-      stockId: json['stock_id'] as int,
+      stockId: json['stock_id'] as int? ?? 0,
       type: json['type'] == 'BUY' ? TransactionType.buy : TransactionType.sell,
-      qty: (json['qty'] as num).toDouble(),
-      price: (json['price'] as num).toDouble(),
-      date: DateTime.parse(json['date']),
+      qty: (json['qty'] as num?)?.toDouble() ?? 0.0,
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      date:
+          json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
       stock:
           json['stocks'] != null ? StockModel.fromJson(json['stocks']) : null,
     );

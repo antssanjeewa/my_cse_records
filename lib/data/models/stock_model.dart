@@ -11,11 +11,11 @@ class StockModel extends Stock {
 
   factory StockModel.fromJson(Map<String, dynamic> json) {
     return StockModel(
-      id: json['id'],
-      ticker: json['ticker'],
-      name: json['name'],
-      sector: json['sector'],
-      lastPrice: (json['last_price'] as num).toDouble(),
+      id: json['id'] as int? ?? 0,
+      ticker: json['ticker']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      sector: json['sector']?.toString(),
+      lastPrice: (json['last_price'] as num?)?.toDouble() ?? 0.0,
     );
   }
 

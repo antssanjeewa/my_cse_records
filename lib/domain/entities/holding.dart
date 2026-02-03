@@ -6,6 +6,9 @@ class Holding {
   final int stockId;
   final double avgPrice;
   final double quantity;
+  final double totalPrice;
+  final double profit;
+  final double dividend;
   final Stock? stock;
 
   Holding({
@@ -14,6 +17,9 @@ class Holding {
     required this.stockId,
     required this.avgPrice,
     required this.quantity,
+    this.totalPrice = 0,
+    this.profit = 0,
+    this.dividend = 0,
     this.stock,
   });
 
@@ -24,7 +30,6 @@ class Holding {
   double get marketPrice => stock?.lastPrice ?? 0;
 
   double get value => quantity * marketPrice;
-  double get profit => value - (quantity * avgPrice);
   double get profitPercent =>
       avgPrice > 0 ? ((marketPrice - avgPrice) / avgPrice) * 100 : 0;
 }
