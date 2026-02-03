@@ -150,9 +150,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         Navigator.of(context).pop();
                       } else if (!success && mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content:
-                                  Text('Please fill all fields correctly')),
+                          SnackBar(
+                              content: Text(viewModel.errorMessage ??
+                                  'An unknown error occurred')),
                         );
                       }
                     },

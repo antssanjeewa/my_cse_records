@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/entities/transaction.dart';
@@ -73,46 +74,117 @@ class TransactionHistoryScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: AppSizes.p16),
-                      // Date Range
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AppSizes.p16, vertical: AppSizes.p12),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(AppSizes.r12),
-                          border: Border.all(color: AppColors.border),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.calendar_today,
-                                    color: AppColors.primary,
-                                    size: AppSizes.iconMd),
-                                const SizedBox(width: AppSizes.p12),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('DATE RANGE',
-                                        style: TextStyle(
-                                            color: AppColors.textSecondary,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.0)),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                        'Oct 01, 2023 - Oct 31, 2023', // Static for now
-                                        style: GoogleFonts.inter(
-                                            color: AppColors.textPrimary,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold)),
-                                  ],
+                      // Company Filter
+                      GestureDetector(
+                        onTap: () => _showCompanyFilter(context, viewModel),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.p16, vertical: AppSizes.p12),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(AppSizes.r12),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.business,
+                                      color: AppColors.primary,
+                                      size: AppSizes.iconMd),
+                                  const SizedBox(width: AppSizes.p12),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('COMPANY',
+                                          style: TextStyle(
+                                              color: AppColors.textSecondary,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 1.0)),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                          viewModel.tickerFilter ??
+                                              'All Companies',
+                                          style: GoogleFonts.inter(
+                                              color: AppColors.textPrimary,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold)),
+                                    ],
+                                  )
+                                ],
+                              ),
+                              if (viewModel.tickerFilter != null)
+                                IconButton(
+                                  icon: const Icon(Icons.close,
+                                      size: 16, color: Colors.grey),
+                                  onPressed: () =>
+                                      viewModel.setTickerFilter(null),
                                 )
-                              ],
-                            ),
-                            const Icon(Icons.expand_more, color: Colors.grey),
-                          ],
+                              else
+                                const Icon(Icons.expand_more,
+                                    color: Colors.grey),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSizes.p12),
+                      // Date Range
+                      GestureDetector(
+                        onTap: () => _selectDateRange(context, viewModel),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.p16, vertical: AppSizes.p12),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(AppSizes.r12),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_today,
+                                      color: AppColors.primary,
+                                      size: AppSizes.iconMd),
+                                  const SizedBox(width: AppSizes.p12),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('DATE RANGE',
+                                          style: TextStyle(
+                                              color: AppColors.textSecondary,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 1.0)),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                          _formatDateRange(viewModel.startDate,
+                                              viewModel.endDate),
+                                          style: GoogleFonts.inter(
+                                              color: AppColors.textPrimary,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold)),
+                                    ],
+                                  )
+                                ],
+                              ),
+                              if (viewModel.startDate != null)
+                                IconButton(
+                                  icon: const Icon(Icons.close,
+                                      size: 16, color: Colors.grey),
+                                  onPressed: () =>
+                                      viewModel.setDateFilter(null, null),
+                                )
+                              else
+                                const Icon(Icons.expand_more,
+                                    color: Colors.grey),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -154,7 +226,6 @@ class TransactionHistoryScreen extends StatelessWidget {
                           'Showing ${filteredTransactions.length} transactions',
                           style: const TextStyle(
                               color: Colors.white54, fontSize: 12)),
-                      const SizedBox(height: 80), // Bottom padding
                     ],
                   ),
                 ),
@@ -173,10 +244,10 @@ class TransactionHistoryScreen extends StatelessWidget {
 
   Widget _buildSegment(BuildContext context,
       TransactionHistoryViewModel viewModel, String label) {
-    final isSelected = viewModel.filter == label;
+    final isSelected = viewModel.typeFilter == label;
     return Expanded(
       child: GestureDetector(
-        onTap: () => viewModel.setFilter(label),
+        onTap: () => viewModel.setTypeFilter(label),
         child: Container(
           decoration: BoxDecoration(
             color: isSelected ? AppColors.background : Colors.transparent,
@@ -201,6 +272,89 @@ class TransactionHistoryScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _selectDateRange(
+      BuildContext context, TransactionHistoryViewModel viewModel) async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      initialDateRange: viewModel.startDate != null && viewModel.endDate != null
+          ? DateTimeRange(start: viewModel.startDate!, end: viewModel.endDate!)
+          : null,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.primary,
+              onPrimary: Colors.white,
+              surface: AppColors.surface,
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      viewModel.setDateFilter(picked.start, picked.end);
+    }
+  }
+
+  void _showCompanyFilter(
+      BuildContext context, TransactionHistoryViewModel viewModel) {
+    final tickers = viewModel.availableTickers;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSizes.r20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(AppSizes.p20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Filter by Company',
+                  style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary)),
+              const SizedBox(height: AppSizes.p16),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: tickers.length + 1,
+                  itemBuilder: (context, index) {
+                    final item = index == 0 ? null : tickers[index - 1];
+                    return ListTile(
+                      title: Text(item ?? 'All Companies',
+                          style: const TextStyle(color: Colors.white)),
+                      onTap: () {
+                        viewModel.setTickerFilter(item);
+                        Navigator.pop(context);
+                      },
+                      trailing: viewModel.tickerFilter == item
+                          ? const Icon(Icons.check, color: AppColors.primary)
+                          : null,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatDateRange(DateTime? start, DateTime? end) {
+    if (start == null || end == null) return 'All Time';
+    return '${DateFormat('MMM dd').format(start)} - ${DateFormat('MMM dd, yyyy').format(end)}';
   }
 
   Widget _buildTransactionItem(Transaction t) {
@@ -265,8 +419,9 @@ class TransactionHistoryScreen extends StatelessWidget {
                             ),
                             child: Text(t.typeString.toUpperCase(),
                                 style: TextStyle(
-                                    color:
-                                        isBuy ? AppColors.primary : Colors.grey,
+                                    color: isBuy
+                                        ? AppColors.success
+                                        : AppColors.error,
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold)),
                           ),
@@ -342,9 +497,8 @@ class TransactionHistoryScreen extends StatelessWidget {
                               fontWeight: FontWeight.w500)),
                       Text(AppFormatters.formatCurrency(t.totalValue),
                           style: TextStyle(
-                              color: isBuy
-                                  ? AppColors.primary
-                                  : AppColors.textPrimary,
+                              color:
+                                  isBuy ? AppColors.success : AppColors.error,
                               fontWeight: FontWeight.bold,
                               fontSize: 16)),
                     ],

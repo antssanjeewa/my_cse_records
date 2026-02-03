@@ -24,6 +24,9 @@ class AddTransactionViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+
   Stock? _selectedStock;
   Stock? get selectedStock => _selectedStock;
 
@@ -39,7 +42,7 @@ class AddTransactionViewModel extends ChangeNotifier {
   DateTime _date = DateTime.now();
   DateTime get date => _date;
 
-  static const double feePercentage = 0.0112; // 1.12% estimated fees
+  static const double feePercentage = 0.0114; // 1.14%
 
   double get totalPrice {
     final subtotal = _quantity * _unitPrice;
@@ -93,7 +96,23 @@ class AddTransactionViewModel extends ChangeNotifier {
   }
 
   Future<bool> saveTransaction() async {
-    if (_selectedStock == null || _quantity <= 0 || _unitPrice <= 0) {
+    _errorMessage = null;
+
+    if (_selectedStock == null) {
+      _errorMessage = 'Please select a company';
+      notifyListeners();
+      return false;
+    }
+
+    if (_quantity <= 0) {
+      _errorMessage = 'Quantity must be greater than 0';
+      notifyListeners();
+      return false;
+    }
+
+    if (_unitPrice <= 0) {
+      _errorMessage = 'Unit price must be greater than 0';
+      notifyListeners();
       return false;
     }
 
@@ -117,6 +136,7 @@ class AddTransactionViewModel extends ChangeNotifier {
       return true;
     } catch (e) {
       debugPrint('Error saving transaction: $e');
+      _errorMessage = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
       notifyListeners();
       return false;

@@ -122,8 +122,6 @@ class PortfolioScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
           ],
         );
       }),
