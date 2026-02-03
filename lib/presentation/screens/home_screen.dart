@@ -18,12 +18,8 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: Consumer<HomeViewModel>(
         builder: (context, viewModel, child) {
-          if (viewModel.isLoading || viewModel.summary == null) {
-            return const Center(
-                child: CircularProgressIndicator(color: AppColors.primary));
-          }
-
-          final summary = viewModel.summary!;
+          final summary = viewModel.summary;
+          final isInitialLoad = viewModel.isLoading && summary == null;
 
           return CustomScrollView(
             slivers: [
@@ -74,24 +70,46 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
 
+              // Loading Indicator
+              if (viewModel.isLoading && summary != null)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: AppSizes.p16),
+                    child: LinearProgressIndicator(
+                      backgroundColor: Colors.transparent,
+                      color: AppColors.primary,
+                      minHeight: 2,
+                    ),
+                  ),
+                ),
+
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSizes.p16),
-                  child: Column(
-                    children: [
-                      // Hero Card
-                      _buildHeroCard(summary.totalValue, summary.load),
-                      const SizedBox(height: AppSizes.p24),
-                      // Chart
-                      _buildChartSection(),
-                      const SizedBox(height: AppSizes.p24),
-                      // Asset Allocation
-                      _buildAssetAllocation(),
-                      const SizedBox(height: AppSizes.p24),
-                      // Top Holdings (Using the list from summary)
-                      _buildTopHoldings(summary.holdings, context),
-                    ],
-                  ),
+                  child: isInitialLoad
+                      ? Column(
+                          children: [
+                            _buildLoadingSkeleton(),
+                          ],
+                        )
+                      : Opacity(
+                          opacity: viewModel.isLoading ? 0.6 : 1.0,
+                          child: Column(
+                            children: [
+                              // Hero Card
+                              _buildHeroCard(summary!.totalValue, summary.load),
+                              const SizedBox(height: AppSizes.p24),
+                              // Chart
+                              _buildChartSection(),
+                              const SizedBox(height: AppSizes.p24),
+                              // Asset Allocation
+                              _buildAssetAllocation(),
+                              const SizedBox(height: AppSizes.p24),
+                              // Top Holdings
+                              _buildTopHoldings(summary.holdings, context),
+                            ],
+                          ),
+                        ),
                 ),
               ),
             ],
@@ -476,6 +494,202 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               )),
+      ],
+    );
+  }
+
+  Widget _buildLoadingSkeleton() {
+    return Column(
+      children: [
+        // Hero Card Skeleton
+        Container(
+          padding: const EdgeInsets.all(AppSizes.p24),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSizes.r24),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 100,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              const SizedBox(height: AppSizes.p8),
+              Container(
+                width: 200,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              const SizedBox(height: AppSizes.p16),
+              Container(
+                width: 150,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(AppSizes.r8),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSizes.p24),
+        // Chart Skeleton
+        Container(
+          padding: const EdgeInsets.all(AppSizes.p16),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSizes.r16),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSizes.p24),
+              Container(
+                height: 150,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSizes.p24),
+        // Holdings Skeleton
+        Container(
+          padding: const EdgeInsets.all(AppSizes.p16),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSizes.r16),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  Container(
+                    width: 60,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSizes.p12),
+              ...List.generate(
+                3,
+                (index) => Container(
+                  margin: const EdgeInsets.only(bottom: AppSizes.p8),
+                  padding: const EdgeInsets.all(AppSizes.p12),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceLight.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(AppSizes.r12),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceLight,
+                          borderRadius: BorderRadius.circular(AppSizes.r8),
+                        ),
+                      ),
+                      const SizedBox(width: AppSizes.p12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 120,
+                              height: 14,
+                              decoration: BoxDecoration(
+                                color: AppColors.surfaceLight,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Container(
+                              width: 80,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: AppColors.surfaceLight,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceLight,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            width: 40,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceLight,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

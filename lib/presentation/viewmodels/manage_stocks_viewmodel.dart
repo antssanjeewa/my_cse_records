@@ -86,4 +86,22 @@ class ManageStocksViewModel extends ChangeNotifier {
       debugPrint('Error updating stock: $e');
     }
   }
+
+  Future<void> deleteStock(int stockId) async {
+    try {
+      // In a real app, you'd call an API endpoint to delete the stock
+      debugPrint('Deleting stock ID: $stockId');
+
+      // Optimistically remove from local list
+      _stocks.removeWhere((stock) => stock.id == stockId);
+      _applyFilters();
+
+      // Refresh the list after deleting
+      await fetchStocks();
+    } catch (e) {
+      debugPrint('Error deleting stock: $e');
+      // Refresh to restore the list if deletion failed
+      await fetchStocks();
+    }
+  }
 }

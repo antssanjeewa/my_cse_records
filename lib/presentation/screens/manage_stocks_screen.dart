@@ -162,13 +162,66 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
-              IconButton(
-                icon:
-                    const Icon(Icons.edit, color: AppColors.primary, size: 20),
-                onPressed: () =>
-                    _showEditStockDialog(context, stock, viewModel),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit,
+                        color: AppColors.primary, size: 20),
+                    onPressed: () =>
+                        _showEditStockDialog(context, stock, viewModel),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.delete,
+                        color: Colors.redAccent, size: 20),
+                    onPressed: () =>
+                        _showDeleteConfirmation(context, stock, viewModel),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(
+      BuildContext context, Stock stock, ManageStocksViewModel viewModel) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: const Text('Delete Stock',
+            style: TextStyle(color: AppColors.textPrimary)),
+        content: Text(
+          'Are you sure you want to delete ${stock.ticker} - ${stock.name}?\n\nThis action cannot be undone.',
+          style: const TextStyle(color: AppColors.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              viewModel.deleteStock(stock.id);
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${stock.ticker} deleted successfully'),
+                  backgroundColor: AppColors.success,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
