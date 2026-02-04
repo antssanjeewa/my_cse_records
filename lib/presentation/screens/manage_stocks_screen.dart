@@ -270,12 +270,12 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const CustomLabel(text: 'Description (Optional)'),
+                        const CustomLabel(text: 'Ticker Symbol'),
                         const SizedBox(height: AppSizes.p8),
                         CustomTextField(
                           controller: tickerController,
                           keyboardType: TextInputType.text,
-                          hint: '',
+                          hint: 'e.g., SAMP.N0000',
                         ),
                       ],
                     ),
@@ -283,16 +283,6 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                       height: 16,
                       width: MediaQuery.of(context).size.width * 0.8,
                     ),
-                    TextField(
-                      controller: tickerController,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(
-                        labelText: 'Ticker Symbol',
-                        labelStyle: TextStyle(color: AppColors.textSecondary),
-                        hintText: 'e.g., SAMP.N0000',
-                      ),
-                    ),
-                    const SizedBox(height: 16),
                     TextField(
                       controller: nameController,
                       style: const TextStyle(color: AppColors.textPrimary),
