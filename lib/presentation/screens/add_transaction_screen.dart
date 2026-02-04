@@ -64,7 +64,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               stocks: viewModel.stocks,
               onStockSelected: (stock) {
                 viewModel.selectStock(stock);
-                _priceController.text = stock.lastPrice.toStringAsFixed(2);
               },
             ),
             const SizedBox(height: AppSizes.p16),

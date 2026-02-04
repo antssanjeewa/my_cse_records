@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import '../../core/utils/error_handler.dart';
 import '../../domain/entities/cash_transaction.dart';
 import '../../domain/repositories/portfolio_repository.dart';
 import 'package:uuid/uuid.dart';
@@ -85,8 +86,7 @@ class CashViewModel extends ChangeNotifier {
       await repository.addCashTransaction(transaction);
       await fetchCashData();
     } catch (e) {
-      if (e is SocketException) return "Check your internet connection.";
-      return 'Error adding cash transaction: $e';
+      return AppErrorHandler.mapErrorToString(e);
     } finally {
       _isLoading = false;
       notifyListeners();

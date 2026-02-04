@@ -275,6 +275,7 @@ class CashScreen extends StatelessWidget {
                                 ? null
                                 : descController.text,
                           );
+
                           if (context.mounted) {
                             if (error == null) {
                               Navigator.pop(context);

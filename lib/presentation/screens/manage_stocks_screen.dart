@@ -5,6 +5,7 @@ import '../../core/constants/constants.dart';
 import '../../core/utils/formatters.dart';
 import '../viewmodels/manage_stocks_viewmodel.dart';
 import '../../domain/entities/stock.dart';
+import '../widgets/widgets.dart';
 
 class ManageStocksScreen extends StatefulWidget {
   const ManageStocksScreen({super.key});
@@ -195,51 +196,59 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
       BuildContext context, Stock stock, ManageStocksViewModel viewModel) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text('Delete Stock',
-            style: TextStyle(color: AppColors.textPrimary)),
-        content: Text(
-          'Are you sure you want to delete ${stock.ticker} - ${stock.name}?\n\nThis action cannot be undone.',
-          style: const TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                await viewModel.deleteStock(stock.id);
-                if (!context.mounted) return;
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${stock.ticker} deleted successfully'),
-                    backgroundColor: AppColors.success,
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              } catch (e) {
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Failed to delete stock'),
-                    backgroundColor: Colors.redAccent,
-                  ),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+      builder: (context) => ListenableBuilder(
+          listenable: viewModel,
+          builder: (context, child) {
+            return AlertDialog(
+              backgroundColor: AppColors.surface,
+              title: const Text('Delete Stock',
+                  style: TextStyle(color: AppColors.textPrimary)),
+              content: Text(
+                'Are you sure you want to delete ${stock.ticker} - ${stock.name}?\n\nThis action cannot be undone.',
+                style: const TextStyle(color: AppColors.textSecondary),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel',
+                      style: TextStyle(color: Colors.grey)),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      await viewModel.deleteStock(stock.id);
+                      if (!context.mounted) return;
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${stock.ticker} deleted successfully'),
+                          backgroundColor: AppColors.success,
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Failed to delete stock'),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent),
+                  child: const Text('Delete',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            );
+          }),
     );
   }
 
   void _showAddStockDialog(BuildContext context) {
+    final viewModel = context.read<ManageStocksViewModel>();
     final tickerController = TextEditingController();
     final nameController = TextEditingController();
     final sectorController = TextEditingController();
@@ -247,97 +256,119 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text('Add New Stock',
-            style: TextStyle(color: AppColors.textPrimary)),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: tickerController,
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: const InputDecoration(
-                  labelText: 'Ticker Symbol',
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
-                  hintText: 'e.g., SAMP.N0000',
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: nameController,
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: const InputDecoration(
-                  labelText: 'Company Name',
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: sectorController,
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: const InputDecoration(
-                  labelText: 'Sector (Optional)',
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: priceController,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: const InputDecoration(
-                  labelText: 'Last Price',
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
-                  prefixText: 'Rs. ',
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final ticker = tickerController.text.trim();
-              final name = nameController.text.trim();
-              final sector = sectorController.text.trim();
-              final price = double.tryParse(priceController.text);
-
-              if (ticker.isNotEmpty &&
-                  name.isNotEmpty &&
-                  price != null &&
-                  price > 0) {
-                try {
-                  await context.read<ManageStocksViewModel>().addStock(
-                        ticker: ticker,
-                        name: name,
-                        sector: sector.isEmpty ? null : sector,
-                        lastPrice: price,
-                      );
-                  if (!context.mounted) return;
-                  Navigator.pop(context);
-                } catch (_) {
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to add stock'),
-                      backgroundColor: Colors.redAccent,
+      builder: (context) => ListenableBuilder(
+          listenable: viewModel,
+          builder: (context, child) {
+            return AlertDialog(
+              backgroundColor: AppColors.surface,
+              title: const Text('Add New Stock',
+                  style: TextStyle(color: AppColors.textPrimary)),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const CustomLabel(text: 'Description (Optional)'),
+                        const SizedBox(height: AppSizes.p8),
+                        CustomTextField(
+                          controller: tickerController,
+                          keyboardType: TextInputType.text,
+                          hint: '',
+                        ),
+                      ],
                     ),
-                  );
-                }
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            child:
-                const Text('Add Stock', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+                    SizedBox(
+                      height: 16,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                    ),
+                    TextField(
+                      controller: tickerController,
+                      style: const TextStyle(color: AppColors.textPrimary),
+                      decoration: const InputDecoration(
+                        labelText: 'Ticker Symbol',
+                        labelStyle: TextStyle(color: AppColors.textSecondary),
+                        hintText: 'e.g., SAMP.N0000',
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: nameController,
+                      style: const TextStyle(color: AppColors.textPrimary),
+                      decoration: const InputDecoration(
+                        labelText: 'Company Name',
+                        labelStyle: TextStyle(color: AppColors.textSecondary),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: sectorController,
+                      style: const TextStyle(color: AppColors.textPrimary),
+                      decoration: const InputDecoration(
+                        labelText: 'Sector (Optional)',
+                        labelStyle: TextStyle(color: AppColors.textSecondary),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: priceController,
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(color: AppColors.textPrimary),
+                      decoration: const InputDecoration(
+                        labelText: 'Last Price',
+                        labelStyle: TextStyle(color: AppColors.textSecondary),
+                        prefixText: 'Rs. ',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel',
+                      style: TextStyle(color: Colors.grey)),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final ticker = tickerController.text.trim();
+                    final name = nameController.text.trim();
+                    final sector = sectorController.text.trim();
+                    final price = double.tryParse(priceController.text);
+
+                    if (ticker.isNotEmpty &&
+                        name.isNotEmpty &&
+                        price != null &&
+                        price > 0) {
+                      try {
+                        await viewModel.addStock(
+                          ticker: ticker,
+                          name: name,
+                          sector: sector.isEmpty ? null : sector,
+                          lastPrice: price,
+                        );
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                      } catch (_) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Failed to add stock'),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary),
+                  child: const Text('Add Stock',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            );
+          }),
     );
   }
 
