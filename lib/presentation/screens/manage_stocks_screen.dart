@@ -254,6 +254,13 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
     final sectorController = TextEditingController();
     final priceController = TextEditingController();
 
+    void disposeControllers() {
+      sectorController.dispose();
+      priceController.dispose();
+      tickerController.dispose();
+      nameController.dispose();
+    }
+
     showDialog(
       context: context,
       builder: (context) => ListenableBuilder(
@@ -316,7 +323,10 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    disposeControllers();
+                    Navigator.pop(context);
+                  },
                   child: const Text('Cancel',
                       style: TextStyle(color: Colors.grey)),
                 ),
@@ -339,6 +349,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                           lastPrice: price,
                         );
                         if (!context.mounted) return;
+                        disposeControllers();
                         Navigator.pop(context);
                       } catch (_) {
                         if (!context.mounted) return;
@@ -349,6 +360,14 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                           ),
                         );
                       }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Please fill in all required fields with valid values'),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -359,7 +378,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
               ],
             );
           }),
-    );
+    ).then((_) => disposeControllers());
   }
 
   void _showEditStockDialog(
@@ -367,6 +386,11 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
     final priceController =
         TextEditingController(text: stock.lastPrice.toString());
     final sectorController = TextEditingController(text: stock.sector ?? '');
+
+    void disposeControllers() {
+      sectorController.dispose();
+      priceController.dispose();
+    }
 
     showDialog(
       context: context,
@@ -400,7 +424,10 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              disposeControllers();
+              Navigator.pop(context);
+            },
             child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
@@ -416,6 +443,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                     lastPrice: price,
                   );
                   if (!context.mounted) return;
+                  disposeControllers();
                   Navigator.pop(context);
                 } catch (_) {
                   if (!context.mounted) return;
@@ -433,6 +461,6 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
           ),
         ],
       ),
-    );
+    ).then((_) => disposeControllers());
   }
 }
