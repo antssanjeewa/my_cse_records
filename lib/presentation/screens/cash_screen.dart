@@ -3,8 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/constants.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/utils/snackbar_util.dart';
 import '../../domain/entities/cash_transaction.dart';
 import '../viewmodels/cash_viewmodel.dart';
+import '../widgets/widgets.dart';
 
 class CashScreen extends StatelessWidget {
   const CashScreen({super.key});
@@ -128,7 +130,7 @@ class CashScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withAlpha(50),
             borderRadius: BorderRadius.circular(AppSizes.r12),
           ),
           child: Row(
@@ -214,57 +216,94 @@ class CashScreen extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: Text('$type Cash',
-            style: const TextStyle(color: AppColors.textPrimary)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: amountController,
-              keyboardType: TextInputType.number,
-              style: const TextStyle(color: AppColors.textPrimary),
-              decoration: const InputDecoration(
-                labelText: 'Amount',
-                labelStyle: TextStyle(color: AppColors.textSecondary),
-                prefixText: 'Rs. ',
+      builder: (context) => ListenableBuilder(
+          listenable: viewModel,
+          builder: (context, child) {
+            return AlertDialog(
+              backgroundColor: AppColors.surface,
+              title: Text('$type Cash',
+                  style: const TextStyle(color: AppColors.textPrimary)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const CustomLabel(text: 'Amount'),
+                      const SizedBox(height: AppSizes.p8),
+                      CustomTextField(
+                        controller: amountController,
+                        hint: '0',
+                        prefixText: 'Rs. ',
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const CustomLabel(text: 'Description (Optional)'),
+                      const SizedBox(height: AppSizes.p8),
+                      CustomTextField(
+                        controller: descController,
+                        keyboardType: TextInputType.text,
+                        hint: '',
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: descController,
-              style: const TextStyle(color: AppColors.textPrimary),
-              decoration: const InputDecoration(
-                labelText: 'Description (Optional)',
-                labelStyle: TextStyle(color: AppColors.textSecondary),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final amount = double.tryParse(amountController.text);
-              if (amount != null && amount > 0) {
-                viewModel.addTransaction(
-                  amount: amount,
-                  type: type,
-                  description:
-                      descController.text.isEmpty ? null : descController.text,
-                );
-                Navigator.pop(context);
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            child: const Text('Confirm', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel',
+                      style: TextStyle(color: Colors.grey)),
+                ),
+                ElevatedButton(
+                  onPressed: viewModel.isLoading
+                      ? null
+                      : () async {
+                          final amount = double.tryParse(amountController.text);
+
+                          final error = await viewModel.addTransaction(
+                            amount: amount,
+                            type: type,
+                            description: descController.text.isEmpty
+                                ? null
+                                : descController.text,
+                          );
+                          if (context.mounted) {
+                            if (error == null) {
+                              Navigator.pop(context);
+                            }
+
+                            AppSnackBar.show(context,
+                                message:
+                                    error ?? 'Transaction added successfully',
+                                isError: error != null);
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      disabledBackgroundColor: AppColors.primary.withAlpha(50)),
+                  child: viewModel.isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Confirm',
+                          style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            );
+          }),
     );
   }
 }

@@ -147,7 +147,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                 if (stock.sector != null)
                   Text(stock.sector!,
                       style: TextStyle(
-                          color: AppColors.primary.withOpacity(0.7),
+                          color: AppColors.primary.withAlpha(178),
                           fontSize: 10,
                           fontWeight: FontWeight.bold)),
               ],
