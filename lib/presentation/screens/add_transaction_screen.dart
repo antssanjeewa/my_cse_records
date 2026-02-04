@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/constants.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/utils/snackbar_util.dart';
 import '../../domain/entities/transaction.dart';
 import '../viewmodels/add_transaction_viewmodel.dart';
 import '../widgets/widgets.dart';
@@ -156,11 +157,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       if (success && mounted) {
                         Navigator.of(context).pop();
                       } else if (!success && mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(viewModel.errorMessage ??
-                                  'An unknown error occurred')),
-                        );
+                        AppSnackBar.show(context,
+                            message: viewModel.errorMessage ??
+                                'An unknown error occurred',
+                            isError: true);
                       }
                     },
               style: ElevatedButton.styleFrom(

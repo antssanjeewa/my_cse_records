@@ -127,6 +127,7 @@ class AddTransactionViewModel extends ChangeNotifier {
         type: _type,
         qty: _quantity,
         price: _unitPrice,
+        totalPrice: totalPrice,
         date: _date,
       );
 

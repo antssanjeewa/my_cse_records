@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import '../../core/utils/error_handler.dart';
 import '../../domain/entities/cash_transaction.dart';
@@ -50,25 +48,20 @@ class CashViewModel extends ChangeNotifier {
     if (_isLoading) {
       return 'Please wait for the previous transaction to complete';
     }
+
     _isLoading = true;
     notifyListeners();
 
     try {
       if (amount == null || amount <= 0) {
-        _isLoading = false;
-        notifyListeners();
         return 'Amount must be positive';
       }
       const allowedTypes = {'DEPOSIT', 'WITHDRAWAL'};
       if (!allowedTypes.contains(type)) {
-        _isLoading = false;
-        notifyListeners();
         return 'Unsupported transaction type: $type';
       }
 
       if (type == 'WITHDRAWAL' && amount > balance) {
-        _isLoading = false;
-        notifyListeners();
         return 'Insufficient balance';
       }
 

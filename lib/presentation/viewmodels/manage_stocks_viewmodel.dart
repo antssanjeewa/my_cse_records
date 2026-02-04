@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/utils/error_handler.dart';
 import '../../domain/entities/stock.dart';
 import '../../domain/repositories/portfolio_repository.dart';
 
@@ -53,12 +54,16 @@ class ManageStocksViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addStock({
+  Future<String?> addStock({
     required String ticker,
     required String name,
     String? sector,
-    required double lastPrice,
+    required double? lastPrice,
   }) async {
+    if (ticker.isEmpty || name.isEmpty || lastPrice == null || lastPrice <= 0) {
+      return 'Please fill in all required fields with valid values';
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -70,14 +75,13 @@ class ManageStocksViewModel extends ChangeNotifier {
         lastPrice: lastPrice,
       );
 
-      // Refresh the list after adding
       await fetchStocks();
     } catch (e) {
-      debugPrint('Error adding stock: $e');
       _isLoading = false;
       notifyListeners();
-      rethrow;
+      return AppErrorHandler.mapErrorToString(e);
     }
+    return null;
   }
 
   Future<void> updateStock({
@@ -95,7 +99,6 @@ class ManageStocksViewModel extends ChangeNotifier {
         lastPrice: lastPrice,
       );
 
-      // Refresh the list after updating
       await fetchStocks();
     } catch (e) {
       debugPrint('Error updating stock: $e');
@@ -107,19 +110,14 @@ class ManageStocksViewModel extends ChangeNotifier {
 
   Future<void> deleteStock(int stockId) async {
     try {
-      // Delete from database first
       await repository.deleteStock(stockId);
 
-      // Update local state after successful deletion
       _stocks.removeWhere((stock) => stock.id == stockId);
       _applyFilters();
 
-      // Optional: Refresh from database to ensure consistency
-      // Comment out if you trust the local state after deletion
       await fetchStocks();
     } catch (e) {
       debugPrint('Error deleting stock: $e');
-      // Refresh to restore correct state if deletion failed
       await fetchStocks();
       rethrow;
     }

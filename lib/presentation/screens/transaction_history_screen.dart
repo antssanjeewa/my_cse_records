@@ -198,10 +198,19 @@ class TransactionHistoryScreen extends StatelessWidget {
                   ),
                 )
               else if (filteredTransactions.isEmpty)
-                const SliverFillRemaining(
+                SliverFillRemaining(
                   child: Center(
-                    child: Text('No transactions found',
-                        style: TextStyle(color: Colors.white54)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.compare_arrows,
+                            size: 64, color: Colors.grey.withAlpha(50)),
+                        const SizedBox(height: 16),
+                        const Text('No Transactions found',
+                            style: TextStyle(
+                                color: AppColors.textSecondary, fontSize: 16)),
+                      ],
+                    ),
                   ),
                 )
               else

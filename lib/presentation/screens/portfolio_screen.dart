@@ -79,11 +79,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                         onChanged: (value) => viewModel.setSearchQuery(value),
                         style: const TextStyle(color: AppColors.textPrimary),
                         decoration: InputDecoration(
-                          filled: true,
-                          fillColor: AppColors.surface,
                           hintText: 'Search ticker or company...',
-                          hintStyle:
-                              const TextStyle(color: AppColors.textSecondary),
                           prefixIcon: const Icon(Icons.search,
                               color: AppColors.textSecondary),
                           suffixIcon: _searchController.text.isNotEmpty
@@ -96,18 +92,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                                   },
                                 )
                               : null,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(AppSizes.r12),
-                              borderSide:
-                                  const BorderSide(color: AppColors.border)),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(AppSizes.r12),
-                              borderSide:
-                                  const BorderSide(color: AppColors.border)),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(AppSizes.r12),
-                              borderSide:
-                                  const BorderSide(color: AppColors.primary)),
                           contentPadding: EdgeInsets.zero,
                         ),
                       ),
@@ -416,7 +400,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                   Text(h.sector,
                       style: GoogleFonts.inter(
                           color: AppColors.primary,
-                          fontSize: 10,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0)),
                   Text(h.ticker,
@@ -450,7 +434,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('QUANTITY | AVG COST',
+                  const Text('QUANTITY | UNIT PRICE',
                       style: TextStyle(
                           color: Colors.grey,
                           fontSize: 10,
@@ -476,13 +460,13 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Text('MARKET PRICE',
+                  const Text('TOTAL COST',
                       style: TextStyle(
                           color: Colors.grey,
                           fontSize: 10,
                           fontWeight: FontWeight.bold)),
                   const SizedBox(height: 2),
-                  Text(AppFormatters.formatCurrency(h.marketPrice),
+                  Text(AppFormatters.formatCurrency(h.totalPrice),
                       style: const TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 14,

@@ -10,6 +10,7 @@ class Transaction {
   final double qty;
   final double price;
   final DateTime date;
+  final double totalPrice;
   final Stock? stock;
 
   Transaction({
@@ -20,6 +21,7 @@ class Transaction {
     required this.qty,
     required this.price,
     required this.date,
+    this.totalPrice = 0,
     this.stock,
   });
 

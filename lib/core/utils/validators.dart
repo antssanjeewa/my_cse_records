@@ -18,4 +18,18 @@ class AppValidators {
     }
     return null;
   }
+
+  static String? validateAmount(String? value) {
+    if (value == null || value.isEmpty) return 'Amount is required';
+    final n = double.tryParse(value);
+    if (n == null) return 'Enter a valid number';
+    if (n <= 0) return 'Amount must be greater than 0';
+    return null;
+  }
+
+  static String? validateText(String? value) {
+    if (value == null || value.isEmpty) return 'This field is required';
+    if (value.length > 50) return 'Too long (max 50 chars)';
+    return null;
+  }
 }

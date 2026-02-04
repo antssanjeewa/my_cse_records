@@ -292,7 +292,7 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
 
   void _log(String method, String table, [dynamic data]) {
     if (kDebugMode) {
-      debugPrint('DEBUG [Supabase $method] $table');
+      developer.log('DEBUG [Supabase $method] $table');
       if (data != null) {
         developer.log(table, name: method, error: data, level: 50);
       }
