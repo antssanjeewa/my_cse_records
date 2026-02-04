@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import '../../core/constants/constants.dart';
 import '../../core/utils/formatters.dart';
 import '../../domain/entities/transaction.dart';
-import '../../domain/entities/stock.dart';
 import '../viewmodels/add_transaction_viewmodel.dart';
+import '../widgets/widgets.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -59,9 +58,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             const SizedBox(height: AppSizes.p24),
 
             // Company Selection
-            _buildLabel('Company'),
+            const CustomLabel(text: 'Company'),
             const SizedBox(height: AppSizes.p8),
-            _buildStockSelector(viewModel),
+            CustomStockSearchField(
+              stocks: viewModel.stocks,
+              onStockSelected: (stock) {
+                viewModel.selectStock(stock);
+              },
+            ),
             const SizedBox(height: AppSizes.p16),
 
             // Quantity & Unit Price
@@ -71,9 +75,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildLabel('Quantity'),
+                      const CustomLabel(text: 'Quantity'),
                       const SizedBox(height: AppSizes.p8),
-                      _buildTextField(
+                      CustomTextField(
                         controller: _qtyController,
                         hint: '0',
                         onChanged: (val) =>
@@ -87,9 +91,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildLabel('Unit Price (LKR)'),
+                      const CustomLabel(text: 'Unit Price (LKR)'),
                       const SizedBox(height: AppSizes.p8),
-                      _buildTextField(
+                      CustomTextField(
                         controller: _priceController,
                         hint: '0.00',
                         onChanged: (val) =>
@@ -103,7 +107,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             const SizedBox(height: AppSizes.p16),
 
             // Total Price
-            _buildLabel('Total Price (LKR)'),
+            const CustomLabel(text: 'Total Price (LKR)'),
             const SizedBox(height: AppSizes.p8),
             Container(
               height: 56,
@@ -135,9 +139,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             const SizedBox(height: AppSizes.p16),
 
             // Date Picker
-            _buildLabel('Date'),
+            const CustomLabel(text: 'Date'),
             const SizedBox(height: AppSizes.p8),
-            _buildDatePicker(context, viewModel),
+            CustomDateField(
+              selectedDate: viewModel.date,
+              onDateSelected: viewModel.setDate,
+            ),
             const SizedBox(height: AppSizes.p32),
 
             // Save Button
@@ -186,21 +193,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4),
-      child: Text(
-        text.toUpperCase(),
-        style: const TextStyle(
-          color: AppColors.textSecondary,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.2,
         ),
       ),
     );
@@ -263,171 +255,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStockSelector(AddTransactionViewModel viewModel) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.r12),
-        border: Border.all(color: AppColors.border),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.p4),
-      child: Autocomplete<Stock>(
-        displayStringForOption: (Stock stock) =>
-            '${stock.name} (${stock.ticker})',
-        optionsBuilder: (TextEditingValue textEditingValue) {
-          if (textEditingValue.text == '') {
-            return const Iterable<Stock>.empty();
-          }
-          return viewModel.stocks.where((Stock stock) {
-            return stock.name
-                    .toLowerCase()
-                    .contains(textEditingValue.text.toLowerCase()) ||
-                stock.ticker
-                    .toLowerCase()
-                    .contains(textEditingValue.text.toLowerCase());
-          });
-        },
-        onSelected: (Stock stock) {
-          viewModel.selectStock(stock);
-          _priceController.text = stock.lastPrice.toStringAsFixed(2);
-        },
-        fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-          return TextField(
-            controller: controller,
-            focusNode: focusNode,
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.w500),
-            decoration: const InputDecoration(
-              hintText: 'Search ticker or name',
-              hintStyle: TextStyle(color: AppColors.textSecondary),
-              prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
-              suffixIcon:
-                  Icon(Icons.expand_more, color: AppColors.textSecondary),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 16),
-            ),
-          );
-        },
-        optionsViewBuilder: (context, onSelected, options) {
-          return Align(
-            alignment: Alignment.topLeft,
-            child: Material(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppSizes.r12),
-              elevation: 4,
-              borderOnForeground: true,
-              child: Container(
-                width: MediaQuery.of(context).size.width - 32,
-                constraints: const BoxConstraints(maxHeight: 200),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(AppSizes.r12),
-                ),
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  itemCount: options.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final Stock option = options.elementAt(index);
-                    return InkWell(
-                      onTap: () => onSelected(option),
-                      child: Container(
-                        padding: const EdgeInsets.all(AppSizes.p16),
-                        child: Text(
-                          '${option.name} (${option.ticker})',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hint,
-    required Function(String) onChanged,
-  }) {
-    return Container(
-      height: 56,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.r12),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        style:
-            const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: const TextStyle(color: AppColors.textSecondary),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDatePicker(
-      BuildContext context, AddTransactionViewModel viewModel) {
-    return GestureDetector(
-      onTap: () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: viewModel.date,
-          firstDate: DateTime(2000),
-          lastDate: DateTime.now(),
-          builder: (context, child) {
-            return Theme(
-              data: Theme.of(context).copyWith(
-                colorScheme: const ColorScheme.dark(
-                  primary: AppColors.primary,
-                  onPrimary: Colors.white,
-                  surface: AppColors.surface,
-                  onSurface: Colors.white,
-                ),
-              ),
-              child: child!,
-            );
-          },
-        );
-        if (date != null) {
-          viewModel.setDate(date);
-        }
-      },
-      child: Container(
-        height: 56,
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppSizes.r12),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.calendar_today,
-                color: AppColors.textSecondary, size: 20),
-            const SizedBox(width: AppSizes.p12),
-            Text(
-              DateFormat('yyyy-MM-dd').format(viewModel.date),
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.w500),
-            ),
-          ],
         ),
       ),
     );

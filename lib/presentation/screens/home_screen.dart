@@ -506,7 +506,7 @@ class HomeScreen extends StatelessWidget {
       children: [
         // Hero Card Skeleton
         Container(
-          padding: const EdgeInsets.all(AppSizes.p24),
+          padding: const EdgeInsets.all(AppSizes.p16),
           decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(AppSizes.r24),
@@ -525,7 +525,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppSizes.p8),
               Container(
-                width: 200,
+                width: 400,
                 height: 32,
                 decoration: BoxDecoration(
                   color: AppColors.surfaceLight,
@@ -534,7 +534,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppSizes.p16),
               Container(
-                width: 150,
+                width: 200,
                 height: 24,
                 decoration: BoxDecoration(
                   color: AppColors.surfaceLight,
@@ -626,7 +626,7 @@ class HomeScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: AppSizes.p8),
                   padding: const EdgeInsets.all(AppSizes.p12),
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceLight.withOpacity(0.3),
+                    color: AppColors.surfaceLight.withAlpha(75),
                     borderRadius: BorderRadius.circular(AppSizes.r12),
                   ),
                   child: Row(

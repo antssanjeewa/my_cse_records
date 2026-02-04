@@ -14,6 +14,10 @@ class AppTheme {
         secondary: AppColors.primary,
         surface: AppColors.surface,
       ),
+      inputDecorationTheme: const InputDecorationTheme(
+        hintStyle: TextStyle(color: AppColors.textSecondary),
+        contentPadding: EdgeInsets.symmetric(horizontal: AppSizes.p16),
+      ),
       useMaterial3: true,
     );
   }

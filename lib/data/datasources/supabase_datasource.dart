@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/holding_model.dart';
@@ -276,8 +278,10 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
     _log('GET_AGGREGATE', 'cash_transactions_balance');
     try {
       final response =
-          await supabase.from('cash_transactions').select('amount.sum()');
-      final total = (response[0]['sum'] as num?)?.toDouble() ?? 0.0;
+          await supabase.from('cash_transactions').select('amount');
+
+      final total = (response as List).fold<double>(
+          0.0, (sum, item) => sum + (item['amount'] as num).toDouble());
       _log('RESPONSE', 'cash_balance', total);
       return total;
     } catch (e) {
@@ -288,9 +292,9 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
 
   void _log(String method, String table, [dynamic data]) {
     if (kDebugMode) {
-      print('DEBUG [Supabase $method] $table');
+      debugPrint('DEBUG [Supabase $method] $table');
       if (data != null) {
-        print('      Data: $data');
+        developer.log(table, name: method, error: data, level: 50);
       }
     }
   }

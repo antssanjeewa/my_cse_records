@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import '../../core/utils/error_handler.dart';
 import '../../domain/entities/cash_transaction.dart';
 import '../../domain/repositories/portfolio_repository.dart';
 import 'package:uuid/uuid.dart';
@@ -39,28 +42,36 @@ class CashViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> addTransaction({
-    required double amount,
+  Future<String?> addTransaction({
+    required double? amount,
     required String type,
     String? description,
   }) async {
+    if (_isLoading) {
+      return 'Please wait for the previous transaction to complete';
+    }
     _isLoading = true;
     notifyListeners();
 
     try {
-      if (amount <= 0) {
-        debugPrint('Amount must be positive');
+      if (amount == null || amount <= 0) {
         _isLoading = false;
         notifyListeners();
-        return;
+        return 'Amount must be positive';
       }
       const allowedTypes = {'DEPOSIT', 'WITHDRAWAL'};
       if (!allowedTypes.contains(type)) {
-        debugPrint('Unsupported transaction type: $type');
         _isLoading = false;
         notifyListeners();
-        return;
+        return 'Unsupported transaction type: $type';
       }
+
+      if (type == 'WITHDRAWAL' && amount > balance) {
+        _isLoading = false;
+        notifyListeners();
+        return 'Insufficient balance';
+      }
+
       final normalizedAmount = amount.abs();
 
       final transaction = CashTransaction(
@@ -75,10 +86,11 @@ class CashViewModel extends ChangeNotifier {
       await repository.addCashTransaction(transaction);
       await fetchCashData();
     } catch (e) {
-      debugPrint('Error adding cash transaction: $e');
+      return AppErrorHandler.mapErrorToString(e);
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+    return null;
   }
 }
