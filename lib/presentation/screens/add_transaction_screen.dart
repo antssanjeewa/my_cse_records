@@ -6,6 +6,8 @@ import '../../core/utils/formatters.dart';
 import '../../core/utils/snackbar_util.dart';
 import '../../domain/entities/transaction.dart';
 import '../viewmodels/add_transaction_viewmodel.dart';
+import '../viewmodels/portfolio_viewmodel.dart';
+import '../viewmodels/transaction_history_viewmodel.dart';
 import '../widgets/widgets.dart';
 
 class AddTransactionScreen extends StatefulWidget {
@@ -155,7 +157,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   : () async {
                       final success = await viewModel.saveTransaction();
                       if (success && mounted) {
+                        // Refresh portfolio and transaction history
+                        if (context.mounted) {
+                          context.read<PortfolioViewModel>().fetchHoldings();
+                          context
+                              .read<TransactionHistoryViewModel>()
+                              .fetchTransactions();
+                        }
                         Navigator.of(context).pop();
+                        AppSnackBar.show(context,
+                            message: 'Transaction added successfully',
+                            isError: false);
                       } else if (!success && mounted) {
                         AppSnackBar.show(context,
                             message: viewModel.errorMessage ??
