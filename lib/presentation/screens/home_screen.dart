@@ -29,10 +29,13 @@ class HomeScreen extends StatelessWidget {
                 floating: true,
                 leading: Container(
                   margin: const EdgeInsets.only(left: AppSizes.p20),
-                  child: Image.asset(
-                    AppAssets.logo,
-                    width: 24,
-                    height: 24,
+                  child: Hero(
+                    tag: 'app_logo_hero',
+                    child: Image.asset(
+                      AppAssets.logo,
+                      width: 24,
+                      height: 24,
+                    ),
                   ),
                 ),
                 pinned: true,
