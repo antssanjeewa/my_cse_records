@@ -27,6 +27,5 @@ class Holding {
   double get marketPrice => stock?.lastPrice ?? 0;
   double get totalPrice => avgPrice * quantity;
   double get value => quantity * marketPrice;
-  double get profitPercent =>
-      avgPrice > 0 ? ((marketPrice - avgPrice) / avgPrice) * 100 : 0;
+  double get profitPercent => (profit / totalPrice) * 100;
 }

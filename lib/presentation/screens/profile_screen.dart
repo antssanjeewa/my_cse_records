@@ -94,12 +94,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     width: 80,
                     height: 80,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.primary, width: 2),
-                      image: const DecorationImage(
-                        image: NetworkImage(AppAssets.userAvatar),
-                        fit: BoxFit.cover,
+                      // border: Border.all(color: AppColors.primary, width: 2),
+                      image: DecorationImage(
+                        image: AssetImage(AppAssets.logo),
+                        fit: BoxFit.fitWidth,
                       ),
                     ),
                   ),

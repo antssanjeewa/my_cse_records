@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/entities/transaction.dart';
@@ -44,140 +43,141 @@ class TransactionHistoryScreen extends StatelessWidget {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSizes.p16),
-                  child: Column(
-                    children: [
-                      // Segmented Control
-                      Container(
-                        height: 44,
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceLight,
-                          borderRadius: BorderRadius.circular(AppSizes.r12),
-                        ),
-                        child: Row(
-                          children: [
-                            _buildSegment(context, viewModel, 'All'),
-                            _buildSegment(context, viewModel, 'Buy'),
-                            _buildSegment(context, viewModel, 'Sell'),
-                          ],
-                        ),
+                  child: Column(children: [
+                    // Segmented Control
+                    Container(
+                      height: 44,
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(AppSizes.r12),
                       ),
-                      const SizedBox(height: AppSizes.p16),
-                      // Company Filter
-                      GestureDetector(
-                        onTap: () => _showCompanyFilter(context, viewModel),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: AppSizes.p16, vertical: AppSizes.p12),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            borderRadius: BorderRadius.circular(AppSizes.r12),
-                            border: Border.all(color: AppColors.border),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
+                      child: Row(
+                        children: [
+                          _buildTimeSegment(context, viewModel, 'All'),
+                          _buildTimeSegment(context, viewModel, 'Month'),
+                          _buildTimeSegment(context, viewModel, 'Custom'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSizes.p16),
+                    Row(
+                      children: [
+                        // Company Filter
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _showCompanyFilter(context, viewModel),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSizes.p16,
+                                  vertical: AppSizes.p12),
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                borderRadius:
+                                    BorderRadius.circular(AppSizes.r12),
+                                border: Border.all(color: AppColors.border),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(Icons.business,
-                                      color: AppColors.primary,
-                                      size: AppSizes.iconMd),
-                                  const SizedBox(width: AppSizes.p12),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  const Text('COMPANY',
+                                      style: TextStyle(
+                                          color: AppColors.textSecondary,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 1.0)),
+                                  const SizedBox(height: 2),
+                                  Row(
                                     children: [
-                                      const Text('COMPANY',
-                                          style: TextStyle(
-                                              color: AppColors.textSecondary,
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 1.0)),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                          viewModel.tickerFilter ??
-                                              'All Companies',
-                                          style: GoogleFonts.inter(
-                                              color: AppColors.textPrimary,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold)),
+                                      const Icon(Icons.business,
+                                          color: AppColors.primary,
+                                          size: AppSizes.iconMd),
+                                      const SizedBox(width: AppSizes.p8),
+                                      Expanded(
+                                        child: Text(
+                                            viewModel.tickerFilter ?? 'All',
+                                            style: GoogleFonts.inter(
+                                                color: AppColors.textPrimary,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold),
+                                            overflow: TextOverflow.ellipsis),
+                                      ),
+                                      if (viewModel.tickerFilter != null)
+                                        GestureDetector(
+                                          onTap: () => viewModel.setStockFilter(
+                                              null, null),
+                                          child: const Icon(Icons.close,
+                                              size: 14, color: Colors.grey),
+                                        )
+                                      else
+                                        const Icon(Icons.expand_more,
+                                            size: 14, color: Colors.grey),
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
-                              if (viewModel.tickerFilter != null)
-                                IconButton(
-                                  icon: const Icon(Icons.close,
-                                      size: 16, color: Colors.grey),
-                                  onPressed: () =>
-                                      viewModel.setStockFilter(null, null),
-                                )
-                              else
-                                const Icon(Icons.expand_more,
-                                    color: Colors.grey),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: AppSizes.p12),
-                      // Date Range
-                      GestureDetector(
-                        onTap: () => _selectDateRange(context, viewModel),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: AppSizes.p16, vertical: AppSizes.p12),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            borderRadius: BorderRadius.circular(AppSizes.r12),
-                            border: Border.all(color: AppColors.border),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
+                        const SizedBox(width: AppSizes.p12),
+                        // Type Filter
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _showTypeFilter(context, viewModel),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSizes.p16,
+                                  vertical: AppSizes.p12),
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                borderRadius:
+                                    BorderRadius.circular(AppSizes.r12),
+                                border: Border.all(color: AppColors.border),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(Icons.calendar_today,
-                                      color: AppColors.primary,
-                                      size: AppSizes.iconMd),
-                                  const SizedBox(width: AppSizes.p12),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  const Text('TYPE',
+                                      style: TextStyle(
+                                          color: AppColors.textSecondary,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 1.0)),
+                                  const SizedBox(height: 2),
+                                  Row(
                                     children: [
-                                      const Text('DATE RANGE',
-                                          style: TextStyle(
-                                              color: AppColors.textSecondary,
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 1.0)),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                          _formatDateRange(viewModel.startDate,
-                                              viewModel.endDate),
-                                          style: GoogleFonts.inter(
-                                              color: AppColors.textPrimary,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold)),
+                                      const Icon(Icons.filter_list,
+                                          color: AppColors.primary,
+                                          size: AppSizes.iconMd),
+                                      const SizedBox(width: AppSizes.p8),
+                                      Expanded(
+                                        child: Text(viewModel.typeFilter,
+                                            style: GoogleFonts.inter(
+                                                color: AppColors.textPrimary,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold),
+                                            overflow: TextOverflow.ellipsis),
+                                      ),
+                                      if (viewModel.typeFilter != 'All')
+                                        GestureDetector(
+                                          onTap: () =>
+                                              viewModel.setTypeFilter('All'),
+                                          child: const Icon(Icons.close,
+                                              size: 14, color: Colors.grey),
+                                        )
+                                      else
+                                        const Icon(Icons.expand_more,
+                                            size: 14, color: Colors.grey),
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
-                              if (viewModel.startDate != null)
-                                IconButton(
-                                  icon: const Icon(Icons.close,
-                                      size: 16, color: Colors.grey),
-                                  onPressed: () =>
-                                      viewModel.setDateFilter(null, null),
-                                )
-                              else
-                                const Icon(Icons.expand_more,
-                                    color: Colors.grey),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ]),
                 ),
               ),
 
@@ -277,12 +277,36 @@ class TransactionHistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSegment(BuildContext context,
+  Widget _buildTimeSegment(BuildContext context,
       TransactionHistoryViewModel viewModel, String label) {
-    final isSelected = viewModel.typeFilter == label;
+    bool isSelected = false;
+    if (label == 'All') {
+      isSelected = viewModel.startDate == null && viewModel.endDate == null;
+    } else if (label == 'Month') {
+      if (viewModel.startDate != null && viewModel.endDate != null) {
+        final days = viewModel.endDate!.difference(viewModel.startDate!).inDays;
+        isSelected = days <= 31;
+      }
+    } else if (label == 'Custom') {
+      if (viewModel.startDate != null && viewModel.endDate != null) {
+        final days = viewModel.endDate!.difference(viewModel.startDate!).inDays;
+        isSelected = days > 31;
+      }
+    }
+
     return Expanded(
       child: GestureDetector(
-        onTap: () => viewModel.setTypeFilter(label),
+        onTap: () {
+          if (label == 'All') {
+            viewModel.setDateFilter(null, null);
+          } else if (label == 'Month') {
+            final start = DateTime.now().subtract(const Duration(days: 30));
+            viewModel.setDateFilter(start, DateTime.now());
+          } else if (label == 'Custom') {
+            // Open the date range picker for a custom range
+            _selectDateRange(context, viewModel);
+          }
+        },
         child: Container(
           decoration: BoxDecoration(
             color: isSelected ? AppColors.background : Colors.transparent,
@@ -306,6 +330,45 @@ class TransactionHistoryScreen extends StatelessWidget {
               )),
         ),
       ),
+    );
+  }
+
+  void _showTypeFilter(
+      BuildContext context, TransactionHistoryViewModel viewModel) {
+    final options = ['All', 'Buy', 'Sell', 'Dividend'];
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSizes.r20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(AppSizes.p20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Filter by Type',
+                  style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary)),
+              const SizedBox(height: AppSizes.p16),
+              ...options.map((opt) => ListTile(
+                    title:
+                        Text(opt, style: const TextStyle(color: Colors.white)),
+                    onTap: () {
+                      viewModel.setTypeFilter(opt);
+                      Navigator.pop(context);
+                    },
+                    trailing: viewModel.typeFilter == opt
+                        ? const Icon(Icons.check, color: AppColors.primary)
+                        : null,
+                  ))
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -387,14 +450,18 @@ class TransactionHistoryScreen extends StatelessWidget {
     );
   }
 
-  String _formatDateRange(DateTime? start, DateTime? end) {
-    if (start == null || end == null) return 'All Time';
-    return '${DateFormat('MMM dd').format(start)} - ${DateFormat('MMM dd, yyyy').format(end)}';
-  }
-
   Widget _buildTransactionItem(Transaction t) {
     final isBuy = t.type == TransactionType.buy;
-    final color = isBuy ? AppColors.success : AppColors.error;
+    final isDividend = t.type == TransactionType.dividend;
+
+    Color color;
+    if (isDividend) {
+      color = AppColors.info;
+    } else if (isBuy) {
+      color = AppColors.success;
+    } else {
+      color = AppColors.error;
+    }
 
     return IntrinsicHeight(
       child: Row(
@@ -409,19 +476,17 @@ class TransactionHistoryScreen extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: isBuy ? AppColors.primary : Colors.grey[700],
+                    color: color.withAlpha(100),
                     shape: BoxShape.circle,
-                    boxShadow: isBuy
-                        ? [
-                            const BoxShadow(
-                                color: AppColors.primary,
-                                blurRadius: 10,
-                                spreadRadius: -2)
-                          ]
-                        : [],
                   ),
-                  child: Icon(isBuy ? Icons.shopping_cart : Icons.sell,
-                      color: Colors.white, size: AppSizes.iconMd),
+                  child: Icon(
+                      isDividend
+                          ? Icons.attach_money
+                          : isBuy
+                              ? Icons.shopping_cart
+                              : Icons.sell,
+                      color: Colors.white,
+                      size: AppSizes.iconMd),
                 ),
                 Expanded(child: Container(width: 2, color: AppColors.border)),
               ],
@@ -448,9 +513,7 @@ class TransactionHistoryScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: isBuy
-                                  ? AppColors.success.withValues(alpha: 0.1)
-                                  : Colors.grey.withValues(alpha: 0.1),
+                              color: color.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(AppSizes.r4),
                             ),
                             child: Text(t.typeString.toUpperCase(),
@@ -486,57 +549,49 @@ class TransactionHistoryScreen extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('QUANTITY',
+                          const Text('QUANTITY | UNIT PRICE',
                               style: TextStyle(
                                   color: AppColors.textSecondary,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold)),
                           const SizedBox(height: 2),
-                          Text(
-                              '${AppFormatters.formatNumber(t.quantity)} Shares',
-                              style: const TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600)),
+                          RichText(
+                            text: TextSpan(
+                                style: const TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600),
+                                children: [
+                                  TextSpan(
+                                      text: AppFormatters.formatNumber(
+                                          t.quantity)),
+                                  const TextSpan(
+                                      text: ' @ ',
+                                      style: TextStyle(
+                                          color: AppColors.textPrimary)),
+                                  TextSpan(text: t.unit_price.toString()),
+                                ]),
+                          ),
                         ],
                       ),
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          const Text('PRICE',
+                          const Text('TOTAL VALUE',
                               style: TextStyle(
                                   color: AppColors.textSecondary,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold)),
                           const SizedBox(height: 2),
-                          Text(AppFormatters.formatCurrency(t.unit_price),
-                              style: const TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600)),
+                          Text(AppFormatters.formatCurrency(t.total_price),
+                              style: TextStyle(
+                                  color: color,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16)),
                         ],
-                      ),
+                      )
                     ],
                   ),
-                  const SizedBox(height: AppSizes.p12),
-                  Divider(color: color.withAlpha(100), height: 1),
-                  const SizedBox(height: AppSizes.p12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Value',
-                          style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500)),
-                      Text(AppFormatters.formatCurrency(t.total_price),
-                          style: TextStyle(
-                              color:
-                                  isBuy ? AppColors.success : AppColors.error,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16)),
-                    ],
-                  )
                 ],
               ),
             ),

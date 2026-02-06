@@ -1,3 +1,4 @@
+import 'package:cse_portfolio_tracker/core/constants/constants.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/stock.dart';
 import '../../domain/entities/transaction.dart';
@@ -42,14 +43,16 @@ class AddTransactionViewModel extends ChangeNotifier {
   DateTime _date = DateTime.now();
   DateTime get date => _date;
 
-  static const double feePercentage = 0.0114; // 1.14%
+  final double feePercentage = AppConfig.feePercentage;
 
   double get totalPrice {
     final subtotal = _quantity * _unitPrice;
     if (_type == TransactionType.buy) {
       return subtotal * (1 + feePercentage);
-    } else {
+    } else if (_type == TransactionType.sell) {
       return subtotal * (1 - feePercentage);
+    } else {
+      return subtotal;
     }
   }
 

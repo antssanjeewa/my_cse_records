@@ -234,6 +234,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               onTap: () => viewModel.setType(TransactionType.sell),
             ),
           ),
+          Expanded(
+            child: _buildTypeButton(
+              label: 'Dividend',
+              isSelected: viewModel.type == TransactionType.dividend,
+              onTap: () => viewModel.setType(TransactionType.dividend),
+            ),
+          ),
         ],
       ),
     );

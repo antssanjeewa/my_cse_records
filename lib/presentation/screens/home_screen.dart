@@ -27,6 +27,14 @@ class HomeScreen extends StatelessWidget {
               SliverAppBar(
                 backgroundColor: AppColors.background.withValues(alpha: 0.9),
                 floating: true,
+                leading: Container(
+                  margin: const EdgeInsets.only(left: AppSizes.p20),
+                  child: Image.asset(
+                    AppAssets.logo,
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
                 pinned: true,
                 elevation: 0,
                 title: Column(

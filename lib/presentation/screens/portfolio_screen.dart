@@ -376,7 +376,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   }
 
   Widget _buildHoldingCard(Holding h) {
-    final profit = h.profit;
+    var profit = h.profit;
     final profitPct = h.profitPercent;
 
     return Container(
@@ -489,40 +489,58 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                           fontSize: 10,
                           fontWeight: FontWeight.bold)),
                   const SizedBox(height: 2),
-                  Text(
-                      (profit > 0 ? '+' : '') +
-                          AppFormatters.formatCurrency(profit),
-                      style: TextStyle(
-                          color:
-                              profit > 0 ? AppColors.success : AppColors.error,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold)),
+                  Row(
+                    children: [
+                      Text(
+                        (profit < 0 ? '' : '+') +
+                            AppFormatters.formatCurrency(profit),
+                        style: TextStyle(
+                            color: profit < 0
+                                ? AppColors.error
+                                : AppColors.success,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(width: AppSizes.p8),
+                      Row(
+                        children: [
+                          Icon(
+                              profit < 0
+                                  ? Icons.trending_down
+                                  : Icons.trending_up,
+                              color: profit < 0
+                                  ? AppColors.error
+                                  : AppColors.success,
+                              size: 16),
+                          const SizedBox(width: AppSizes.p4),
+                          Text('${profitPct.toStringAsFixed(2)}%',
+                              style: TextStyle(
+                                  color: profit < 0
+                                      ? AppColors.error
+                                      : AppColors.success,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10)),
+                        ],
+                      )
+                    ],
+                  ),
                 ],
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: (profit > 0 ? AppColors.successBg : AppColors.errorBg)
-                      .withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppSizes.r8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(profit > 0 ? Icons.trending_up : Icons.trending_down,
-                        color: profit > 0 ? AppColors.success : AppColors.error,
-                        size: 16),
-                    const SizedBox(width: AppSizes.p4),
-                    Text(
-                        '${profitPct > 0 ? '+' : ''}${profitPct.toStringAsFixed(2)}%',
-                        style: TextStyle(
-                            color: profit > 0
-                                ? AppColors.success
-                                : AppColors.error,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12)),
-                  ],
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Text('TOTAL DIVIDENDS',
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 2),
+                  Text(AppFormatters.formatCurrency(h.dividend),
+                      style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600)),
+                ],
               )
             ],
           ),

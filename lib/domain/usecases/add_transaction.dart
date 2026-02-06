@@ -17,7 +17,8 @@ class AddTransaction {
 
     double newQuantity = transaction.qty;
     double newTotalPrice = transaction.total_price;
-    double profit = 0;
+    double profit = existingHolding?.profit ?? 0;
+    double dividend = existingHolding?.dividend ?? 0;
 
     if (transaction.type == TransactionType.buy) {
       if (balance < transaction.total_price) {
@@ -27,7 +28,6 @@ class AddTransaction {
       if (existingHolding != null) {
         newQuantity = existingHolding.quantity + transaction.qty;
         newTotalPrice = existingHolding.totalPrice + transaction.total_price;
-        profit = existingHolding.profit;
       }
     } else if (transaction.type == TransactionType.sell) {
       if (existingHolding != null) {
@@ -39,11 +39,19 @@ class AddTransaction {
         final currentValue = existingHolding.avgPrice * transaction.qty;
         newTotalPrice = existingHolding.totalPrice - currentValue;
 
-        profit =
-            existingHolding.profit + (transaction.total_price - currentValue);
+        profit += (transaction.total_price - currentValue);
       } else {
         throw Exception('Cannot sell stock with no existing holdings');
       }
+    } else if (transaction.type == TransactionType.dividend) {
+      if (existingHolding == null) {
+        throw Exception(
+            'Cannot receive dividend for stock with no existing holdings');
+      }
+
+      dividend += transaction.total_price;
+      newTotalPrice = existingHolding.totalPrice;
+      newQuantity = existingHolding.quantity;
     } else {
       throw Exception('Invalid transaction type');
     }
@@ -51,12 +59,12 @@ class AddTransaction {
     await repository.addTransaction(transaction);
 
     await repository.upsertHolding(Holding(
-      id: existingHolding?.id ?? '',
-      userId: transaction.userId,
-      stockId: transaction.stockId,
-      avgPrice: newTotalPrice / newQuantity,
-      quantity: newQuantity,
-      profit: profit,
-    ));
+        id: existingHolding?.id ?? '',
+        userId: transaction.userId,
+        stockId: transaction.stockId,
+        avgPrice: newTotalPrice / newQuantity,
+        quantity: newQuantity,
+        profit: profit,
+        dividend: dividend));
   }
 }
