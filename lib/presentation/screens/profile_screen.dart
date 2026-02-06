@@ -10,6 +10,7 @@ import '../../core/services/biometric_service.dart';
 import '../../core/services/secure_storage_service.dart';
 import '../../core/di/service_locator.dart';
 import '../viewmodels/auth_viewmodel.dart';
+import '../viewmodels/theme_viewmodel.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -19,7 +20,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool _darkMode = true;
   bool _displayPct = false;
   bool _biometricEnabled = false;
 
@@ -152,8 +152,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildToggleItem(
                     icon: Icons.dark_mode,
                     label: 'Dark Mode',
-                    value: _darkMode,
-                    onChanged: (v) => setState(() => _darkMode = v),
+                    value: context.watch<ThemeViewModel>().isDarkMode,
+                    onChanged: (v) {
+                      context.read<ThemeViewModel>().toggleTheme();
+                    },
                     isLast: false,
                   ),
                   _buildToggleItem(

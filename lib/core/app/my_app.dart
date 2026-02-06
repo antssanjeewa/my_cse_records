@@ -5,6 +5,7 @@ import '../constants/constants.dart';
 import '../routing/router_config.dart';
 import '../theme/app_theme.dart';
 import '../di/app_providers.dart';
+import '../../presentation/viewmodels/theme_viewmodel.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -21,11 +22,17 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: AppProviders.providers,
-      child: MaterialApp.router(
-        title: AppText.appName,
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.darkTheme,
-        routerConfig: router,
+      child: Consumer<ThemeViewModel>(
+        builder: (context, themeViewModel, child) {
+          return MaterialApp.router(
+            title: AppText.appName,
+            debugShowCheckedModeBanner: false,
+            theme: themeViewModel.isDarkMode
+                ? AppTheme.darkTheme
+                : AppTheme.lightTheme,
+            routerConfig: router,
+          );
+        },
       ),
     );
   }
