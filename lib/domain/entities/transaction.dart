@@ -8,9 +8,9 @@ class Transaction {
   final int stockId;
   final TransactionType type;
   final double qty;
-  final double price;
+  final double unit_price;
+  final double total_price;
   final DateTime date;
-  final double totalPrice;
   final Stock? stock;
 
   Transaction({
@@ -19,9 +19,9 @@ class Transaction {
     required this.stockId,
     required this.type,
     required this.qty,
-    required this.price,
+    required this.unit_price,
+    required this.total_price,
     required this.date,
-    this.totalPrice = 0,
     this.stock,
   });
 
@@ -29,6 +29,5 @@ class Transaction {
   String get ticker => stock?.ticker ?? 'N/A';
   String get name => stock?.name ?? 'Unknown';
   double get quantity => qty;
-  double get totalValue => qty * price;
   String get typeString => type == TransactionType.buy ? 'Buy' : 'Sell';
 }

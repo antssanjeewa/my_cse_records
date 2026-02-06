@@ -74,6 +74,8 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       stockId: holding.stockId,
       avgPrice: holding.avgPrice,
       quantity: holding.quantity,
+      profit: holding.profit,
+      dividend: holding.dividend,
     ));
   }
 
@@ -85,6 +87,8 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       stockId: holding.stockId,
       avgPrice: holding.avgPrice,
       quantity: holding.quantity,
+      profit: holding.profit,
+      dividend: holding.dividend,
     ));
   }
 
@@ -118,7 +122,8 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       stockId: transaction.stockId,
       type: transaction.type,
       qty: transaction.qty,
-      price: transaction.price,
+      unit_price: transaction.unit_price,
+      total_price: transaction.total_price,
       date: transaction.date,
     ));
   }

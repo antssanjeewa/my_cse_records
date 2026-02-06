@@ -53,6 +53,7 @@ void setupLocator() {
   getIt.registerFactory(() => AddTransactionViewModel(
         getStocks: getIt(),
         addTransaction: getIt(),
+        getHoldings: getIt(),
         userId: getIt<AuthViewModel>().currentUser?.id ?? '',
       ));
 }

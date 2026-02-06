@@ -509,7 +509,7 @@ class TransactionHistoryScreen extends StatelessWidget {
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold)),
                           const SizedBox(height: 2),
-                          Text(AppFormatters.formatCurrency(t.price),
+                          Text(AppFormatters.formatCurrency(t.unit_price),
                               style: const TextStyle(
                                   color: AppColors.textPrimary,
                                   fontSize: 14,
@@ -529,7 +529,7 @@ class TransactionHistoryScreen extends StatelessWidget {
                               color: AppColors.textSecondary,
                               fontSize: 12,
                               fontWeight: FontWeight.w500)),
-                      Text(AppFormatters.formatCurrency(t.totalValue),
+                      Text(AppFormatters.formatCurrency(t.total_price),
                           style: TextStyle(
                               color:
                                   isBuy ? AppColors.success : AppColors.error,

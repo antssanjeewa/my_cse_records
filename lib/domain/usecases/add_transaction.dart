@@ -16,34 +16,36 @@ class AddTransaction {
     );
 
     double newQuantity = transaction.qty;
-    double newAvgPrice = transaction.price;
-    double newTotalPrice = transaction.totalPrice;
+    double newTotalPrice = transaction.total_price;
+    double profit = 0;
 
-    if (transaction.type == TransactionType.buy &&
-        balance < transaction.totalPrice) {
-      throw Exception('Insufficient balance');
-    }
+    if (transaction.type == TransactionType.buy) {
+      if (balance < transaction.total_price) {
+        throw Exception('Insufficient balance');
+      }
 
-    if (existingHolding != null) {
-      if (transaction.type == TransactionType.buy) {
+      if (existingHolding != null) {
         newQuantity = existingHolding.quantity + transaction.qty;
-        newAvgPrice = ((existingHolding.quantity * existingHolding.avgPrice) +
-                (transaction.qty * transaction.price)) /
-            newQuantity;
-        newTotalPrice = existingHolding.totalPrice + transaction.totalPrice;
-      } else {
-        // Assuming TransactionType.sell
+        newTotalPrice = existingHolding.totalPrice + transaction.total_price;
+        profit = existingHolding.profit;
+      }
+    } else if (transaction.type == TransactionType.sell) {
+      if (existingHolding != null) {
         if (existingHolding.quantity < transaction.qty) {
           throw Exception('Insufficient holdings to sell');
         }
+
         newQuantity = existingHolding.quantity - transaction.qty;
-        newAvgPrice = existingHolding.avgPrice;
-        newTotalPrice = existingHolding.totalPrice - transaction.totalPrice;
-      }
-    } else {
-      if (transaction.type == TransactionType.sell) {
+        final currentValue = existingHolding.avgPrice * transaction.qty;
+        newTotalPrice = existingHolding.totalPrice - currentValue;
+
+        profit =
+            existingHolding.profit + (transaction.total_price - currentValue);
+      } else {
         throw Exception('Cannot sell stock with no existing holdings');
       }
+    } else {
+      throw Exception('Invalid transaction type');
     }
 
     await repository.addTransaction(transaction);
@@ -52,9 +54,9 @@ class AddTransaction {
       id: existingHolding?.id ?? '',
       userId: transaction.userId,
       stockId: transaction.stockId,
-      avgPrice: newAvgPrice,
+      avgPrice: newTotalPrice / newQuantity,
       quantity: newQuantity,
-      totalPrice: newTotalPrice,
+      profit: profit,
     ));
   }
 }

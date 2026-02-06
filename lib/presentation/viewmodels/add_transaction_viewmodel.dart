@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/stock.dart';
 import '../../domain/entities/transaction.dart';
 import '../../domain/usecases/add_transaction.dart';
+import '../../domain/usecases/get_holdings.dart';
 import '../../domain/usecases/get_stocks.dart';
 import 'package:uuid/uuid.dart';
 
 class AddTransactionViewModel extends ChangeNotifier {
   final GetStocks getStocks;
   final AddTransaction addTransaction;
+  final GetHoldings getHoldings;
   final String userId;
 
   AddTransactionViewModel({
     required this.getStocks,
     required this.addTransaction,
+    required this.getHoldings,
     required this.userId,
   }) {
     fetchStocks();
@@ -126,12 +129,14 @@ class AddTransactionViewModel extends ChangeNotifier {
         stockId: _selectedStock!.id,
         type: _type,
         qty: _quantity,
-        price: _unitPrice,
-        totalPrice: totalPrice,
+        unit_price: _unitPrice,
+        total_price: totalPrice,
         date: _date,
       );
 
       await addTransaction(transaction);
+      await getHoldings();
+      await getStocks();
       _isLoading = false;
       notifyListeners();
       return true;
