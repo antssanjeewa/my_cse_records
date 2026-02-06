@@ -40,12 +40,3 @@ flutter_launcher_icons:
   image_path: "assets/images/icon.png"
   adaptive_icon_background: "#0B162C"
 
-flutter_native_splash:
-  color: "#0B162C"
-  image: "assets/images/icon.png"
-  android: true
-  ios: false
-  android_12:
-    color: "#0B162C"
-    image: "assets/images/icon.png"
-
