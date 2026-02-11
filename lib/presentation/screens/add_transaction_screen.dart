@@ -68,8 +68,73 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               onStockSelected: (stock) {
                 viewModel.selectStock(stock);
               },
+              onClear: () {
+                viewModel.selectStock(null);
+                _qtyController.clear();
+                _priceController.clear();
+                viewModel.setQuantity(0);
+                viewModel.setUnitPrice(0);
+              },
             ),
             const SizedBox(height: AppSizes.p16),
+
+            // Current Holding Details Card
+            if (viewModel.selectedStock != null)
+              Container(
+                margin: const EdgeInsets.only(bottom: AppSizes.p24),
+                padding: const EdgeInsets.all(AppSizes.p16),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppSizes.r16),
+                  border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.2)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(AppSizes.p12),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(AppSizes.r12),
+                      ),
+                      child: const Icon(Icons.account_balance_wallet,
+                          color: AppColors.primary, size: 20),
+                    ),
+                    const SizedBox(width: AppSizes.p16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Your Current Position',
+                            style: GoogleFonts.inter(
+                              color: AppColors.primary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              _buildPositionStat(
+                                label: 'Quantity',
+                                value: AppFormatters.formatNumber(
+                                    viewModel.currentHolding?.quantity ?? 0),
+                              ),
+                              const SizedBox(width: 24),
+                              _buildPositionStat(
+                                label: 'Avg. Price',
+                                value: AppFormatters.formatCurrency(
+                                    viewModel.currentHolding?.avgPrice ?? 0),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
             // Quantity & Unit Price
             Row(
@@ -276,6 +341,30 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPositionStat({required String label, required String value}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 10,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

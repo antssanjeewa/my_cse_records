@@ -1,19 +1,23 @@
-import 'package:cse_portfolio_tracker/core/constants/constants.dart';
 import 'package:flutter/material.dart';
+import '../../core/constants/constants.dart';
+import '../../domain/entities/holding.dart';
 import '../../domain/entities/stock.dart';
 import '../../domain/entities/transaction.dart';
 import '../../domain/usecases/add_transaction.dart';
+import '../../domain/usecases/get_holding_by_stock.dart';
 import '../../domain/usecases/get_stocks.dart';
 import 'package:uuid/uuid.dart';
 
 class AddTransactionViewModel extends ChangeNotifier {
   final GetStocks getStocks;
   final AddTransaction addTransaction;
+  final GetHoldingByStock getHoldingByStock;
   final String userId;
 
   AddTransactionViewModel({
     required this.getStocks,
     required this.addTransaction,
+    required this.getHoldingByStock,
     required this.userId,
   }) {
     fetchStocks();
@@ -30,6 +34,9 @@ class AddTransactionViewModel extends ChangeNotifier {
 
   Stock? _selectedStock;
   Stock? get selectedStock => _selectedStock;
+
+  Holding? _currentHolding;
+  Holding? get currentHolding => _currentHolding;
 
   TransactionType _type = TransactionType.buy;
   TransactionType get type => _type;
@@ -56,10 +63,16 @@ class AddTransactionViewModel extends ChangeNotifier {
     }
   }
 
-  void selectStock(Stock? stock) {
+  Future<void> selectStock(Stock? stock) async {
     _selectedStock = stock;
-    if (stock != null && _unitPrice == 0) {
-      _unitPrice = stock.lastPrice;
+    _currentHolding = null;
+
+    if (stock != null) {
+      try {
+        _currentHolding = await getHoldingByStock(userId, stock.id);
+      } catch (e) {
+        debugPrint('Error fetching holding: $e');
+      }
     }
     notifyListeners();
   }

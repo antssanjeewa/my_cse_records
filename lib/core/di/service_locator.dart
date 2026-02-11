@@ -12,6 +12,7 @@ import '../services/biometric_service.dart';
 import '../services/secure_storage_service.dart';
 import '../../domain/usecases/get_stocks.dart';
 import '../../domain/usecases/add_transaction.dart';
+import '../../domain/usecases/get_holding_by_stock.dart';
 import '../../presentation/viewmodels/home_viewmodel.dart';
 import '../../presentation/viewmodels/portfolio_viewmodel.dart';
 import '../../presentation/viewmodels/transaction_history_viewmodel.dart';
@@ -45,6 +46,7 @@ void setupLocator() {
   getIt.registerLazySingleton(() => GetTransactions(getIt()));
   getIt.registerLazySingleton(() => GetStocks(getIt()));
   getIt.registerLazySingleton(() => AddTransaction(getIt()));
+  getIt.registerLazySingleton(() => GetHoldingByStock(getIt()));
 
   // ViewModels
   getIt.registerFactory(() => AuthViewModel(supabase: getIt()));
@@ -55,6 +57,7 @@ void setupLocator() {
   getIt.registerFactory(() => AddTransactionViewModel(
         getStocks: getIt(),
         addTransaction: getIt(),
+        getHoldingByStock: getIt(),
         userId: getIt<AuthViewModel>().currentUser?.id ?? '',
       ));
 }

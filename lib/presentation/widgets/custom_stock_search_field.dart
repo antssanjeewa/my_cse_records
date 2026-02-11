@@ -6,12 +6,14 @@ import '../../domain/entities/stock.dart';
 class CustomStockSearchField extends StatelessWidget {
   final List<Stock> stocks;
   final Function(Stock) onStockSelected;
+  final VoidCallback? onClear;
   final String? hintText;
 
   const CustomStockSearchField({
     super.key,
     required this.stocks,
     required this.onStockSelected,
+    this.onClear,
     this.hintText,
   });
 
@@ -35,21 +37,35 @@ class CustomStockSearchField extends StatelessWidget {
       },
       onSelected: onStockSelected,
       fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-        return TextField(
-          controller: controller,
-          focusNode: focusNode,
-          style:
-              const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-          decoration: InputDecoration(
-            hintText: hintText ?? 'Search ticker or name',
-            hintStyle: const TextStyle(color: AppColors.textSecondary),
-            prefixIcon:
-                const Icon(Icons.search, color: AppColors.textSecondary),
-            suffixIcon:
-                const Icon(Icons.expand_more, color: AppColors.textSecondary),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 16),
-          ),
+        return ListenableBuilder(
+          listenable: controller,
+          builder: (context, child) {
+            return TextField(
+              controller: controller,
+              focusNode: focusNode,
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.w500),
+              decoration: InputDecoration(
+                hintText: hintText ?? 'Search ticker or name',
+                hintStyle: const TextStyle(color: AppColors.textSecondary),
+                prefixIcon:
+                    const Icon(Icons.search, color: AppColors.textSecondary),
+                suffixIcon: controller.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear,
+                            color: AppColors.textSecondary),
+                        onPressed: () {
+                          controller.clear();
+                          onClear?.call();
+                        },
+                      )
+                    : const Icon(Icons.expand_more,
+                        color: AppColors.textSecondary),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+            );
+          },
         );
       },
       optionsViewBuilder: (context, onSelected, options) {
