@@ -2,10 +2,12 @@ import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/datasources/supabase_datasource.dart';
 import '../../data/repositories/portfolio_repository_impl.dart';
+import '../../data/repositories/wallet_repository_impl.dart';
 import '../../domain/repositories/portfolio_repository.dart';
 import '../../domain/usecases/get_holdings.dart';
 import '../../domain/usecases/get_portfolio_summary.dart';
 import '../../domain/usecases/get_transactions.dart';
+import '../../domain/usecases/wallet_usecases.dart';
 import '../services/biometric_service.dart';
 import '../services/secure_storage_service.dart';
 import '../../domain/usecases/get_stocks.dart';
@@ -37,12 +39,30 @@ void setupLocator() {
     () => PortfolioRepositoryImpl(remoteDataSource: getIt()),
   );
 
+  getIt.registerLazySingleton<WalletRepository>(
+    () => WalletRepositoryImpl(remoteDataSource: getIt()),
+  );
+
   // Use Cases
   getIt.registerLazySingleton(() => GetHoldings(getIt()));
   getIt.registerLazySingleton(() => GetPortfolioSummary(getIt()));
   getIt.registerLazySingleton(() => GetTransactions(getIt()));
   getIt.registerLazySingleton(() => GetStocks(getIt()));
   getIt.registerLazySingleton(() => AddTransaction(getIt()));
+
+  // Wallet Use Cases
+  getIt.registerLazySingleton<GetWallet>(
+    () => GetWallet(repository: getIt<WalletRepository>()),
+  );
+  getIt.registerLazySingleton<CreateWallet>(
+    () => CreateWallet(repository: getIt<WalletRepository>()),
+  );
+  getIt.registerLazySingleton<UpdateWalletBalance>(
+    () => UpdateWalletBalance(repository: getIt<WalletRepository>()),
+  );
+  getIt.registerLazySingleton<AddToWalletBalance>(
+    () => AddToWalletBalance(repository: getIt<WalletRepository>()),
+  );
 
   // ViewModels
   getIt.registerFactory(() => AuthViewModel(supabase: getIt()));

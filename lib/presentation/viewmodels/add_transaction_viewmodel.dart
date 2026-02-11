@@ -2,8 +2,11 @@ import 'package:cse_portfolio_tracker/core/constants/constants.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/stock.dart';
 import '../../domain/entities/transaction.dart';
+import '../../domain/entities/wallet.dart';
 import '../../domain/usecases/add_transaction.dart';
 import '../../domain/usecases/get_stocks.dart';
+import '../../domain/usecases/wallet_usecases.dart';
+import '../../core/di/service_locator.dart';
 import 'package:uuid/uuid.dart';
 
 class AddTransactionViewModel extends ChangeNotifier {
@@ -135,6 +138,10 @@ class AddTransactionViewModel extends ChangeNotifier {
       );
 
       await addTransaction(transaction);
+
+      // Update wallet balance based on transaction type
+      await _updateWalletBalance();
+
       _isLoading = false;
       notifyListeners();
       return true;
@@ -144,6 +151,42 @@ class AddTransactionViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       return false;
+    }
+  }
+
+  Future<void> _updateWalletBalance() async {
+    try {
+      final getWallet = getIt<GetWallet>();
+      final createWallet = getIt<CreateWallet>();
+      final addToWallet = getIt<AddToWalletBalance>();
+
+      // Check if wallet exists
+      Wallet? wallet = await getWallet.call(userId);
+
+      // If wallet doesn't exist, create it first
+      if (wallet == null) {
+        wallet = await createWallet.call(userId, initialBalance: 0);
+        debugPrint('Created new wallet for user: $userId');
+      }
+
+      // Calculate amount to add/subtract
+      double amountToUpdate = 0;
+      if (_type == TransactionType.buy) {
+        // Deduct from wallet for buy transactions
+        amountToUpdate = -totalPrice;
+      } else if (_type == TransactionType.sell) {
+        // Add to wallet for sell transactions
+        amountToUpdate = totalPrice;
+      }
+
+      // Update wallet balance
+      if (amountToUpdate != 0) {
+        await addToWallet.call(userId, amountToUpdate);
+        debugPrint('Updated wallet balance by: $amountToUpdate');
+      }
+    } catch (e) {
+      debugPrint('Error updating wallet balance: $e');
+      rethrow;
     }
   }
 }

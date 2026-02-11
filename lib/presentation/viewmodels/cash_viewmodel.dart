@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/utils/error_handler.dart';
+import '../../core/di/service_locator.dart';
 import '../../domain/entities/cash_transaction.dart';
+import '../../domain/entities/wallet.dart';
 import '../../domain/repositories/portfolio_repository.dart';
+import '../../domain/usecases/wallet_usecases.dart';
 import 'package:uuid/uuid.dart';
 
 class CashViewModel extends ChangeNotifier {
@@ -77,6 +80,10 @@ class CashViewModel extends ChangeNotifier {
       );
 
       await repository.addCashTransaction(transaction);
+
+      // Update wallet balance based on transaction type
+      await _updateWalletBalance(type, normalizedAmount);
+
       await fetchCashData();
     } catch (e) {
       return AppErrorHandler.mapErrorToString(e);
@@ -85,5 +92,41 @@ class CashViewModel extends ChangeNotifier {
       notifyListeners();
     }
     return null;
+  }
+
+  Future<void> _updateWalletBalance(String type, double amount) async {
+    try {
+      final getWallet = getIt<GetWallet>();
+      final createWallet = getIt<CreateWallet>();
+      final addToWallet = getIt<AddToWalletBalance>();
+
+      // Check if wallet exists
+      Wallet? wallet = await getWallet.call(userId);
+
+      // If wallet doesn't exist, create it first
+      if (wallet == null) {
+        wallet = await createWallet.call(userId, initialBalance: 0);
+        debugPrint('Created new wallet for user: $userId');
+      }
+
+      // Calculate amount to add/subtract
+      double amountToUpdate = 0;
+      if (type == 'DEPOSIT') {
+        // Add to wallet for deposits
+        amountToUpdate = amount;
+      } else if (type == 'WITHDRAWAL') {
+        // Deduct from wallet for withdrawals
+        amountToUpdate = -amount;
+      }
+
+      // Update wallet balance
+      if (amountToUpdate != 0) {
+        await addToWallet.call(userId, amountToUpdate);
+        debugPrint('Updated wallet balance by: $amountToUpdate');
+      }
+    } catch (e) {
+      debugPrint('Error updating wallet balance for cash transaction: $e');
+      rethrow;
+    }
   }
 }
