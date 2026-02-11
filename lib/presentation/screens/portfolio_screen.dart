@@ -176,9 +176,16 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final holding = filteredHoldings[index];
-                        return Opacity(
-                          opacity: viewModel.isLoading ? 0.6 : 1.0,
-                          child: _buildHoldingCard(holding),
+                        return GestureDetector(
+                          onTap: () =>
+                              Pages.holdingDetails.push(context, extra: {
+                            'holding': holding,
+                            'totalValue': viewModel.totalMarketValue,
+                          }),
+                          child: Opacity(
+                            opacity: viewModel.isLoading ? 0.6 : 1.0,
+                            child: _buildHoldingCard(holding),
+                          ),
                         );
                       },
                       childCount: filteredHoldings.length,

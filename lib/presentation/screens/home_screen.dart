@@ -189,7 +189,7 @@ class HomeScreen extends StatelessWidget {
                   color: Colors.white,
                   fontSize: 32,
                   fontWeight: FontWeight.bold)),
-          const SizedBox(height: AppSizes.p20),
+          const SizedBox(height: AppSizes.p12),
           // Breakdown Row
           Row(
             children: [
@@ -278,7 +278,24 @@ class HomeScreen extends StatelessWidget {
             ),
           )
         else
-          ...transactions.map((t) => Container(
+          ...transactions.map((t) {
+            final summary = context.read<HomeViewModel>().summary;
+            if (summary == null) return const SizedBox();
+
+            // Find the parent holding for this transaction to allow navigation
+            final parentHolding =
+                summary.holdings.firstWhere((h) => h.stockId == t.stockId);
+
+            return GestureDetector(
+              onTap: () {
+                if (parentHolding.id.isNotEmpty) {
+                  Pages.holdingDetails.push(context, extra: {
+                    'holding': parentHolding,
+                    'totalValue': summary.totalValue + summary.totalProfit,
+                  });
+                }
+              },
+              child: Container(
                 margin: const EdgeInsets.only(bottom: AppSizes.p8),
                 padding: const EdgeInsets.all(AppSizes.p12),
                 decoration: BoxDecoration(
@@ -355,7 +372,9 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-              )),
+              ),
+            );
+          }),
       ],
     );
   }

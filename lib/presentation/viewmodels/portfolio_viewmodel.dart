@@ -13,6 +13,8 @@ class PortfolioViewModel extends ChangeNotifier {
   List<Holding> get holdings => _holdings;
 
   double get totalValue => _holdings.fold(0, (sum, h) => sum + h.totalPrice);
+  double get totalMarketValue =>
+      _holdings.fold(0, (sum, h) => sum + h.totalPrice + h.profit);
 
   String _searchQuery = '';
   String get searchQuery => _searchQuery;

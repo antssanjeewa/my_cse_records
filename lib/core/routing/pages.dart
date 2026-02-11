@@ -13,6 +13,7 @@ enum Pages {
   addTransaction,
   cash,
   manageStocks,
+  holdingDetails,
 }
 
 extension PageExtention on Pages {

@@ -12,9 +12,12 @@ import '../../presentation/screens/cash_screen.dart';
 import '../../presentation/screens/manage_stocks_screen.dart';
 import '../../presentation/viewmodels/cash_viewmodel.dart';
 import '../../presentation/viewmodels/manage_stocks_viewmodel.dart';
-import '../di/service_locator.dart';
+import '../../presentation/screens/holding_details_screen.dart';
+import '../../presentation/viewmodels/holding_details_viewmodel.dart';
+import '../../domain/entities/holding.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
+import '../di/service_locator.dart';
 import 'pages.dart';
 import '../constants/app_colors.dart';
 
@@ -111,6 +114,24 @@ final GoRouter router = GoRouter(
           path: Pages.profile.toPath(),
           name: Pages.profile.toPathName(),
           builder: (context, state) => const ProfileScreen(),
+        ),
+        GoRoute(
+          path: Pages.holdingDetails.toPath(),
+          name: Pages.holdingDetails.toPathName(),
+          builder: (context, state) {
+            final extras = state.extra as Map<String, dynamic>;
+            final holding = extras['holding'] as Holding;
+            final totalValue =
+                (extras['totalValue'] as num?)?.toDouble() ?? 0.0;
+            return ChangeNotifierProvider(
+              create: (context) => HoldingDetailsViewModel(
+                getTransactions: getIt(),
+                holding: holding,
+                totalPortfolioValue: totalValue,
+              ),
+              child: const HoldingDetailsScreen(),
+            );
+          },
         ),
       ],
     ),
