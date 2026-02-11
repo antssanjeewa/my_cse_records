@@ -21,7 +21,11 @@ class HomeScreen extends StatelessWidget {
           final summary = viewModel.summary;
           final isInitialLoad = viewModel.isLoading && summary == null;
 
-          return CustomScrollView(
+          return RefreshIndicator(
+            onRefresh: () => viewModel.fetchSummary(),
+            color: AppColors.primary,
+            backgroundColor: AppColors.surface,
+            child: CustomScrollView(
             slivers: [
               // App Bar
               SliverAppBar(
@@ -127,6 +131,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ],
+          );
           );
         },
       ),
@@ -490,7 +495,7 @@ class HomeScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(AppFormatters.formatCurrency(h.marketPrice),
+                        Text(AppFormatters.formatCurrency(h.totalPrice),
                             style: const TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,

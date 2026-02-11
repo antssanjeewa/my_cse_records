@@ -36,6 +36,7 @@ class TransactionModel extends Transaction {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'user_id': userId,
       'stock_id': stockId,
       'type': type.name.toUpperCase(),

@@ -12,6 +12,8 @@ class PortfolioViewModel extends ChangeNotifier {
   List<Holding> _holdings = [];
   List<Holding> get holdings => _holdings;
 
+  double get totalValue => _holdings.fold(0, (sum, h) => sum + h.totalPrice);
+
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
 
@@ -45,7 +47,7 @@ class PortfolioViewModel extends ChangeNotifier {
     if (_sortBy == 'Name') {
       list.sort((a, b) => a.name.compareTo(b.name));
     } else if (_sortBy == 'Price') {
-      list.sort((a, b) => b.marketPrice.compareTo(a.marketPrice));
+      list.sort((a, b) => b.totalPrice.compareTo(a.totalPrice));
     } else if (_sortBy == 'Quantity') {
       list.sort((a, b) => b.quantity.compareTo(a.quantity));
     } else if (_sortBy == 'Profit %') {

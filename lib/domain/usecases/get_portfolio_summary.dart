@@ -13,7 +13,7 @@ class GetPortfolioSummary {
     double totalProfit = 0;
 
     for (var h in holdings) {
-      totalValue += h.value;
+      totalValue += h.totalPrice;
       totalProfit += h.profit;
     }
 

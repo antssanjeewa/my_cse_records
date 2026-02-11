@@ -193,8 +193,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   }
 
   Widget _buildSummaryCard(PortfolioViewModel vm) {
-    double totalValue = vm.holdings.fold(0, (sum, h) => sum + h.value);
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSizes.p20),
@@ -218,7 +216,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                   fontSize: 14,
                   fontWeight: FontWeight.w500)),
           const SizedBox(height: AppSizes.p4),
-          Text(AppFormatters.formatCurrency(totalValue),
+          Text(AppFormatters.formatCurrency(vm.totalValue),
               style: GoogleFonts.inter(
                   color: AppColors.textPrimary,
                   fontSize: 28,

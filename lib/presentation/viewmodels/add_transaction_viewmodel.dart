@@ -132,6 +132,7 @@ class AddTransactionViewModel extends ChangeNotifier {
         unit_price: _unitPrice,
         total_price: totalPrice,
         date: _date,
+        stock: _selectedStock,
       );
 
       await addTransaction(transaction);

@@ -1,4 +1,5 @@
 import '../entities/holding.dart';
+import '../entities/stock.dart';
 import '../entities/transaction.dart';
 import '../repositories/portfolio_repository.dart';
 import '../entities/cash_transaction.dart';
@@ -10,12 +11,19 @@ class AddTransaction {
   AddTransaction(this.repository);
 
   Future<void> call(Transaction transaction) async {
-    final balance = await repository.getCashBalance();
+    // 1. Fetch all necessary data upfront
+    final results = await Future.wait([
+      repository.getCashBalance(),
+      repository.getHoldingByStock(transaction.userId, transaction.stockId),
+      repository.getStockById(transaction.stockId),
+    ]);
 
-    final existingHolding = await repository.getHoldingByStock(
-      transaction.userId,
-      transaction.stockId,
-    );
+    final double balance = results[0] as double;
+    final Holding? existingHolding = results[1] as Holding?;
+    final Stock? stock = transaction.stock ?? (results[2] as Stock?);
+
+    // 2. Calculations and Validations
+    final ticker = stock?.ticker ?? 'Unknown';
 
     double newQuantity = transaction.qty;
     double newTotalPrice = transaction.total_price;
@@ -58,13 +66,7 @@ class AddTransaction {
       throw Exception('Invalid transaction type');
     }
 
-    await repository.addTransaction(transaction);
-
-    // Get stock info for description
-    final stock = await repository.getStockById(transaction.stockId);
-    final ticker = stock?.ticker ?? 'Unknown';
-
-    // Add corresponding cash transaction
+    // 3. Prepare Writes
     double cashAmount = 0;
     String cashType = '';
     String description = '';
@@ -83,6 +85,10 @@ class AddTransaction {
       description = 'Dividend from $ticker';
     }
 
+    // 4. Execute Writes
+    // We do them sequentially but quickly as data is ready
+    await repository.addTransaction(transaction);
+
     if (cashAmount != 0) {
       await repository.addCashTransaction(CashTransaction(
         id: const Uuid().v4(),
@@ -98,7 +104,7 @@ class AddTransaction {
         id: existingHolding?.id ?? '',
         userId: transaction.userId,
         stockId: transaction.stockId,
-        avgPrice: newTotalPrice / newQuantity,
+        avgPrice: newQuantity == 0 ? 0 : newTotalPrice / newQuantity,
         quantity: newQuantity,
         profit: profit,
         dividend: dividend));
