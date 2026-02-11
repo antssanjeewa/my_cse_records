@@ -31,157 +31,162 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       body: Consumer<PortfolioViewModel>(builder: (context, viewModel, child) {
         final filteredHoldings = viewModel.filteredHoldings;
 
-        return CustomScrollView(
-          slivers: [
-            // App Bar
-            SliverAppBar(
-              backgroundColor: AppColors.background.withValues(alpha: 0.9),
-              pinned: true,
-              title: Text(AppText.portfolioHoldings,
-                  style: GoogleFonts.inter(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: AppColors.textPrimary)),
-              centerTitle: true,
-              actions: [
-                IconButton(
-                    icon: const Icon(Icons.more_vert, color: Colors.white),
-                    onPressed: () {}),
-              ],
-              expandedHeight: 220,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 120,
-                      left: AppSizes.p16,
-                      right: AppSizes.p16,
-                      bottom: AppSizes.p16),
-                  child: _buildSummaryCard(viewModel),
+        return RefreshIndicator(
+          onRefresh: () => viewModel.fetchHoldings(),
+          color: AppColors.primary,
+          backgroundColor: AppColors.surface,
+          child: CustomScrollView(
+            slivers: [
+              // App Bar
+              SliverAppBar(
+                backgroundColor: AppColors.background.withValues(alpha: 0.9),
+                pinned: true,
+                title: Text(AppText.portfolioHoldings,
+                    style: GoogleFonts.inter(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: AppColors.textPrimary)),
+                centerTitle: true,
+                actions: [
+                  IconButton(
+                      icon: const Icon(Icons.more_vert, color: Colors.white),
+                      onPressed: () {}),
+                ],
+                expandedHeight: 220,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 120,
+                        left: AppSizes.p16,
+                        right: AppSizes.p16,
+                        bottom: AppSizes.p16),
+                    child: _buildSummaryCard(viewModel),
+                  ),
                 ),
               ),
-            ),
 
-            // Sticky Search & Filter
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _StickyHeaderDelegate(
-                minHeight: 130,
-                maxHeight: 130,
-                child: Container(
-                  color: AppColors.background,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppSizes.p16, vertical: AppSizes.p8),
-                  child: Column(
-                    children: [
-                      // Search
-                      TextField(
-                        controller: _searchController,
-                        onChanged: (value) => viewModel.setSearchQuery(value),
-                        style: const TextStyle(color: AppColors.textPrimary),
-                        decoration: InputDecoration(
-                          hintText: 'Search ticker or company...',
-                          prefixIcon: const Icon(Icons.search,
-                              color: AppColors.textSecondary),
-                          suffixIcon: _searchController.text.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(Icons.clear,
-                                      color: AppColors.textSecondary),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                    viewModel.setSearchQuery('');
-                                  },
-                                )
-                              : null,
-                          contentPadding: EdgeInsets.zero,
+              // Sticky Search & Filter
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StickyHeaderDelegate(
+                  minHeight: 130,
+                  maxHeight: 130,
+                  child: Container(
+                    color: AppColors.background,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSizes.p16, vertical: AppSizes.p8),
+                    child: Column(
+                      children: [
+                        // Search
+                        TextField(
+                          controller: _searchController,
+                          onChanged: (value) => viewModel.setSearchQuery(value),
+                          style: const TextStyle(color: AppColors.textPrimary),
+                          decoration: InputDecoration(
+                            hintText: 'Search ticker or company...',
+                            prefixIcon: const Icon(Icons.search,
+                                color: AppColors.textSecondary),
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear,
+                                        color: AppColors.textSecondary),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      viewModel.setSearchQuery('');
+                                    },
+                                  )
+                                : null,
+                            contentPadding: EdgeInsets.zero,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: AppSizes.p12),
-                      // Filter Dropdowns
-                      Row(
-                        children: [
-                          // Sort Dropdown
-                          Expanded(
-                            child: _buildDropdownHeader(
-                              label: 'Sort: ${viewModel.sortBy}',
-                              icon: Icons.sort,
-                              onTap: () {
-                                _showSortPicker(context, viewModel);
-                              },
+                        const SizedBox(height: AppSizes.p12),
+                        // Filter Dropdowns
+                        Row(
+                          children: [
+                            // Sort Dropdown
+                            Expanded(
+                              child: _buildDropdownHeader(
+                                label: 'Sort: ${viewModel.sortBy}',
+                                icon: Icons.sort,
+                                onTap: () {
+                                  _showSortPicker(context, viewModel);
+                                },
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: AppSizes.p12),
-                          // Sector Dropdown
-                          Expanded(
-                            child: _buildDropdownHeader(
-                              label: viewModel.sectorFilter == 'All'
-                                  ? 'All Sectors'
-                                  : viewModel.sectorFilter,
-                              icon: Icons.category,
-                              onTap: () {
-                                _showSectorPicker(context, viewModel);
-                              },
+                            const SizedBox(width: AppSizes.p12),
+                            // Sector Dropdown
+                            Expanded(
+                              child: _buildDropdownHeader(
+                                label: viewModel.sectorFilter == 'All'
+                                    ? 'All Sectors'
+                                    : viewModel.sectorFilter,
+                                icon: Icons.category,
+                                onTap: () {
+                                  _showSectorPicker(context, viewModel);
+                                },
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Loading Indicator
-            if (viewModel.isLoading && filteredHoldings.isNotEmpty)
-              const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSizes.p16),
-                  child: LinearProgressIndicator(
-                    backgroundColor: Colors.transparent,
-                    color: AppColors.primary,
-                    minHeight: 2,
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
 
-            if (viewModel.isLoading && filteredHoldings.isEmpty)
-              const SliverFillRemaining(
-                child: Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                ),
-              )
-            else if (filteredHoldings.isEmpty)
-              SliverFillRemaining(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.inventory_2_outlined,
-                          size: 64, color: Colors.grey.withAlpha(50)),
-                      const SizedBox(height: 16),
-                      const Text('No holdings found',
-                          style: TextStyle(
-                              color: AppColors.textSecondary, fontSize: 16)),
-                    ],
+              // Loading Indicator
+              if (viewModel.isLoading && filteredHoldings.isNotEmpty)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: AppSizes.p16),
+                    child: LinearProgressIndicator(
+                      backgroundColor: Colors.transparent,
+                      color: AppColors.primary,
+                      minHeight: 2,
+                    ),
                   ),
                 ),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final holding = filteredHoldings[index];
-                      return Opacity(
-                        opacity: viewModel.isLoading ? 0.6 : 1.0,
-                        child: _buildHoldingCard(holding),
-                      );
-                    },
-                    childCount: filteredHoldings.length,
+
+              if (viewModel.isLoading && filteredHoldings.isEmpty)
+                const SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  ),
+                )
+              else if (filteredHoldings.isEmpty)
+                SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.inventory_2_outlined,
+                            size: 64, color: Colors.grey.withAlpha(50)),
+                        const SizedBox(height: 16),
+                        const Text('No holdings found',
+                            style: TextStyle(
+                                color: AppColors.textSecondary, fontSize: 16)),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final holding = filteredHoldings[index];
+                        return Opacity(
+                          opacity: viewModel.isLoading ? 0.6 : 1.0,
+                          child: _buildHoldingCard(holding),
+                        );
+                      },
+                      childCount: filteredHoldings.length,
+                    ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         );
       }),
       floatingActionButton: FloatingActionButton(

@@ -26,112 +26,113 @@ class HomeScreen extends StatelessWidget {
             color: AppColors.primary,
             backgroundColor: AppColors.surface,
             child: CustomScrollView(
-            slivers: [
-              // App Bar
-              SliverAppBar(
-                backgroundColor: AppColors.background.withValues(alpha: 0.9),
-                floating: true,
-                leading: Container(
-                  margin: const EdgeInsets.only(left: AppSizes.p20),
-                  child: Hero(
-                    tag: 'app_logo_hero',
-                    child: Image.asset(
-                      AppAssets.logo,
-                      width: 24,
-                      height: 24,
-                    ),
-                  ),
-                ),
-                pinned: true,
-                elevation: 0,
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(AppText.appName,
-                        style: GoogleFonts.inter(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary)),
-                    Text('MARKET OPEN',
-                        style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey,
-                            letterSpacing: 1.5)),
-                  ],
-                ),
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: AppSizes.p16),
-                    child: CircleAvatar(
-                      backgroundColor: AppColors.surfaceLight,
-                      child: Stack(
-                        children: [
-                          const Icon(Icons.notifications,
-                              color: Colors.white, size: AppSizes.iconMd),
-                          Positioned(
-                              top: 2,
-                              right: 2,
-                              child: Container(
-                                  width: 6,
-                                  height: 6,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.red,
-                                      shape: BoxShape.circle))),
-                        ],
+              slivers: [
+                // App Bar
+                SliverAppBar(
+                  backgroundColor: AppColors.background.withValues(alpha: 0.9),
+                  floating: true,
+                  leading: Container(
+                    margin: const EdgeInsets.only(left: AppSizes.p20),
+                    child: Hero(
+                      tag: 'app_logo_hero',
+                      child: Image.asset(
+                        AppAssets.logo,
+                        width: 24,
+                        height: 24,
                       ),
                     ),
                   ),
-                ],
-              ),
+                  pinned: true,
+                  elevation: 0,
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(AppText.appName,
+                          style: GoogleFonts.inter(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary)),
+                      Text('MARKET OPEN',
+                          style: GoogleFonts.inter(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey,
+                              letterSpacing: 1.5)),
+                    ],
+                  ),
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: AppSizes.p16),
+                      child: CircleAvatar(
+                        backgroundColor: AppColors.surfaceLight,
+                        child: Stack(
+                          children: [
+                            const Icon(Icons.notifications,
+                                color: Colors.white, size: AppSizes.iconMd),
+                            Positioned(
+                                top: 2,
+                                right: 2,
+                                child: Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle))),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
 
-              // Loading Indicator
-              if (viewModel.isLoading && summary != null)
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: AppSizes.p16),
-                    child: LinearProgressIndicator(
-                      backgroundColor: Colors.transparent,
-                      color: AppColors.primary,
-                      minHeight: 2,
+                // Loading Indicator
+                if (viewModel.isLoading && summary != null)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: AppSizes.p16),
+                      child: LinearProgressIndicator(
+                        backgroundColor: Colors.transparent,
+                        color: AppColors.primary,
+                        minHeight: 2,
+                      ),
                     ),
                   ),
-                ),
 
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSizes.p16),
-                  child: isInitialLoad
-                      ? Column(
-                          children: [
-                            _buildLoadingSkeleton(),
-                          ],
-                        )
-                      : summary == null
-                          ? const Center(
-                              child: Text('Unable to load summary',
-                                  style: TextStyle(
-                                      color: AppColors.textSecondary)),
-                            )
-                          : Opacity(
-                              opacity: viewModel.isLoading ? 0.6 : 1.0,
-                              child: Column(
-                                children: [
-                                  _buildHeroCard(
-                                      summary.netWorth, summary.load),
-                                  const SizedBox(height: AppSizes.p24),
-                                  _buildChartSection(),
-                                  const SizedBox(height: AppSizes.p24),
-                                  _buildAssetAllocation(),
-                                  const SizedBox(height: AppSizes.p24),
-                                  _buildTopHoldings(summary.holdings, context),
-                                ],
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSizes.p16),
+                    child: isInitialLoad
+                        ? Column(
+                            children: [
+                              _buildLoadingSkeleton(),
+                            ],
+                          )
+                        : summary == null
+                            ? const Center(
+                                child: Text('Unable to load summary',
+                                    style: TextStyle(
+                                        color: AppColors.textSecondary)),
+                              )
+                            : Opacity(
+                                opacity: viewModel.isLoading ? 0.6 : 1.0,
+                                child: Column(
+                                  children: [
+                                    _buildHeroCard(
+                                        summary.netWorth, summary.load),
+                                    const SizedBox(height: AppSizes.p24),
+                                    _buildChartSection(),
+                                    const SizedBox(height: AppSizes.p24),
+                                    _buildAssetAllocation(),
+                                    const SizedBox(height: AppSizes.p24),
+                                    _buildTopHoldings(
+                                        summary.holdings, context),
+                                  ],
+                                ),
                               ),
-                            ),
+                  ),
                 ),
-              ),
-            ],
-          );
+              ],
+            ),
           );
         },
       ),
