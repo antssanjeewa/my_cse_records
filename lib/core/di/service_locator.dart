@@ -50,7 +50,10 @@ void setupLocator() {
 
   // ViewModels
   getIt.registerFactory(() => AuthViewModel(supabase: getIt()));
-  getIt.registerFactory(() => HomeViewModel(getPortfolioSummary: getIt()));
+  getIt.registerFactory(() => HomeViewModel(
+        getPortfolioSummary: getIt(),
+        getTransactions: getIt(),
+      ));
   getIt.registerFactory(() => PortfolioViewModel(getHoldings: getIt()));
   getIt.registerFactory(
       () => TransactionHistoryViewModel(getTransactions: getIt()));

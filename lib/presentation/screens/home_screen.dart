@@ -7,6 +7,7 @@ import '../../core/constants/constants.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/routing/pages.dart';
 import '../../domain/entities/portfolio_summary.dart';
+import '../../domain/entities/transaction.dart';
 import '../viewmodels/home_viewmodel.dart';
 import '../../domain/entities/holding.dart';
 
@@ -53,12 +54,33 @@ class HomeScreen extends StatelessWidget {
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary)),
-                      Text('MARKET OPEN',
-                          style: GoogleFonts.inter(
+                      Row(
+                        children: [
+                          Text(
+                            viewModel.isMarketOpen
+                                ? 'MARKET OPEN'
+                                : 'MARKET CLOSED',
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: viewModel.isMarketOpen
+                                  ? AppColors.success
+                                  : AppColors.textSecondary,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          const SizedBox(width: AppSizes.p8),
+                          Text(
+                            '• ${viewModel.currentTime}',
+                            style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
-                              color: Colors.grey,
-                              letterSpacing: 1.5)),
+                              color: Colors.white.withValues(alpha: 0.5),
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                   actions: [
@@ -118,15 +140,15 @@ class HomeScreen extends StatelessWidget {
                                 opacity: viewModel.isLoading ? 0.6 : 1.0,
                                 child: Column(
                                   children: [
-                                    _buildHeroCard(
-                                        summary.netWorth, summary.load),
+                                    _buildHeroCard(summary),
                                     const SizedBox(height: AppSizes.p24),
-                                    _buildChartSection(),
+                                    _buildTransactionBarChart(
+                                        viewModel.recentTransactions),
                                     const SizedBox(height: AppSizes.p24),
-                                    _buildAssetAllocation(summary),
+                                    _buildAllocationRow(summary),
                                     const SizedBox(height: AppSizes.p24),
-                                    _buildTopHoldings(
-                                        summary.holdings, context),
+                                    _buildRecentTransactions(
+                                        viewModel.recentTransactions, context),
                                   ],
                                 ),
                               ),
@@ -140,7 +162,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroCard(double value, double load) {
+  Widget _buildHeroCard(PortfolioSummary summary) {
     return Container(
       padding: const EdgeInsets.all(AppSizes.p24),
       decoration: BoxDecoration(
@@ -156,292 +178,82 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppText.totalPortfolioValue,
-              style: GoogleFonts.inter(color: Colors.white70, fontSize: 14)),
-          const SizedBox(height: AppSizes.p8),
-          Text(AppFormatters.formatCurrency(value),
+          Text('Net Worth',
+              style: GoogleFonts.inter(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500)),
+          const SizedBox(height: 4),
+          Text(AppFormatters.formatCurrency(summary.netWorth),
               style: GoogleFonts.inter(
                   color: Colors.white,
                   fontSize: 32,
                   fontWeight: FontWeight.bold)),
-          const SizedBox(height: AppSizes.p16),
+          const SizedBox(height: AppSizes.p20),
+          // Breakdown Row
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(AppSizes.r8)),
-                child: Row(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.trending_up,
-                        color: AppColors.success, size: AppSizes.iconSm),
-                    const SizedBox(width: AppSizes.p4),
-                    Text('+LKR ${load.toStringAsFixed(2)} (2.5%)',
+                    Text('Portfolio value',
                         style: GoogleFonts.inter(
-                            color: AppColors.success,
-                            fontSize: 12,
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 11)),
+                    const SizedBox(height: 4),
+                    Text(AppFormatters.formatCurrency(summary.totalValue),
+                        style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
-              const SizedBox(width: AppSizes.p8),
-              Text(AppText.today,
-                  style:
-                      GoogleFonts.inter(color: Colors.white60, fontSize: 12)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChartSection() {
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.p16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.r16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(AppText.performanceHistory,
-                  style: GoogleFonts.inter(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.bold)),
-              Row(
-                children: [
-                  _buildChartTab('30D', true),
-                  _buildChartTab('6M', false),
-                  _buildChartTab('1Y', false),
-                ],
-              )
-            ],
-          ),
-          const SizedBox(height: AppSizes.p24),
-          SizedBox(
-            height: 150,
-            child: LineChart(
-              LineChartData(
-                gridData: const FlGridData(show: false),
-                titlesData: FlTitlesData(
-                  show: true,
-                  rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  leftTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        switch (value.toInt()) {
-                          case 0:
-                            return const Text('MAY 01',
-                                style: TextStyle(
-                                    color: Colors.grey, fontSize: 10));
-                          case 6:
-                            return const Text('MAY 15',
-                                style: TextStyle(
-                                    color: Colors.grey, fontSize: 10));
-                          case 11:
-                            return const Text('TODAY',
-                                style: TextStyle(
-                                    color: Colors.grey, fontSize: 10));
-                        }
-                        return const Text('');
-                      },
-                      interval: 1,
-                    ),
-                  ),
-                ),
-                borderData: FlBorderData(show: false),
-                minX: 0,
-                maxX: 11,
-                minY: 0,
-                maxY: 6,
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: [
-                      const FlSpot(0, 3),
-                      const FlSpot(2, 2),
-                      const FlSpot(4, 5),
-                      const FlSpot(6, 3.1),
-                      const FlSpot(8, 4),
-                      const FlSpot(9.5, 3),
-                      const FlSpot(11, 4),
-                    ],
-                    isCurved: true,
-                    color: AppColors.primary,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: const FlDotData(show: false),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.primary.withValues(alpha: 0.3),
-                          AppColors.primary.withValues(alpha: 0.0),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                    ),
-                  ),
-                ],
+              Container(
+                width: 1,
+                height: 30,
+                color: Colors.white.withValues(alpha: 0.2),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChartTab(String text, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      margin: const EdgeInsets.only(left: 4),
-      decoration: BoxDecoration(
-        color: isSelected ? AppColors.border : Colors.transparent,
-        borderRadius: BorderRadius.circular(AppSizes.r8),
-      ),
-      child: Text(text,
-          style: TextStyle(
-              color: isSelected ? Colors.white : Colors.grey,
-              fontSize: 12,
-              fontWeight: FontWeight.bold)),
-    );
-  }
-
-  Widget _buildAssetAllocation(PortfolioSummary summary) {
-    final stockVal = summary.totalValue;
-    final cashVal = summary.cashBalance;
-    final dividendVal = summary.totalDividends;
-    final total = stockVal + cashVal + dividendVal;
-
-    final stockPct = total == 0 ? 0.0 : (stockVal / total) * 100;
-    final cashPct = total == 0 ? 0.0 : (cashVal / total) * 100;
-    final dividendPct = total == 0 ? 0.0 : (dividendVal / total) * 100;
-
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.p16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.r16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(AppText.assetAllocation,
-              style: GoogleFonts.inter(
-                  color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
-          const SizedBox(height: AppSizes.p16),
-          Row(
-            children: [
-              SizedBox(
-                height: 100,
-                width: 100,
-                child: PieChart(
-                  PieChartData(
-                    sections: [
-                      if (stockVal > 0)
-                        PieChartSectionData(
-                            value: stockVal,
-                            color: AppColors.primary,
-                            radius: 12,
-                            showTitle: false),
-                      if (cashVal > 0)
-                        PieChartSectionData(
-                            value: cashVal,
-                            color: Colors.grey.withAlpha(150),
-                            radius: 12,
-                            showTitle: false),
-                      if (dividendVal > 0)
-                        PieChartSectionData(
-                            value: dividendVal,
-                            color: Colors.white,
-                            radius: 12,
-                            showTitle: false),
-                      if (total == 0)
-                        PieChartSectionData(
-                            value: 1,
-                            color: Colors.grey.withAlpha(50),
-                            radius: 12,
-                            showTitle: false),
-                    ],
-                    sectionsSpace: 2,
-                    centerSpaceRadius: 30,
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppSizes.p24),
+              const SizedBox(width: AppSizes.p16),
               Expanded(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildLegendItem(
-                        color: AppColors.primary,
-                        label: 'Stocks',
-                        pct: '${stockPct.toStringAsFixed(1)}%'),
-                    _buildLegendItem(
-                        color: Colors.grey.withAlpha(150),
-                        label: 'Cash',
-                        pct: '${cashPct.toStringAsFixed(1)}%'),
-                    _buildLegendItem(
-                        color: Colors.white,
-                        label: 'Dividends',
-                        pct: '${dividendPct.toStringAsFixed(1)}%'),
+                    Text('Available balance',
+                        style: GoogleFonts.inter(
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 11)),
+                    const SizedBox(height: 4),
+                    Text(AppFormatters.formatCurrency(summary.cashBalance),
+                        style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
                   ],
                 ),
-              )
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildLegendItem(
-      {required Color color, required String label, required String pct}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(children: [
-            CircleAvatar(radius: 4, backgroundColor: color),
-            const SizedBox(width: AppSizes.p8),
-            Text(label,
-                style: const TextStyle(color: Colors.grey, fontSize: 12)),
-          ]),
-          Text(pct,
-              style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTopHoldings(List<Holding> holdings, BuildContext context) {
+  Widget _buildRecentTransactions(
+      List<Transaction> transactions, BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(AppText.topHoldings,
+            Text('Recent Activity',
                 style: GoogleFonts.inter(
                     color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
-            if (holdings.isNotEmpty)
+            if (transactions.isNotEmpty)
               GestureDetector(
-                onTap: () => Pages.portfolio.go(context),
+                onTap: () => Pages.transactions.go(context),
                 child: Text(AppText.viewAll,
                     style: GoogleFonts.inter(
                         color: AppColors.primary,
@@ -451,35 +263,22 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSizes.p12),
-        if (holdings.isEmpty)
+        if (transactions.isEmpty)
           Container(
-            padding: const EdgeInsets.all(AppSizes.p24),
+            padding: const EdgeInsets.all(AppSizes.p20),
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(AppSizes.r16),
               border: Border.all(color: AppColors.border),
             ),
-            child: Column(
-              children: [
-                Icon(Icons.inventory_2_outlined,
-                    size: 40, color: Colors.grey.withAlpha(50)),
-                const SizedBox(height: AppSizes.p12),
-                const Text('No holdings yet',
-                    style: TextStyle(
-                        color: AppColors.textSecondary, fontSize: 13)),
-                const SizedBox(height: AppSizes.p12),
-                TextButton(
-                  onPressed: () => Pages.addTransaction.push(context),
-                  child: const Text('Add your first stock',
-                      style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold)),
-                ),
-              ],
+            child: const Center(
+              child: Text('No recent transactions',
+                  style:
+                      TextStyle(color: AppColors.textSecondary, fontSize: 13)),
             ),
           )
         else
-          ...holdings.take(5).map((h) => Container(
+          ...transactions.map((t) => Container(
                 margin: const EdgeInsets.only(bottom: AppSizes.p8),
                 padding: const EdgeInsets.all(AppSizes.p12),
                 decoration: BoxDecoration(
@@ -493,49 +292,67 @@ class HomeScreen extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                          color: AppColors.surfaceLight,
-                          borderRadius: BorderRadius.circular(AppSizes.r8)),
-                      alignment: Alignment.center,
-                      child: Text(h.ticker.split('.')[0],
-                          style: const TextStyle(
-                              color: AppColors.primary,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold)),
+                        color: (t.type == TransactionType.buy
+                                ? AppColors.primary
+                                : t.type == TransactionType.sell
+                                    ? AppColors.error
+                                    : AppColors.success)
+                            .withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(AppSizes.r12),
+                      ),
+                      child: Icon(
+                        t.type == TransactionType.buy
+                            ? Icons.add_chart
+                            : t.type == TransactionType.sell
+                                ? Icons.show_chart
+                                : Icons.account_balance_wallet,
+                        color: t.type == TransactionType.buy
+                            ? AppColors.primary
+                            : t.type == TransactionType.sell
+                                ? AppColors.error
+                                : AppColors.success,
+                        size: 20,
+                      ),
                     ),
                     const SizedBox(width: AppSizes.p12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(h.name,
+                          Text(t.ticker.split('.')[0],
                               style: const TextStyle(
                                   color: AppColors.textPrimary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14)),
-                          Text('${h.quantity.toInt()} Shares',
+                          Text(
+                              '${t.typeString} • ${AppFormatters.dateOnly.format(t.date)}',
                               style: const TextStyle(
-                                  color: Colors.grey, fontSize: 10)),
+                                  color: AppColors.textSecondary,
+                                  fontSize: 10)),
                         ],
                       ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(AppFormatters.formatCurrency(h.totalPrice),
-                            style: const TextStyle(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14)),
                         Text(
-                            '${h.profitPercent > 0 ? '+' : ''}${h.profitPercent.toStringAsFixed(1)}%',
-                            style: TextStyle(
-                                color: h.profitPercent >= 0
-                                    ? AppColors.success
-                                    : AppColors.error,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold)),
+                          '${(t.type == TransactionType.sell || t.type == TransactionType.dividend) ? '+' : '-'} ${AppFormatters.formatCurrency(t.total_price)}',
+                          style: TextStyle(
+                            color: (t.type == TransactionType.sell ||
+                                    t.type == TransactionType.dividend)
+                                ? AppColors.success
+                                : Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          '${t.qty.toInt()} Shares',
+                          style: const TextStyle(
+                              color: AppColors.textSecondary, fontSize: 10),
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               )),
@@ -543,174 +360,318 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingSkeleton() {
-    return Column(
+  Widget _buildTransactionBarChart(List<Transaction> transactions) {
+    return _TransactionActivityChart(transactions: transactions);
+  }
+
+  Widget _buildAllocationRow(PortfolioSummary summary) {
+    return Row(
       children: [
-        // Hero Card Skeleton
-        Container(
-          padding: const EdgeInsets.all(AppSizes.p16),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(AppSizes.r24),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 100,
-                height: 14,
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceLight,
-                  borderRadius: BorderRadius.circular(4),
-                ),
+        Expanded(
+          child: _AllocationCard(
+            title: 'Assets',
+            sections: [
+              _ChartSectionData(
+                value: summary.totalValue,
+                color: AppColors.primary,
+                label: 'Stocks',
               ),
-              const SizedBox(height: AppSizes.p8),
-              Container(
-                width: 400,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceLight,
-                  borderRadius: BorderRadius.circular(4),
-                ),
+              _ChartSectionData(
+                value: summary.cashBalance,
+                color: Colors.orange,
+                label: 'Cash',
               ),
-              const SizedBox(height: AppSizes.p16),
-              Container(
-                width: 200,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceLight,
-                  borderRadius: BorderRadius.circular(AppSizes.r8),
-                ),
+              _ChartSectionData(
+                value: summary.totalDividends,
+                color: Colors.green,
+                label: 'Div',
               ),
             ],
           ),
         ),
-        const SizedBox(height: AppSizes.p24),
-        // Chart Skeleton
-        Container(
-          padding: const EdgeInsets.all(AppSizes.p16),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(AppSizes.r16),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 120,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceLight,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  Container(
-                    width: 100,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceLight,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSizes.p24),
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceLight,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ],
+        const SizedBox(width: AppSizes.p12),
+        Expanded(
+          child: _AllocationCard(
+            title: 'Stocks',
+            sections: _getStockSections(summary.holdings),
           ),
         ),
-        const SizedBox(height: AppSizes.p24),
-        // Holdings Skeleton
-        Container(
-          padding: const EdgeInsets.all(AppSizes.p16),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(AppSizes.r16),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 100,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceLight,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  Container(
-                    width: 60,
-                    height: 14,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceLight,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSizes.p12),
-              ...List.generate(
-                3,
-                (index) => Container(
-                  margin: const EdgeInsets.only(bottom: AppSizes.p8),
-                  padding: const EdgeInsets.all(AppSizes.p12),
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceLight.withAlpha(75),
-                    borderRadius: BorderRadius.circular(AppSizes.r12),
-                  ),
-                  child: Row(
+      ],
+    );
+  }
+
+  List<_ChartSectionData> _getStockSections(List<Holding> holdings) {
+    if (holdings.isEmpty) return [];
+    final sorted = List<Holding>.from(holdings)
+      ..sort((a, b) => b.totalPrice.compareTo(a.totalPrice));
+
+    final top4 = sorted.take(4).toList();
+    final otherVal = sorted.length > 4
+        ? sorted.skip(4).fold(0.0, (sum, h) => sum + h.totalPrice)
+        : 0.0;
+
+    final palette = [
+      AppColors.primary,
+      const Color(0xFF6366F1),
+      const Color(0xFFEC4899),
+      const Color(0xFF10B981),
+    ];
+
+    final List<_ChartSectionData> sections = [];
+    for (int i = 0; i < top4.length; i++) {
+      sections.add(_ChartSectionData(
+        value: top4[i].totalPrice,
+        color: palette[i],
+        label: top4[i].ticker.split('.')[0],
+      ));
+    }
+
+    if (otherVal > 0) {
+      sections.add(_ChartSectionData(
+        value: otherVal,
+        color: Colors.grey.withValues(alpha: 0.3),
+        label: 'Other',
+      ));
+    }
+
+    return sections;
+  }
+}
+
+class _ChartSectionData {
+  final double value;
+  final Color color;
+  final String label;
+
+  _ChartSectionData({
+    required this.value,
+    required this.color,
+    required this.label,
+  });
+}
+
+class _AllocationCard extends StatefulWidget {
+  final String title;
+  final List<_ChartSectionData> sections;
+
+  const _AllocationCard({required this.title, required this.sections});
+
+  @override
+  State<_AllocationCard> createState() => _AllocationCardState();
+}
+
+class _AllocationCardState extends State<_AllocationCard> {
+  int touchedIndex = -1;
+
+  @override
+  Widget build(BuildContext context) {
+    final total = widget.sections.fold(0.0, (sum, s) => sum + s.value);
+
+    return Container(
+      padding: const EdgeInsets.all(AppSizes.p12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.r24),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        children: [
+          Text(widget.title,
+              style: GoogleFonts.inter(
+                  color: AppColors.textPrimary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold)),
+          const SizedBox(height: AppSizes.p8),
+          SizedBox(
+            height: 140,
+            child: widget.sections.isEmpty || total == 0
+                ? Center(
+                    child: Text('Empty',
+                        style: TextStyle(
+                            color: Colors.grey.withValues(alpha: 0.5),
+                            fontSize: 10)))
+                : Stack(
+                    alignment: Alignment.center,
                     children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceLight,
-                          borderRadius: BorderRadius.circular(AppSizes.r8),
+                      PieChart(
+                        PieChartData(
+                          pieTouchData: PieTouchData(
+                            touchCallback:
+                                (FlTouchEvent event, pieTouchResponse) {
+                              setState(() {
+                                if (!event.isInterestedForInteractions ||
+                                    pieTouchResponse == null ||
+                                    pieTouchResponse.touchedSection == null) {
+                                  touchedIndex = -1;
+                                  return;
+                                }
+                                touchedIndex = pieTouchResponse
+                                    .touchedSection!.touchedSectionIndex;
+                              });
+                            },
+                          ),
+                          sections:
+                              widget.sections.asMap().entries.map((entry) {
+                            final isTouched = entry.key == touchedIndex;
+                            final radius = isTouched ? 22.0 : 18.0;
+
+                            return PieChartSectionData(
+                              value: entry.value.value,
+                              color: entry.value.color,
+                              radius: radius,
+                              showTitle: false,
+                            );
+                          }).toList(),
+                          sectionsSpace: 2,
+                          centerSpaceRadius: 42,
                         ),
                       ),
-                      const SizedBox(width: AppSizes.p12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      if (touchedIndex != -1)
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Container(
-                              width: 120,
-                              height: 14,
-                              decoration: BoxDecoration(
-                                color: AppColors.surfaceLight,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
+                            Text(
+                              widget.sections[touchedIndex].label,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(height: 4),
-                            Container(
-                              width: 80,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: AppColors.surfaceLight,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
+                            Text(
+                              '${((widget.sections[touchedIndex].value / total) * 100).toStringAsFixed(1)}%',
+                              style: const TextStyle(
+                                  color: AppColors.textSecondary, fontSize: 9),
                             ),
                           ],
+                        )
+                      else
+                        Text(
+                          'Tap',
+                          style: TextStyle(
+                              color: Colors.grey.withValues(alpha: 0.3),
+                              fontSize: 9),
                         ),
+                    ],
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _buildLoadingSkeleton() {
+  return Column(
+    children: [
+      // Hero Card Skeleton
+      Container(
+        padding: const EdgeInsets.all(AppSizes.p16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizes.r24),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 100,
+              height: 14,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceLight,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(height: AppSizes.p8),
+            Container(
+              width: 400,
+              height: 32,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceLight,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(height: AppSizes.p16),
+            Container(
+              width: 200,
+              height: 24,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceLight,
+                borderRadius: BorderRadius.circular(AppSizes.r8),
+              ),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: AppSizes.p24),
+      const SizedBox(height: AppSizes.p24),
+      // Allocation Row Skeleton
+      Row(
+        children: [
+          Expanded(child: _buildChartSkeleton()),
+          const SizedBox(width: AppSizes.p16),
+          Expanded(child: _buildChartSkeleton()),
+        ],
+      ),
+      const SizedBox(height: AppSizes.p24),
+      // Transactions Skeleton
+      Container(
+        padding: const EdgeInsets.all(AppSizes.p16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSizes.r16),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 120,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceLight,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                Container(
+                  width: 60,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceLight,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSizes.p16),
+            ...List.generate(
+              3,
+              (index) => Container(
+                margin: const EdgeInsets.only(bottom: AppSizes.p8),
+                padding: const EdgeInsets.all(AppSizes.p12),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceLight.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppSizes.r12),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(AppSizes.r12),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                    ),
+                    const SizedBox(width: AppSizes.p12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            width: 60,
+                            width: 100,
                             height: 14,
                             decoration: BoxDecoration(
                               color: AppColors.surfaceLight,
@@ -719,7 +680,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            width: 40,
+                            width: 60,
                             height: 10,
                             decoration: BoxDecoration(
                               color: AppColors.surfaceLight,
@@ -728,14 +689,375 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildChartSkeleton() {
+  return Container(
+    padding: const EdgeInsets.all(AppSizes.p12),
+    decoration: BoxDecoration(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(AppSizes.r24),
+      border: Border.all(color: AppColors.border),
+    ),
+    child: Column(
+      children: [
+        Container(
+          width: 50,
+          height: 10,
+          decoration: BoxDecoration(
+            color: AppColors.surfaceLight,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        const SizedBox(height: AppSizes.p12),
+        Container(
+          width: 100,
+          height: 100,
+          decoration: const BoxDecoration(
+            color: AppColors.surfaceLight,
+            shape: BoxShape.circle,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _TransactionActivityChart extends StatefulWidget {
+  final List<Transaction> transactions;
+
+  const _TransactionActivityChart({required this.transactions});
+
+  @override
+  State<_TransactionActivityChart> createState() =>
+      _TransactionActivityChartState();
+}
+
+enum ChartPeriod { week, month, year }
+
+class _TransactionActivityChartState extends State<_TransactionActivityChart> {
+  ChartPeriod selectedPeriod = ChartPeriod.month;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSizes.p16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.r24),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Transaction Activity',
+                  style: GoogleFonts.inter(
+                      color: AppColors.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold)),
+              Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    _buildToggleItem(
+                        'Week', selectedPeriod == ChartPeriod.week),
+                    _buildToggleItem(
+                        'Month', selectedPeriod == ChartPeriod.month),
+                    _buildToggleItem(
+                        'Year', selectedPeriod == ChartPeriod.year),
+                  ],
                 ),
               ),
             ],
           ),
-        ),
-      ],
+          const SizedBox(height: AppSizes.p24),
+          SizedBox(
+            height: 150,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: _getMaxY(),
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    tooltipRoundedRadius: 8,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      return BarTooltipItem(
+                        '${rodIndex == 0 ? "Buy" : "Sell"}\n${AppFormatters.formatCurrency(rod.toY)}',
+                        GoogleFonts.inter(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: _getBottomTitles,
+                      reservedSize: 30,
+                    ),
+                  ),
+                  leftTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                ),
+                gridData: const FlGridData(show: false),
+                borderData: FlBorderData(show: false),
+                barGroups: _getBarGroups(),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  Widget _buildToggleItem(String label, bool isSelected) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          if (label == 'Week') {
+            selectedPeriod = ChartPeriod.week;
+          } else if (label == 'Month') {
+            selectedPeriod = ChartPeriod.month;
+          } else {
+            selectedPeriod = ChartPeriod.year;
+          }
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.inter(
+            color: isSelected ? Colors.white : Colors.grey,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  double _getMaxY() {
+    double max = 0;
+    final groups = _getBarGroups();
+    for (var group in groups) {
+      for (var rod in group.barRods) {
+        if (rod.toY > max) max = rod.toY;
+      }
+    }
+    return max == 0 ? 100 : max * 1.2;
+  }
+
+  List<BarChartGroupData> _getBarGroups() {
+    if (widget.transactions.isEmpty) return [];
+
+    if (selectedPeriod == ChartPeriod.week) {
+      // Group by last 7 days
+      final now = DateTime.now();
+      return List.generate(7, (i) {
+        final date = DateTime(now.year, now.month, now.day - (6 - i));
+        double buyAmount = 0;
+        double sellAmount = 0;
+
+        for (var t in widget.transactions) {
+          if (t.date.year == date.year &&
+              t.date.month == date.month &&
+              t.date.day == date.day) {
+            if (t.type == TransactionType.buy) {
+              buyAmount += t.total_price;
+            } else if (t.type == TransactionType.sell) {
+              sellAmount += t.total_price;
+            }
+          }
+        }
+
+        return BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              toY: buyAmount,
+              color: AppColors.primary,
+              width: 8,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(4)),
+            ),
+            BarChartRodData(
+              toY: sellAmount,
+              color: AppColors.error,
+              width: 8,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(4)),
+            ),
+          ],
+        );
+      });
+    } else if (selectedPeriod == ChartPeriod.month) {
+      // Group by month for the last 6 months
+      final now = DateTime.now();
+      return List.generate(6, (i) {
+        final monthDate = DateTime(now.year, now.month - (5 - i), 1);
+        double buyAmount = 0;
+        double sellAmount = 0;
+
+        for (var t in widget.transactions) {
+          if (t.date.year == monthDate.year &&
+              t.date.month == monthDate.month) {
+            if (t.type == TransactionType.buy) {
+              buyAmount += t.total_price;
+            } else if (t.type == TransactionType.sell) {
+              sellAmount += t.total_price;
+            }
+          }
+        }
+
+        return BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              toY: buyAmount,
+              color: AppColors.primary,
+              width: 8,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(4)),
+            ),
+            BarChartRodData(
+              toY: sellAmount,
+              color: AppColors.error,
+              width: 8,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(4)),
+            ),
+          ],
+        );
+      });
+    } else {
+      // Group by last 3 years
+      final now = DateTime.now();
+      return List.generate(3, (i) {
+        final year = now.year - (2 - i);
+        double buyAmount = 0;
+        double sellAmount = 0;
+
+        for (var t in widget.transactions) {
+          if (t.date.year == year) {
+            if (t.type == TransactionType.buy) {
+              buyAmount += t.total_price;
+            } else if (t.type == TransactionType.sell) {
+              sellAmount += t.total_price;
+            }
+          }
+        }
+
+        return BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              toY: buyAmount,
+              color: AppColors.primary,
+              width: 12,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(4)),
+            ),
+            BarChartRodData(
+              toY: sellAmount,
+              color: AppColors.error,
+              width: 12,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(4)),
+            ),
+          ],
+        );
+      });
+    }
+  }
+
+  Widget _getBottomTitles(double value, TitleMeta meta) {
+    if (selectedPeriod == ChartPeriod.week) {
+      final now = DateTime.now();
+      final date = DateTime(now.year, now.month, now.day - (6 - value.toInt()));
+      final text = _getWeekdayName(date.weekday);
+      return SideTitleWidget(
+        axisSide: meta.axisSide,
+        space: 10,
+        child: Text(text,
+            style: const TextStyle(
+                color: Colors.grey, fontSize: 9, fontWeight: FontWeight.bold)),
+      );
+    } else if (selectedPeriod == ChartPeriod.month) {
+      final now = DateTime.now();
+      final monthDate = DateTime(now.year, now.month - (5 - value.toInt()), 1);
+      final text = _getMonthName(monthDate.month);
+      return SideTitleWidget(
+        axisSide: meta.axisSide,
+        space: 10,
+        child: Text(text,
+            style: const TextStyle(
+                color: Colors.grey, fontSize: 9, fontWeight: FontWeight.bold)),
+      );
+    } else {
+      final now = DateTime.now();
+      final year = now.year - (2 - value.toInt());
+      return SideTitleWidget(
+        axisSide: meta.axisSide,
+        space: 10,
+        child: Text('$year',
+            style: const TextStyle(
+                color: Colors.grey, fontSize: 9, fontWeight: FontWeight.bold)),
+      );
+    }
+  }
+
+  String _getWeekdayName(int weekday) {
+    const names = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+    return names[weekday - 1];
+  }
+
+  String _getMonthName(int month) {
+    const names = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC'
+    ];
+    return names[month - 1];
   }
 }
