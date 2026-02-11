@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/constants.dart';
+import '../../core/theme/app_text_styles.dart';
 
 /// A reusable AppBar widget with consistent styling and behavior
 /// Reduces duplication across screens
@@ -58,7 +58,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                     onPressed: onLeadingPressed,
                   )
                 : null),
-        title: _buildTitle(),
+        title: _buildTitle(context),
         actions: actions,
         centerTitle: centerTitle,
       );
@@ -78,13 +78,13 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                   onPressed: onLeadingPressed,
                 )
               : null),
-      title: _buildTitle(),
+      title: _buildTitle(context),
       actions: actions,
       centerTitle: centerTitle,
     );
   }
 
-  Widget? _buildTitle() {
+  Widget? _buildTitle(context) {
     if (title == null && subtitle == null) return null;
 
     return Column(
@@ -95,13 +95,13 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
         if (title != null)
           Text(
             title!,
-            style: AppTextStyles.titleLarge,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
         if (subtitle != null) ...[
           const SizedBox(height: 4),
           Text(
             subtitle!,
-            style: AppTextStyles.captionText,
+            style: Theme.of(context).textTheme.labelSmall,
           ),
         ],
       ],
@@ -153,7 +153,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           Text(
             appName,
-            style: AppTextStyles.titleLarge,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
           Row(
             children: [

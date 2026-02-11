@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/constants.dart';
@@ -40,17 +39,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               SliverAppBar(
                 backgroundColor: AppColors.background.withValues(alpha: 0.9),
                 pinned: true,
-                title: Text(AppText.portfolioHoldings,
-                    style: GoogleFonts.inter(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: AppColors.textPrimary)),
+                title: Text(
+                  AppText.portfolioHoldings,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
                 centerTitle: true,
-                actions: [
-                  IconButton(
-                      icon: const Icon(Icons.more_vert, color: Colors.white),
-                      onPressed: () {}),
-                ],
                 expandedHeight: 250,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Padding(
@@ -88,7 +81,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                         TextField(
                           controller: _searchController,
                           onChanged: (value) => viewModel.setSearchQuery(value),
-                          style: const TextStyle(color: AppColors.textPrimary),
+                          style: Theme.of(context).textTheme.bodyMedium,
                           decoration: InputDecoration(
                             hintText: 'Search ticker or company...',
                             prefixIcon: const Icon(Icons.search,
@@ -169,9 +162,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                         Icon(Icons.inventory_2_outlined,
                             size: 64, color: Colors.grey.withAlpha(50)),
                         const SizedBox(height: 16),
-                        const Text('No holdings found',
-                            style: TextStyle(
-                                color: AppColors.textSecondary, fontSize: 16)),
+                        Text('No holdings found',
+                            style: Theme.of(context).textTheme.bodyLarge),
                       ],
                     ),
                   ),
@@ -224,15 +216,16 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Sort By',
-                style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold)),
+            Text(
+              'Sort By',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: AppSizes.p12),
             ...options.map((opt) => ListTile(
-                  title: Text(opt,
-                      style: const TextStyle(color: AppColors.textPrimary)),
+                  title: Text(
+                    opt,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                   trailing: viewModel.sortBy == opt
                       ? const Icon(Icons.check, color: AppColors.primary)
                       : null,
@@ -260,20 +253,20 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Filter by Sector',
-                style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold)),
+            Text(
+              'Filter by Sector',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: AppSizes.p12),
             Flexible(
               child: ListView(
                 shrinkWrap: true,
                 children: sectors
                     .map((sec) => ListTile(
-                          title: Text(sec,
-                              style: const TextStyle(
-                                  color: AppColors.textPrimary)),
+                          title: Text(
+                            sec,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                           trailing: viewModel.sectorFilter == sec
                               ? const Icon(Icons.check,
                                   color: AppColors.primary)

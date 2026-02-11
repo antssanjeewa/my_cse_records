@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/constants.dart';
 
 /// A custom label widget for form fields with consistent styling
@@ -25,9 +24,9 @@ class CustomLabel extends StatelessWidget {
         children: [
           Text(
             text.toUpperCase(),
-            style: AppTextStyles.labelSmall.copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
           ),
           if (isRequired) ...[
             const SizedBox(width: 4),

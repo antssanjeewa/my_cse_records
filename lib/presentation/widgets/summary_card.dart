@@ -48,10 +48,7 @@ class SummaryCard extends StatelessWidget {
                   fontWeight: FontWeight.w500)),
           const SizedBox(height: 4),
           Text(AppFormatters.formatCurrency(mainValue),
-              style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold)),
+              style: Theme.of(context).textTheme.displayLarge),
           const SizedBox(height: AppSizes.p12),
           // Breakdown Row
           Row(

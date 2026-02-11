@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/constants.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../viewmodels/home_viewmodel.dart';
-import '../../widgets/widgets.dart';
 import 'widgets/home_allocation_row.dart';
 import 'widgets/home_hero_card.dart';
 import 'widgets/home_loading_skeleton.dart';
@@ -51,7 +49,7 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Text(
                         AppText.appName,
-                        style: AppTextStyles.titleLarge,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                       Row(
                         children: [
@@ -59,18 +57,22 @@ class HomeScreen extends StatelessWidget {
                             viewModel.isMarketOpen
                                 ? 'MARKET OPEN'
                                 : 'MARKET CLOSED',
-                            style: AppTextStyles.marketStatusOpen.copyWith(
-                              color: viewModel.isMarketOpen
-                                  ? AppColors.success
-                                  : AppColors.warn,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                  color: viewModel.isMarketOpen
+                                      ? AppColors.success
+                                      : AppColors.warn,
+                                ),
                           ),
                           const SizedBox(width: AppSizes.p8),
                           Text(
                             '• ${viewModel.currentTime}',
-                            style: AppTextStyles.marketTime.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: AppColors.textSecondary,
+                                    ),
                           ),
                         ],
                       )

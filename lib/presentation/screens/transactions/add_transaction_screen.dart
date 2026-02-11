@@ -43,11 +43,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ),
         title: Text(
           'Add Transaction',
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: true,
       ),

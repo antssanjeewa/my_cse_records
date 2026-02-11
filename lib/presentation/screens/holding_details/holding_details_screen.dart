@@ -39,10 +39,7 @@ class HoldingDetailsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(h.ticker,
-                            style: GoogleFonts.inter(
-                                color: AppColors.textPrimary,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
+                            style: Theme.of(context).textTheme.titleLarge),
                         Text(h.name,
                             style: GoogleFonts.inter(
                                 color: AppColors.textSecondary,

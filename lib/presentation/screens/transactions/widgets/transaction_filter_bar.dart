@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../viewmodels/transaction_history_viewmodel.dart';
@@ -109,10 +108,7 @@ class TransactionFilterBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Filter by Type',
-                  style: GoogleFonts.inter(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary)),
+                  style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: AppSizes.p16),
               ...options.map((opt) => ListTile(
                     title:
@@ -148,10 +144,7 @@ class TransactionFilterBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Filter by Company',
-                  style: GoogleFonts.inter(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary)),
+                  style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: AppSizes.p16),
               Flexible(
                 child: ListView.builder(

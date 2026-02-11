@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/constants.dart';
-import '../../core/theme/app_text_styles.dart';
 import '../../domain/entities/stock.dart';
 
 /// A custom autocomplete search field for stock selection
@@ -44,12 +43,12 @@ class CustomStockSearchField extends StatelessWidget {
             return TextField(
               controller: controller,
               focusNode: focusNode,
-              style: AppTextStyles.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium,
               textInputAction: TextInputAction.search,
               onSubmitted: (_) => onFieldSubmitted(),
               decoration: InputDecoration(
                 hintText: hintText,
-                hintStyle: AppTextStyles.hintText,
+                hintStyle: Theme.of(context).textTheme.bodySmall,
                 prefixIcon: const Icon(
                   Icons.search,
                   color: AppColors.textSecondary,
@@ -134,14 +133,14 @@ class CustomStockSearchField extends StatelessWidget {
                               children: [
                                 Text(
                                   option.name,
-                                  style: AppTextStyles.bodyMedium,
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   option.ticker,
-                                  style: AppTextStyles.captionText,
+                                  style: Theme.of(context).textTheme.labelSmall,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),

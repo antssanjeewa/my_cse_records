@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/constants.dart';
@@ -26,10 +25,7 @@ class TransactionHistoryScreen extends StatelessWidget {
                 backgroundColor: AppColors.background.withValues(alpha: 0.9),
                 pinned: true,
                 title: Text(AppText.transactionHistory,
-                    style: GoogleFonts.inter(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary)),
+                    style: Theme.of(context).textTheme.titleLarge),
                 centerTitle: true,
                 actions: [
                   IconButton(

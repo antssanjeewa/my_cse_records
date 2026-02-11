@@ -23,13 +23,6 @@ class AppTextStyles {
         color: Colors.white,
       );
 
-  // Titles
-  static TextStyle get titleLarge => GoogleFonts.inter(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      );
-
   static TextStyle get titleMedium => GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w600,
