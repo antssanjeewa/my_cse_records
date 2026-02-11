@@ -21,6 +21,10 @@ class CashViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  double get totalCash => _transactions
+      .where((t) => t.type == 'DEPOSIT' || t.type == 'WITHDRAWAL')
+      .fold(0.0, (sum, t) => sum + t.amount);
+
   Future<void> fetchCashData() async {
     _isLoading = true;
     notifyListeners();

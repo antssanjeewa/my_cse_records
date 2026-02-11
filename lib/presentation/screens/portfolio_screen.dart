@@ -52,7 +52,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                       icon: const Icon(Icons.more_vert, color: Colors.white),
                       onPressed: () {}),
                 ],
-                expandedHeight: 220,
+                expandedHeight: 240,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Padding(
                     padding: const EdgeInsets.only(
@@ -227,39 +227,57 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                   color: Colors.white.withValues(alpha: 0.8),
                   fontSize: 14,
                   fontWeight: FontWeight.w500)),
-          const SizedBox(height: AppSizes.p4),
-          Text(AppFormatters.formatCurrency(vm.totalValue),
+          const SizedBox(height: 4),
+          Text(AppFormatters.formatCurrency(vm.totalMarketValue),
               style: GoogleFonts.inter(
-                  color: AppColors.textPrimary,
-                  fontSize: 28,
+                  color: Colors.white,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSizes.p12),
           Row(
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(AppSizes.r20)),
-                child: const Row(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.trending_up,
-                        color: Colors.white, size: AppSizes.iconSm),
-                    SizedBox(width: AppSizes.p4),
-                    Text('+2.4% Today',
-                        style: TextStyle(
+                    Text('Net Worth',
+                        style: GoogleFonts.inter(
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 11)),
+                    const SizedBox(height: 4),
+                    Text(
+                        AppFormatters.formatCurrency(
+                            vm.totalMarketValue + vm.cashBalance),
+                        style: GoogleFonts.inter(
                             color: Colors.white,
-                            fontSize: 12,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
-              const SizedBox(width: AppSizes.p12),
-              Text('Market: Open',
-                  style: GoogleFonts.inter(
-                      color: Colors.white.withValues(alpha: 0.7),
-                      fontSize: 12)),
+              Container(
+                width: 1,
+                height: 30,
+                color: Colors.white.withValues(alpha: 0.2),
+              ),
+              const SizedBox(width: AppSizes.p16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Available balance',
+                        style: GoogleFonts.inter(
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 11)),
+                    const SizedBox(height: 4),
+                    Text(AppFormatters.formatCurrency(vm.cashBalance),
+                        style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
             ],
           )
         ],

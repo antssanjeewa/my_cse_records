@@ -25,6 +25,7 @@ class AppColors {
   static const Color errorBg = Colors.red;
   static const Color successBg = Colors.green;
   static const Color info = Colors.blueAccent;
+  static const Color warn = Colors.orangeAccent;
 
   // Overlays
   static final Color overlayDark = Colors.black.withValues(alpha: 0.5);

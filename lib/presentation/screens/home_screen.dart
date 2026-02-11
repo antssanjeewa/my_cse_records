@@ -65,7 +65,7 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color: viewModel.isMarketOpen
                                   ? AppColors.success
-                                  : AppColors.textSecondary,
+                                  : AppColors.warn,
                               letterSpacing: 1.2,
                             ),
                           ),
@@ -75,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
-                              color: Colors.white.withValues(alpha: 0.5),
+                              color: AppColors.textSecondary,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -495,14 +495,14 @@ class _AllocationCardState extends State<_AllocationCard> {
       ),
       child: Column(
         children: [
-          Text(widget.title,
-              style: GoogleFonts.inter(
-                  color: AppColors.textPrimary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold)),
-          const SizedBox(height: AppSizes.p8),
+          // Text(widget.title,
+          //     style: GoogleFonts.inter(
+          //         color: AppColors.textPrimary,
+          //         fontSize: 12,
+          //         fontWeight: FontWeight.bold)),
+          // const SizedBox(height: AppSizes.p8),
           SizedBox(
-            height: 140,
+            height: 180,
             child: widget.sections.isEmpty || total == 0
                 ? Center(
                     child: Text('Empty',
@@ -532,7 +532,7 @@ class _AllocationCardState extends State<_AllocationCard> {
                           sections:
                               widget.sections.asMap().entries.map((entry) {
                             final isTouched = entry.key == touchedIndex;
-                            final radius = isTouched ? 22.0 : 18.0;
+                            final radius = isTouched ? 50.0 : 40.0;
 
                             return PieChartSectionData(
                               value: entry.value.value,
@@ -565,10 +565,9 @@ class _AllocationCardState extends State<_AllocationCard> {
                         )
                       else
                         Text(
-                          'Tap',
+                          widget.title,
                           style: TextStyle(
-                              color: Colors.grey.withValues(alpha: 0.3),
-                              fontSize: 9),
+                              color: AppColors.textSecondary, fontSize: 14),
                         ),
                     ],
                   ),
@@ -765,7 +764,7 @@ class _TransactionActivityChart extends StatefulWidget {
 enum ChartPeriod { week, month, year }
 
 class _TransactionActivityChartState extends State<_TransactionActivityChart> {
-  ChartPeriod selectedPeriod = ChartPeriod.month;
+  ChartPeriod selectedPeriod = ChartPeriod.week;
 
   @override
   Widget build(BuildContext context) {
@@ -816,7 +815,7 @@ class _TransactionActivityChartState extends State<_TransactionActivityChart> {
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
-                    tooltipRoundedRadius: 8,
+                    tooltipBorderRadius: BorderRadius.circular(8),
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
                         '${rodIndex == 0 ? "Buy" : "Sell"}\n${AppFormatters.formatCurrency(rod.toY)}',
@@ -1027,7 +1026,7 @@ class _TransactionActivityChartState extends State<_TransactionActivityChart> {
       final date = DateTime(now.year, now.month, now.day - (6 - value.toInt()));
       final text = _getWeekdayName(date.weekday);
       return SideTitleWidget(
-        axisSide: meta.axisSide,
+        meta: meta,
         space: 10,
         child: Text(text,
             style: const TextStyle(
@@ -1038,7 +1037,7 @@ class _TransactionActivityChartState extends State<_TransactionActivityChart> {
       final monthDate = DateTime(now.year, now.month - (5 - value.toInt()), 1);
       final text = _getMonthName(monthDate.month);
       return SideTitleWidget(
-        axisSide: meta.axisSide,
+        meta: meta,
         space: 10,
         child: Text(text,
             style: const TextStyle(
@@ -1048,7 +1047,7 @@ class _TransactionActivityChartState extends State<_TransactionActivityChart> {
       final now = DateTime.now();
       final year = now.year - (2 - value.toInt());
       return SideTitleWidget(
-        axisSide: meta.axisSide,
+        meta: meta,
         space: 10,
         child: Text('$year',
             style: const TextStyle(
