@@ -6,7 +6,6 @@ import '../models/holding_model.dart';
 import '../models/stock_model.dart';
 import '../models/transaction_model.dart';
 import '../models/cash_transaction_model.dart';
-import '../models/wallet_model.dart';
 
 abstract class RemoteDataSource {
   Future<List<StockModel>> getStocks();
@@ -41,13 +40,6 @@ abstract class RemoteDataSource {
   Future<List<CashTransactionModel>> getCashTransactions();
   Future<void> addCashTransaction(CashTransactionModel transaction);
   Future<double> getCashBalance();
-
-  // Wallet Management
-  Future<WalletModel?> getWallet(String userId);
-  Future<WalletModel> createWallet(String userId,
-      {double initialBalance = 0, String currency = 'LKR'});
-  Future<void> updateWalletBalance(String userId, double newBalance);
-  Future<void> addToWalletBalance(String userId, double amount);
 }
 
 class SupabaseDataSourceImpl implements RemoteDataSource {
@@ -294,81 +286,6 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
       return total;
     } catch (e) {
       _log('ERROR', 'cash_balance', e);
-      rethrow;
-    }
-  }
-
-  // Wallet Management Implementation
-  @override
-  Future<WalletModel?> getWallet(String userId) async {
-    _log('GET', 'wallets', {'user_id': userId});
-    try {
-      final response = await supabase
-          .from('wallets')
-          .select()
-          .eq('user_id', userId)
-          .maybeSingle();
-      _log('RESPONSE', 'wallets_get', response);
-
-      if (response == null) {
-        return null;
-      }
-      return WalletModel.fromJson(response);
-    } catch (e) {
-      _log('ERROR', 'wallets_get', e);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<WalletModel> createWallet(String userId,
-      {double initialBalance = 0, String currency = 'LKR'}) async {
-    final data = {
-      'user_id': userId,
-      'balance': initialBalance,
-      'currency': currency,
-    };
-    _log('INSERT', 'wallets', data);
-    try {
-      final response =
-          await supabase.from('wallets').insert(data).select().single();
-      _log('RESPONSE', 'wallets_create', response);
-      return WalletModel.fromJson(response);
-    } catch (e) {
-      _log('ERROR', 'wallets_create', e);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> updateWalletBalance(String userId, double newBalance) async {
-    final data = {'balance': newBalance};
-    _log('UPDATE', 'wallets', {'user_id': userId, 'balance': newBalance});
-    try {
-      await supabase.from('wallets').update(data).eq('user_id', userId);
-      _log('RESPONSE', 'wallets_update', 'Success');
-    } catch (e) {
-      _log('ERROR', 'wallets_update', e);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> addToWalletBalance(String userId, double amount) async {
-    _log('UPDATE_INCREMENT', 'wallets', {'user_id': userId, 'amount': amount});
-    try {
-      // Fetch current balance
-      final wallet = await getWallet(userId);
-      if (wallet == null) {
-        // If wallet doesn't exist, create it
-        await createWallet(userId, initialBalance: amount);
-      } else {
-        // Update wallet with new balance
-        await updateWalletBalance(userId, wallet.balance + amount);
-      }
-      _log('RESPONSE', 'wallets_add', 'Success');
-    } catch (e) {
-      _log('ERROR', 'wallets_add', e);
       rethrow;
     }
   }
