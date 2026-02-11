@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants/constants.dart';
-import '../../core/utils/utils.dart';
-import '../widgets/widgets.dart';
-import '../viewmodels/manage_stocks_viewmodel.dart';
-import '../../domain/entities/stock.dart';
+import '../../../core/constants/constants.dart';
+import '../../../core/utils/utils.dart';
+import '../../widgets/widgets.dart';
+import '../../viewmodels/manage_stocks_viewmodel.dart';
+import '../../../domain/entities/stock.dart';
 
 class ManageStocksScreen extends StatefulWidget {
   const ManageStocksScreen({super.key});

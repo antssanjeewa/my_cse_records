@@ -3,13 +3,16 @@ import 'package:intl/intl.dart';
 import '../../core/constants/constants.dart';
 
 /// A custom date picker field with consistent styling
+/// Provides a consistent date selection experience across the app
 class CustomDateField extends StatelessWidget {
   final DateTime selectedDate;
   final Function(DateTime) onDateSelected;
   final DateTime? firstDate;
   final DateTime? lastDate;
-  final String? dateFormat;
-  final double? height;
+  final String dateFormat;
+  final double height;
+  final String? hintText;
+  final String? labelText;
 
   const CustomDateField({
     super.key,
@@ -17,8 +20,10 @@ class CustomDateField extends StatelessWidget {
     required this.onDateSelected,
     this.firstDate,
     this.lastDate,
-    this.dateFormat,
-    this.height,
+    this.dateFormat = 'yyyy-MM-dd',
+    this.height = 56,
+    this.hintText,
+    this.labelText,
   });
 
   @override
@@ -49,7 +54,7 @@ class CustomDateField extends StatelessWidget {
         }
       },
       child: Container(
-        height: height ?? 56,
+        height: height,
         padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
         decoration: BoxDecoration(
           color: AppColors.surface,
@@ -58,13 +63,21 @@ class CustomDateField extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Icon(Icons.calendar_today,
-                color: AppColors.textSecondary, size: 20),
+            const Icon(
+              Icons.calendar_today,
+              color: AppColors.textSecondary,
+              size: 20,
+            ),
             const SizedBox(width: AppSizes.p12),
-            Text(
-              DateFormat(dateFormat ?? 'yyyy-MM-dd').format(selectedDate),
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.w500),
+            Expanded(
+              child: Text(
+                DateFormat(dateFormat).format(selectedDate),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ],
         ),

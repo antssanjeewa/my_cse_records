@@ -4,13 +4,13 @@ import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/constants/constants.dart';
-import '../../core/routing/pages.dart';
-import '../../core/services/biometric_service.dart';
-import '../../core/services/secure_storage_service.dart';
-import '../../core/di/service_locator.dart';
-import '../viewmodels/auth_viewmodel.dart';
-import '../viewmodels/theme_viewmodel.dart';
+import '../../../core/constants/constants.dart';
+import '../../../core/routing/pages.dart';
+import '../../../core/services/biometric_service.dart';
+import '../../../core/services/secure_storage_service.dart';
+import '../../../core/di/service_locator.dart';
+import '../../viewmodels/auth_viewmodel.dart';
+import '../../viewmodels/theme_viewmodel.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

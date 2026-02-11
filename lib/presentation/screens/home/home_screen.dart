@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/constants.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../viewmodels/home_viewmodel.dart';
+import '../../widgets/widgets.dart';
 import 'widgets/home_allocation_row.dart';
 import 'widgets/home_hero_card.dart';
 import 'widgets/home_loading_skeleton.dart';
@@ -48,34 +49,27 @@ class HomeScreen extends StatelessWidget {
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(AppText.appName,
-                          style: GoogleFonts.inter(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary)),
+                      Text(
+                        AppText.appName,
+                        style: AppTextStyles.titleLarge,
+                      ),
                       Row(
                         children: [
                           Text(
                             viewModel.isMarketOpen
                                 ? 'MARKET OPEN'
                                 : 'MARKET CLOSED',
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
+                            style: AppTextStyles.marketStatusOpen.copyWith(
                               color: viewModel.isMarketOpen
                                   ? AppColors.success
                                   : AppColors.warn,
-                              letterSpacing: 1.2,
                             ),
                           ),
                           const SizedBox(width: AppSizes.p8),
                           Text(
                             '• ${viewModel.currentTime}',
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
+                            style: AppTextStyles.marketTime.copyWith(
                               color: AppColors.textSecondary,
-                              letterSpacing: 0.5,
                             ),
                           ),
                         ],

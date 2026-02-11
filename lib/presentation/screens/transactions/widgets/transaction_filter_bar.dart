@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../viewmodels/transaction_history_viewmodel.dart';
-import '../../../../presentation/widgets/widgets.dart'; // For DropdownHeader
+import '../../../widgets/widgets.dart'; // For DropdownHeader
 import 'time_filter_segment.dart';
 
 class TransactionFilterBar extends StatelessWidget {

@@ -51,7 +51,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                       icon: const Icon(Icons.more_vert, color: Colors.white),
                       onPressed: () {}),
                 ],
-                expandedHeight: 240,
+                expandedHeight: 250,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Padding(
                     padding: const EdgeInsets.only(
