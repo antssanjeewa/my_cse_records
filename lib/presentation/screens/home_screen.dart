@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/constants.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/routing/pages.dart';
+import '../../domain/entities/portfolio_summary.dart';
 import '../viewmodels/home_viewmodel.dart';
 import '../../domain/entities/holding.dart';
 
@@ -122,7 +123,7 @@ class HomeScreen extends StatelessWidget {
                                     const SizedBox(height: AppSizes.p24),
                                     _buildChartSection(),
                                     const SizedBox(height: AppSizes.p24),
-                                    _buildAssetAllocation(),
+                                    _buildAssetAllocation(summary),
                                     const SizedBox(height: AppSizes.p24),
                                     _buildTopHoldings(
                                         summary.holdings, context),
@@ -317,7 +318,16 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAssetAllocation() {
+  Widget _buildAssetAllocation(PortfolioSummary summary) {
+    final stockVal = summary.totalValue;
+    final cashVal = summary.cashBalance;
+    final dividendVal = summary.totalDividends;
+    final total = stockVal + cashVal + dividendVal;
+
+    final stockPct = total == 0 ? 0.0 : (stockVal / total) * 100;
+    final cashPct = total == 0 ? 0.0 : (cashVal / total) * 100;
+    final dividendPct = total == 0 ? 0.0 : (dividendVal / total) * 100;
+
     return Container(
       padding: const EdgeInsets.all(AppSizes.p16),
       decoration: BoxDecoration(
@@ -340,21 +350,30 @@ class HomeScreen extends StatelessWidget {
                 child: PieChart(
                   PieChartData(
                     sections: [
-                      PieChartSectionData(
-                          value: 75,
-                          color: AppColors.primary,
-                          radius: 15,
-                          showTitle: false),
-                      PieChartSectionData(
-                          value: 20,
-                          color: Colors.grey,
-                          radius: 15,
-                          showTitle: false),
-                      PieChartSectionData(
-                          value: 5,
-                          color: Colors.white,
-                          radius: 15,
-                          showTitle: false),
+                      if (stockVal > 0)
+                        PieChartSectionData(
+                            value: stockVal,
+                            color: AppColors.primary,
+                            radius: 12,
+                            showTitle: false),
+                      if (cashVal > 0)
+                        PieChartSectionData(
+                            value: cashVal,
+                            color: Colors.grey.withAlpha(150),
+                            radius: 12,
+                            showTitle: false),
+                      if (dividendVal > 0)
+                        PieChartSectionData(
+                            value: dividendVal,
+                            color: Colors.white,
+                            radius: 12,
+                            showTitle: false),
+                      if (total == 0)
+                        PieChartSectionData(
+                            value: 1,
+                            color: Colors.grey.withAlpha(50),
+                            radius: 12,
+                            showTitle: false),
                     ],
                     sectionsSpace: 2,
                     centerSpaceRadius: 30,
@@ -366,11 +385,17 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     _buildLegendItem(
-                        color: AppColors.primary, label: 'Stocks', pct: '75%'),
+                        color: AppColors.primary,
+                        label: 'Stocks',
+                        pct: '${stockPct.toStringAsFixed(1)}%'),
                     _buildLegendItem(
-                        color: Colors.grey, label: 'Cash', pct: '20%'),
+                        color: Colors.grey.withAlpha(150),
+                        label: 'Cash',
+                        pct: '${cashPct.toStringAsFixed(1)}%'),
                     _buildLegendItem(
-                        color: Colors.white, label: 'Other', pct: '5%'),
+                        color: Colors.white,
+                        label: 'Dividends',
+                        pct: '${dividendPct.toStringAsFixed(1)}%'),
                   ],
                 ),
               )

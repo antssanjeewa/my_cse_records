@@ -3,6 +3,7 @@ import 'holding.dart';
 class PortfolioSummary {
   final double totalValue;
   final double totalProfit;
+  final double totalDividends;
   final double load;
   final double cashBalance;
   final List<Holding> holdings;
@@ -10,6 +11,7 @@ class PortfolioSummary {
   PortfolioSummary({
     required this.totalValue,
     required this.totalProfit,
+    required this.totalDividends,
     required this.load,
     required this.cashBalance,
     required this.holdings,
@@ -17,6 +19,9 @@ class PortfolioSummary {
 
   double get netWorth => totalValue + cashBalance;
 
-  double get totalProfitPercent =>
-      totalValue == 0 ? 0 : (totalProfit / (totalValue - totalProfit)) * 100;
+  double get totalProfitPercent {
+    final costBasis = totalValue - totalProfit;
+    if (costBasis <= 0) return 0;
+    return (totalProfit / costBasis) * 100;
+  }
 }

@@ -25,5 +25,5 @@ class Holding {
   String get name => stock?.name ?? 'Unknown';
   String get sector => stock?.sector ?? 'General';
   double get totalPrice => avgPrice * quantity;
-  double get profitPercent => (profit / totalPrice) * 100;
+  double get profitPercent => totalPrice == 0 ? 0 : (profit / totalPrice) * 100;
 }

@@ -11,18 +11,21 @@ class GetPortfolioSummary {
 
     double totalValue = 0;
     double totalProfit = 0;
+    double totalDividends = 0;
 
     for (var h in holdings) {
       totalValue += h.totalPrice;
       totalProfit += h.profit;
+      totalDividends += h.dividend;
     }
 
-    double load = 15200.50;
     final cashBalance = await repository.getCashBalance();
+    const double load = 15200.50;
 
     return PortfolioSummary(
       totalValue: totalValue,
       totalProfit: totalProfit,
+      totalDividends: totalDividends,
       load: load,
       cashBalance: cashBalance,
       holdings: holdings,
