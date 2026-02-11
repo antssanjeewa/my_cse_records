@@ -1,6 +1,8 @@
 import '../entities/holding.dart';
 import '../entities/transaction.dart';
 import '../repositories/portfolio_repository.dart';
+import '../entities/cash_transaction.dart';
+import 'package:uuid/uuid.dart';
 
 class AddTransaction {
   final PortfolioRepository repository;
@@ -57,6 +59,40 @@ class AddTransaction {
     }
 
     await repository.addTransaction(transaction);
+
+    // Get stock info for description
+    final stock = await repository.getStockById(transaction.stockId);
+    final ticker = stock?.ticker ?? 'Unknown';
+
+    // Add corresponding cash transaction
+    double cashAmount = 0;
+    String cashType = '';
+    String description = '';
+
+    if (transaction.type == TransactionType.buy) {
+      cashAmount = -transaction.total_price;
+      cashType = 'BUY';
+      description = 'Bought $ticker stock';
+    } else if (transaction.type == TransactionType.sell) {
+      cashAmount = transaction.total_price;
+      cashType = 'SELL';
+      description = 'Sold $ticker stock';
+    } else if (transaction.type == TransactionType.dividend) {
+      cashAmount = transaction.total_price;
+      cashType = 'DIVIDEND';
+      description = 'Dividend from $ticker';
+    }
+
+    if (cashAmount != 0) {
+      await repository.addCashTransaction(CashTransaction(
+        id: const Uuid().v4(),
+        userId: transaction.userId,
+        amount: cashAmount,
+        type: cashType,
+        description: description,
+        createdAt: transaction.date,
+      ));
+    }
 
     await repository.upsertHolding(Holding(
         id: existingHolding?.id ?? '',

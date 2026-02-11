@@ -37,11 +37,6 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> _fetchWallet() async {
-    try {
-      // This should be called after we have user context
-      // For now, it's a placeholder that will be called from context
-    } catch (e) {
-      debugPrint('Error fetching wallet: $e');
-    }
+    // Handled in GetPortfolioSummary
   }
 }

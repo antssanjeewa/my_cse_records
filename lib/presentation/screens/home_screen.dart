@@ -114,7 +114,7 @@ class HomeScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   _buildHeroCard(
-                                      summary.totalValue, summary.load),
+                                      summary.netWorth, summary.load),
                                   const SizedBox(height: AppSizes.p24),
                                   _buildChartSection(),
                                   const SizedBox(height: AppSizes.p24),
@@ -154,7 +154,7 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: AppSizes.p8),
           Text(AppFormatters.formatCurrency(value),
               style: GoogleFonts.inter(
-                  color: AppColors.textPrimary,
+                  color: Colors.white,
                   fontSize: 32,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSizes.p16),

@@ -18,11 +18,13 @@ class GetPortfolioSummary {
     }
 
     double load = 15200.50;
+    final cashBalance = await repository.getCashBalance();
 
     return PortfolioSummary(
       totalValue: totalValue,
       totalProfit: totalProfit,
       load: load,
+      cashBalance: cashBalance,
       holdings: holdings,
     );
   }
