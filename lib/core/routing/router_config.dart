@@ -119,7 +119,11 @@ final GoRouter router = GoRouter(
           path: Pages.holdingDetails.toPath(),
           name: Pages.holdingDetails.toPathName(),
           builder: (context, state) {
-            final extras = state.extra as Map<String, dynamic>;
+            final extras = state.extra;
+            if (extras is! Map<String, dynamic> ||
+                extras['holding'] is! Holding) {
+              return const PlaceholderScreen(title: 'Invalid holding');
+            }
             final holding = extras['holding'] as Holding;
             final totalValue =
                 (extras['totalValue'] as num?)?.toDouble() ?? 0.0;

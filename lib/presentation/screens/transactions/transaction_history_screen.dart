@@ -145,13 +145,23 @@ class TransactionHistoryScreen extends StatelessWidget {
 
   Future<void> _selectDateRange(
       BuildContext context, TransactionHistoryViewModel viewModel) async {
+    final firstDate = DateTime(2020);
+    final lastDate = DateTime.now();
+    DateTimeRange? initialRange;
+    if (viewModel.startDate != null && viewModel.endDate != null) {
+      final start = viewModel.startDate!;
+      final end = viewModel.endDate!;
+      final safeStart = start.isBefore(firstDate) ? firstDate : start;
+      final safeEnd = end.isAfter(lastDate) ? lastDate : end;
+      if (!safeStart.isAfter(safeEnd)) {
+        initialRange = DateTimeRange(start: safeStart, end: safeEnd);
+      }
+    }
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-      initialDateRange: viewModel.startDate != null && viewModel.endDate != null
-          ? DateTimeRange(start: viewModel.startDate!, end: viewModel.endDate!)
-          : null,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      initialDateRange: initialRange,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -166,7 +176,6 @@ class TransactionHistoryScreen extends StatelessWidget {
         );
       },
     );
-
     if (picked != null) {
       viewModel.setDateFilter(picked.start, picked.end);
     }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../../../core/routing/pages.dart';
 import '../../../viewmodels/holding_details_viewmodel.dart';
 import 'holding_activity_card.dart';
 
@@ -26,11 +27,14 @@ class ActivityListSection extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.2)),
-              Text('VIEW ALL',
-                  style: GoogleFonts.inter(
-                      color: AppColors.info,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800)),
+              InkWell(
+                onTap: () => Pages.transactions.go(context),
+                child: Text('VIEW ALL',
+                    style: GoogleFonts.inter(
+                        color: AppColors.info,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800)),
+              ),
             ],
           ),
         ),

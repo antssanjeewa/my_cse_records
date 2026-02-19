@@ -419,6 +419,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                             controller: priceController,
                             hint: 'Last Price',
                             prefixText: 'Rs. ',
+                            validator: AppValidators.validateAmount,
                           ),
                         ],
                       ),

@@ -35,6 +35,10 @@ class _HomeAllocationCardState extends State<HomeAllocationCard> {
   @override
   Widget build(BuildContext context) {
     final total = widget.sections.fold(0.0, (sum, s) => sum + s.value);
+    final activeIndex =
+        (touchedIndex >= 0 && touchedIndex < widget.sections.length)
+            ? touchedIndex
+            : -1;
 
     return Container(
       padding: const EdgeInsets.all(AppSizes.p12),
@@ -89,19 +93,19 @@ class _HomeAllocationCardState extends State<HomeAllocationCard> {
                           centerSpaceRadius: 42,
                         ),
                       ),
-                      if (touchedIndex != -1)
+                      if (activeIndex != -1)
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              widget.sections[touchedIndex].label,
+                              widget.sections[activeIndex].label,
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              '${((widget.sections[touchedIndex].value / total) * 100).toStringAsFixed(1)}%',
+                              '${((widget.sections[activeIndex].value / total) * 100).toStringAsFixed(1)}%',
                               style: const TextStyle(
                                   color: AppColors.textSecondary, fontSize: 9),
                             ),

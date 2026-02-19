@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../constants/constants.dart';
 import 'text_theme.dart';
 import 'input_decoration_theme.dart';
@@ -8,6 +9,9 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,
+      appBarTheme: const AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+      ),
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.background,
       textTheme: AppTextTheme.getDarkTextTheme(),
@@ -26,6 +30,9 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
+      appBarTheme: const AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+      ),
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: const Color(0xFFF8F9FA),
       textTheme: AppTextTheme.getLightTextTheme(),

@@ -35,6 +35,7 @@ class HomeViewModel extends ChangeNotifier {
   String _currentTime = '';
   String get currentTime => _currentTime;
   Timer? _timer;
+  Timer? _delayTimer;
 
   Future<void> fetchSummary() async {
     _isLoading = true;
@@ -69,7 +70,7 @@ class HomeViewModel extends ChangeNotifier {
     final now = DateTime.now();
     final secondsUntilNextMinute = 60 - now.second;
 
-    Timer(Duration(seconds: secondsUntilNextMinute), () {
+    _delayTimer = Timer(Duration(seconds: secondsUntilNextMinute), () {
       _updateTimeAndStatus();
       notifyListeners();
 
@@ -100,6 +101,7 @@ class HomeViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _timer?.cancel();
+    _delayTimer?.cancel();
     super.dispose();
   }
 }

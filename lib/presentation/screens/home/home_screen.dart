@@ -26,6 +26,7 @@ class HomeScreen extends StatelessWidget {
             color: AppColors.primary,
             backgroundColor: AppColors.surface,
             child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
                 // App Bar
                 SliverAppBar(

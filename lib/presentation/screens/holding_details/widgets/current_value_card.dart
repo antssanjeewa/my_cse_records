@@ -97,7 +97,7 @@ class CurrentValueCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'MARKET PRICE: ${AppFormatters.formatCurrency(marketPrice)} (+2.04%)',
+                'MARKET PRICE: ${AppFormatters.formatCurrency(marketPrice)}',
                 style: GoogleFonts.inter(
                     color: Colors.grey,
                     fontSize: 10,

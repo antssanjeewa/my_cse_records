@@ -291,7 +291,7 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
       return total;
     } catch (e) {
       _log('ERROR', 'cash_balance', e);
-      return 0.0; // Return 0 instead of throwing to prevent UI crash
+      return 0.0;
     }
   }
 

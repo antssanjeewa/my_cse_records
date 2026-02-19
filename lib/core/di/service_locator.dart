@@ -49,7 +49,7 @@ void setupLocator() {
   getIt.registerLazySingleton(() => GetHoldingByStock(getIt()));
 
   // ViewModels
-  getIt.registerFactory(() => AuthViewModel(supabase: getIt()));
+  getIt.registerLazySingleton(() => AuthViewModel(supabase: getIt()));
   getIt.registerFactory(() => HomeViewModel(
         getPortfolioSummary: getIt(),
         getTransactions: getIt(),

@@ -128,8 +128,7 @@ class TransactionHistoryItem extends StatelessWidget {
                                     fontWeight: FontWeight.w600),
                                 children: [
                                   TextSpan(
-                                      text: AppFormatters.formatNumber(
-                                          t.quantity)),
+                                      text: AppFormatters.formatNumber(t.qty)),
                                   const TextSpan(
                                       text: ' @ ',
                                       style: TextStyle(

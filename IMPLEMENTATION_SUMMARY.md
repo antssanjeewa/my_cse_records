@@ -48,7 +48,7 @@
 
 ## 📊 Data Flow
 
-```
+```text
 Transaction Created
     ↓
 Save to Database

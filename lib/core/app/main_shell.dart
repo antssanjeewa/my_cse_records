@@ -46,7 +46,7 @@ class MainShell extends StatelessWidget {
             BottomNavigationBarItem(
                 icon: Icon(Icons.settings_outlined),
                 activeIcon: Icon(Icons.settings),
-                label: 'Setting'),
+                label: 'Settings'),
           ],
         ),
       ),
