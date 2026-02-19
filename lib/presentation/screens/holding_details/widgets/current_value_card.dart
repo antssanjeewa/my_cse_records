@@ -28,24 +28,43 @@ class CurrentValueCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header Section: Name & Sector
+          Text(
+            h.name,
+            style: Theme.of(context).textTheme.displaySmall,
+          ),
+          const SizedBox(height: AppSizes.p4),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(getSectorIcon(h.sector),
+                  size: 14, color: AppColors.textPrimary),
+              const SizedBox(width: 6),
+              Text(
+                h.sector.toUpperCase(),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            height: 1,
+            width: double.infinity,
+            color: Colors.white.withAlpha(15),
+          ),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('CURRENT PORTFOLIO VALUE',
-                      style: GoogleFonts.inter(
-                          color: Colors.grey,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5)),
-                  const SizedBox(height: 4),
                   Text(AppFormatters.formatCurrency(viewModel.marketValue),
                       style: GoogleFonts.inter(
                           color: AppColors.textPrimary,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800)),
+                          fontSize: 32,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -1)),
                 ],
               ),
               Container(

@@ -61,7 +61,7 @@ class HoldingCard extends StatelessWidget {
                   decoration: BoxDecoration(
                       color: AppColors.surfaceLight,
                       borderRadius: BorderRadius.circular(AppSizes.r12)),
-                  child: const Icon(Icons.business,
+                  child: Icon(getSectorIcon(holding.sector),
                       color: Colors.white54, size: AppSizes.iconMd),
                 )
               ],
