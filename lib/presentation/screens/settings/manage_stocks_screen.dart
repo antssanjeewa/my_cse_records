@@ -118,8 +118,8 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
               color: AppColors.surfaceLight,
               borderRadius: BorderRadius.circular(AppSizes.r12),
             ),
-            child:
-                const Icon(Icons.business, color: AppColors.primary, size: 24),
+            child: Icon(getSectorIcon(stock.sector),
+                color: AppColors.info, size: 24),
           ),
           const SizedBox(width: AppSizes.p16),
           Expanded(
@@ -137,7 +137,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                 if (stock.sector != null)
                   Text(stock.sector!,
                       style: TextStyle(
-                          color: AppColors.primary.withAlpha(178),
+                          color: AppColors.info,
                           fontSize: 10,
                           fontWeight: FontWeight.bold)),
               ],
@@ -272,10 +272,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 16,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                      ),
+                      const SizedBox(height: 16),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -295,10 +292,54 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                         children: [
                           const CustomLabel(text: 'Sector'),
                           const SizedBox(height: AppSizes.p8),
-                          CustomTextField(
-                            controller: sectorController,
-                            keyboardType: TextInputType.text,
-                            hint: 'Sector (Optional)',
+                          DropdownButtonFormField<String>(
+                            value: sectorController.text.isNotEmpty
+                                ? sectorController.text
+                                : null,
+                            isExpanded: true,
+                            dropdownColor: AppColors.surface,
+                            style:
+                                const TextStyle(color: AppColors.textPrimary),
+                            decoration: InputDecoration(
+                              hintText: 'Select Sector',
+                              hintStyle: const TextStyle(
+                                  color: AppColors.textSecondary),
+                              filled: true,
+                              fillColor: AppColors.surfaceLight,
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(AppSizes.r12),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: AppSizes.p16,
+                                vertical: AppSizes.p16,
+                              ),
+                            ),
+                            items: appSectors.map((sector) {
+                              return DropdownMenuItem<String>(
+                                value: sector.name,
+                                child: Row(
+                                  children: [
+                                    Icon(sector.icon,
+                                        size: 18,
+                                        color: AppColors.textSecondary),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        sector.name,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                sectorController.text = value;
+                              }
+                            },
                           ),
                         ],
                       ),
@@ -367,6 +408,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
     final priceController =
         TextEditingController(text: stock.lastPrice.toString());
     final sectorController = TextEditingController(text: stock.sector ?? '');
+    final nameController = TextEditingController(text: stock.name);
 
     showDialog(
       context: context,
@@ -378,12 +420,50 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: sectorController,
+              controller: nameController,
+              style: const TextStyle(color: AppColors.textPrimary),
+              decoration: const InputDecoration(
+                labelText: 'Company Name',
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              value: appSectors.any((s) => s.name == sectorController.text)
+                  ? sectorController.text
+                  : null,
+              isExpanded: true,
+              dropdownColor: AppColors.surface,
               style: const TextStyle(color: AppColors.textPrimary),
               decoration: const InputDecoration(
                 labelText: 'Sector',
                 labelStyle: TextStyle(color: AppColors.textSecondary),
+                border: OutlineInputBorder(),
               ),
+              items: appSectors.map((sector) {
+                return DropdownMenuItem<String>(
+                  value: sector.name,
+                  child: Row(
+                    children: [
+                      Icon(sector.icon,
+                          size: 18, color: AppColors.textSecondary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          sector.name,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  sectorController.text = value;
+                }
+              },
             ),
             const SizedBox(height: 16),
             TextField(
@@ -407,11 +487,15 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
             onPressed: () async {
               final price = double.tryParse(priceController.text);
               final sector = sectorController.text.trim();
+              final name = nameController.text.trim();
+
+              if (name.isEmpty) return;
 
               if (price != null && price > 0) {
                 try {
                   await viewModel.updateStock(
                     stockId: stock.id,
+                    name: name,
                     sector: sector.isEmpty ? null : sector,
                     lastPrice: price,
                   );

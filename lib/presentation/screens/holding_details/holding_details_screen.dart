@@ -40,11 +40,31 @@ class HoldingDetailsScreen extends StatelessWidget {
                       children: [
                         Text(h.ticker,
                             style: Theme.of(context).textTheme.titleLarge),
-                        Text(h.name,
-                            style: GoogleFonts.inter(
-                                color: AppColors.textSecondary,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500)),
+                        Row(
+                          children: [
+                            Text(h.name,
+                                style: GoogleFonts.inter(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500)),
+                            const SizedBox(width: 8),
+                            Container(
+                                width: 4,
+                                height: 4,
+                                decoration: const BoxDecoration(
+                                    color: AppColors.textSecondary,
+                                    shape: BoxShape.circle)),
+                            const SizedBox(width: 8),
+                            Icon(getSectorIcon(h.sector),
+                                size: 12, color: AppColors.textSecondary),
+                            const SizedBox(width: 4),
+                            Text(h.sector,
+                                style: GoogleFonts.inter(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500)),
+                          ],
+                        ),
                       ],
                     ),
                     centerTitle: false,

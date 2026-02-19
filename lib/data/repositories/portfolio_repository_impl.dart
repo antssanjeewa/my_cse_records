@@ -46,11 +46,13 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   @override
   Future<void> updateStock({
     required int stockId,
+    String? name,
     String? sector,
     required double lastPrice,
   }) async {
     await remoteDataSource.updateStock(
       stockId: stockId,
+      name: name,
       sector: sector,
       lastPrice: lastPrice,
     );

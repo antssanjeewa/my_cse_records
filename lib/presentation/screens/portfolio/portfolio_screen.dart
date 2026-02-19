@@ -261,22 +261,25 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
             Flexible(
               child: ListView(
                 shrinkWrap: true,
-                children: sectors
-                    .map((sec) => ListTile(
-                          title: Text(
-                            sec,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          trailing: viewModel.sectorFilter == sec
-                              ? const Icon(Icons.check,
-                                  color: AppColors.primary)
-                              : null,
-                          onTap: () {
-                            viewModel.setSectorFilter(sec);
-                            Navigator.pop(context);
-                          },
-                        ))
-                    .toList(),
+                children: sectors.map((sec) {
+                  final isAll = sec == 'All';
+                  final icon = isAll ? Icons.list : getSectorIcon(sec);
+                  return ListTile(
+                    leading:
+                        Icon(icon, color: AppColors.textSecondary, size: 20),
+                    title: Text(
+                      isAll ? 'All Sectors' : sec,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    trailing: viewModel.sectorFilter == sec
+                        ? const Icon(Icons.check, color: AppColors.primary)
+                        : null,
+                    onTap: () {
+                      viewModel.setSectorFilter(sec);
+                      Navigator.pop(context);
+                    },
+                  );
+                }).toList(),
               ),
             ),
           ],

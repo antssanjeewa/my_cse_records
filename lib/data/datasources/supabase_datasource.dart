@@ -31,6 +31,7 @@ abstract class RemoteDataSource {
   });
   Future<void> updateStock({
     required int stockId,
+    String? name,
     String? sector,
     required double lastPrice,
   });
@@ -214,10 +215,12 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
   @override
   Future<void> updateStock({
     required int stockId,
+    String? name,
     String? sector,
     required double lastPrice,
   }) async {
     final data = {
+      if (name != null) 'name': name,
       'sector': sector,
       'last_price': lastPrice,
     };

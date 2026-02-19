@@ -86,6 +86,7 @@ class ManageStocksViewModel extends ChangeNotifier {
 
   Future<void> updateStock({
     required int stockId,
+    String? name,
     String? sector,
     required double lastPrice,
   }) async {
@@ -95,6 +96,7 @@ class ManageStocksViewModel extends ChangeNotifier {
     try {
       await repository.updateStock(
         stockId: stockId,
+        name: name,
         sector: sector,
         lastPrice: lastPrice,
       );
