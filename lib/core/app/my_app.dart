@@ -31,6 +31,19 @@ class MyApp extends StatelessWidget {
                 ? AppTheme.darkTheme
                 : AppTheme.lightTheme,
             routerConfig: router,
+            builder: (context, child) {
+              return GestureDetector(
+                onTap: () {
+                  FocusScopeNode currentFocus = FocusScope.of(context);
+                  if (!currentFocus.hasPrimaryFocus &&
+                      currentFocus.focusedChild != null) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  }
+                },
+                behavior: HitTestBehavior.translucent,
+                child: child,
+              );
+            },
           );
         },
       ),

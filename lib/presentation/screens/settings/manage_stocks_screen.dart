@@ -84,7 +84,57 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                             itemCount: viewModel.filteredStocks.length,
                             itemBuilder: (context, index) {
                               final stock = viewModel.filteredStocks[index];
-                              return _buildStockItem(stock, viewModel);
+                              return Dismissible(
+                                key: ValueKey(stock.id),
+                                direction: DismissDirection.horizontal,
+                                // Right to Left: Delete
+                                secondaryBackground: Container(
+                                  margin: const EdgeInsets.only(
+                                      bottom: AppSizes.p12),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  alignment: Alignment.centerRight,
+                                  decoration: BoxDecoration(
+                                    color: Colors.redAccent.withAlpha(200),
+                                    borderRadius:
+                                        BorderRadius.circular(AppSizes.r20),
+                                  ),
+                                  child: const Icon(
+                                      Icons.delete_outline_rounded,
+                                      color: Colors.white,
+                                      size: 28),
+                                ),
+                                // Left to Right: Edit
+                                background: Container(
+                                  margin: const EdgeInsets.only(
+                                      bottom: AppSizes.p12),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  alignment: Alignment.centerLeft,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withAlpha(200),
+                                    borderRadius:
+                                        BorderRadius.circular(AppSizes.r20),
+                                  ),
+                                  child: const Icon(Icons.edit_outlined,
+                                      color: Colors.white, size: 28),
+                                ),
+                                confirmDismiss: (direction) async {
+                                  if (direction ==
+                                      DismissDirection.endToStart) {
+                                    _showDeleteConfirmation(
+                                        context, stock, viewModel);
+                                    return false;
+                                  } else if (direction ==
+                                      DismissDirection.startToEnd) {
+                                    _showEditStockDialog(
+                                        context, stock, viewModel);
+                                    return false;
+                                  }
+                                  return false;
+                                },
+                                child: _buildStockItem(stock, viewModel),
+                              );
                             },
                           ),
               ),
@@ -103,80 +153,100 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
   Widget _buildStockItem(Stock stock, ManageStocksViewModel viewModel) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSizes.p12),
-      padding: const EdgeInsets.all(AppSizes.p16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSizes.r16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceLight,
-              borderRadius: BorderRadius.circular(AppSizes.r12),
-            ),
-            child: Icon(getSectorIcon(stock.sector),
-                color: AppColors.info, size: 24),
+        borderRadius: BorderRadius.circular(AppSizes.r20),
+        border: Border.all(color: AppColors.border.withAlpha(25)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(5),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          const SizedBox(width: AppSizes.p16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppSizes.r20),
+        child: InkWell(
+          onTap: () => _showEditStockDialog(context, stock, viewModel),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSizes.p16),
+            child: Row(
               children: [
-                Text(stock.ticker,
-                    style: GoogleFonts.inter(
+                // Icon Section
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withAlpha(25),
+                    borderRadius: BorderRadius.circular(AppSizes.r12),
+                  ),
+                  child: Icon(
+                    getSectorIcon(stock.sector),
+                    color: AppColors.info,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: AppSizes.p16),
+
+                // Info Section
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        stock.ticker,
+                        style: GoogleFonts.inter(
+                          color: AppColors.textPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        stock.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                        ),
+                      ),
+                      if (stock.sector != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          stock.sector!.toUpperCase(),
+                          style: GoogleFonts.inter(
+                            color: AppColors.info,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                // Price Section
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      AppFormatters.formatCurrency(stock.lastPrice),
+                      style: GoogleFonts.inter(
                         color: AppColors.textPrimary,
                         fontSize: 16,
-                        fontWeight: FontWeight.bold)),
-                Text(stock.name,
-                    style: const TextStyle(
-                        color: AppColors.textSecondary, fontSize: 12)),
-                if (stock.sector != null)
-                  Text(stock.sector!,
-                      style: TextStyle(
-                          color: AppColors.info,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold)),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(AppFormatters.formatCurrency(stock.lastPrice),
-                  style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit,
-                        color: AppColors.primary, size: 20),
-                    onPressed: () =>
-                        _showEditStockDialog(context, stock, viewModel),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(Icons.delete,
-                        color: Colors.redAccent, size: 20),
-                    onPressed: () =>
-                        _showDeleteConfirmation(context, stock, viewModel),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -199,8 +269,10 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel',
-                      style: TextStyle(color: Colors.grey)),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.textSecondary,
+                  ),
+                  child: const Text('Cancel'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -208,27 +280,21 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                       await viewModel.deleteStock(stock.id);
                       if (!context.mounted) return;
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${stock.ticker} deleted successfully'),
-                          backgroundColor: AppColors.success,
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
+                      AppSnackBar.show(context,
+                          message: '${stock.ticker} deleted successfully');
                     } catch (e) {
                       if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Failed to delete stock'),
-                          backgroundColor: Colors.redAccent,
-                        ),
-                      );
+                      AppSnackBar.show(context,
+                          message: 'Failed to delete stock', isError: true);
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent),
-                  child: const Text('Delete',
-                      style: TextStyle(color: Colors.white)),
+                    backgroundColor: Colors.redAccent.withAlpha(21),
+                    foregroundColor: Colors.redAccent,
+                    elevation: 0,
+                    side: const BorderSide(color: Colors.redAccent, width: 0.5),
+                  ),
+                  child: const Text('Delete'),
                 ),
               ],
             );
@@ -478,42 +544,62 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
             ),
           ],
         ),
+        actionsPadding: const EdgeInsets.all(AppSizes.p16),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final price = double.tryParse(priceController.text);
-              final sector = sectorController.text.trim();
-              final name = nameController.text.trim();
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.textSecondary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final price = double.tryParse(priceController.text);
+                    final sector = sectorController.text.trim();
+                    final name = nameController.text.trim();
 
-              if (name.isEmpty) return;
+                    if (name.isEmpty) return;
 
-              if (price != null && price > 0) {
-                try {
-                  await viewModel.updateStock(
-                    stockId: stock.id,
-                    name: name,
-                    sector: sector.isEmpty ? null : sector,
-                    lastPrice: price,
-                  );
-                  if (!context.mounted) return;
-                  Navigator.pop(context);
-                } catch (_) {
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to update stock'),
-                      backgroundColor: Colors.redAccent,
+                    if (price != null && price > 0) {
+                      try {
+                        await viewModel.updateStock(
+                          stockId: stock.id,
+                          name: name,
+                          sector: sector.isEmpty ? null : sector,
+                          lastPrice: price,
+                        );
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                        AppSnackBar.show(context,
+                            message: 'Stock updated successfully');
+                      } catch (_) {
+                        if (!context.mounted) return;
+                        AppSnackBar.show(context,
+                            message: 'Failed to update stock', isError: true);
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppSizes.r12),
                     ),
-                  );
-                }
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            child: const Text('Update', style: TextStyle(color: Colors.white)),
+                  ),
+                  child: const Text('Update'),
+                ),
+              ),
+            ],
           ),
         ],
       ),
