@@ -1,6 +1,9 @@
 import '../entities/holding.dart';
+import '../entities/stock.dart';
 import '../entities/transaction.dart';
 import '../repositories/portfolio_repository.dart';
+import '../entities/cash_transaction.dart';
+import 'package:uuid/uuid.dart';
 
 class AddTransaction {
   final PortfolioRepository repository;
@@ -8,42 +11,102 @@ class AddTransaction {
   AddTransaction(this.repository);
 
   Future<void> call(Transaction transaction) async {
-    await repository.addTransaction(transaction);
+    // 1. Fetch all necessary data upfront
+    final results = await Future.wait([
+      repository.getCashBalance(),
+      repository.getHoldingByStock(transaction.userId, transaction.stockId),
+      repository.getStockById(transaction.stockId),
+    ]);
 
-    final existingHolding = await repository.getHoldingByStock(
-      transaction.userId,
-      transaction.stockId,
-    );
+    final double balance = results[0] as double;
+    final Holding? existingHolding = results[1] as Holding?;
+    final Stock? stock = transaction.stock ?? (results[2] as Stock?);
+
+    // 2. Calculations and Validations
+    final ticker = stock?.ticker ?? 'Unknown';
 
     double newQuantity = transaction.qty;
-    double newAvgPrice = transaction.price;
+    double newTotalPrice = transaction.total_price;
+    double profit = existingHolding?.profit ?? 0;
+    double dividend = existingHolding?.dividend ?? 0;
 
-    if (existingHolding != null) {
-      if (transaction.type == TransactionType.buy) {
+    if (transaction.type == TransactionType.buy) {
+      if (balance < transaction.total_price) {
+        throw Exception('Insufficient balance');
+      }
+
+      if (existingHolding != null) {
         newQuantity = existingHolding.quantity + transaction.qty;
-        newAvgPrice = ((existingHolding.quantity * existingHolding.avgPrice) +
-                (transaction.qty * transaction.price)) /
-            newQuantity;
-      } else {
-        // Assuming TransactionType.sell
+        newTotalPrice = existingHolding.totalPrice + transaction.total_price;
+      }
+    } else if (transaction.type == TransactionType.sell) {
+      if (existingHolding != null) {
         if (existingHolding.quantity < transaction.qty) {
           throw Exception('Insufficient holdings to sell');
         }
+
         newQuantity = existingHolding.quantity - transaction.qty;
-        newAvgPrice = existingHolding.avgPrice; // Cost basis remains the same
-      }
-    } else {
-      if (transaction.type == TransactionType.sell) {
+        final currentValue = existingHolding.avgPrice * transaction.qty;
+        newTotalPrice = existingHolding.totalPrice - currentValue;
+
+        profit += (transaction.total_price - currentValue);
+      } else {
         throw Exception('Cannot sell stock with no existing holdings');
       }
+    } else if (transaction.type == TransactionType.dividend) {
+      if (existingHolding == null) {
+        throw Exception(
+            'Cannot receive dividend for stock with no existing holdings');
+      }
+
+      dividend += transaction.total_price;
+      newTotalPrice = existingHolding.totalPrice;
+      newQuantity = existingHolding.quantity;
+    } else {
+      throw Exception('Invalid transaction type');
+    }
+
+    // 3. Prepare Writes
+    double cashAmount = 0;
+    String cashType = '';
+    String description = '';
+
+    if (transaction.type == TransactionType.buy) {
+      cashAmount = -transaction.total_price;
+      cashType = 'BUY';
+      description = 'Bought $ticker stock';
+    } else if (transaction.type == TransactionType.sell) {
+      cashAmount = transaction.total_price;
+      cashType = 'SELL';
+      description = 'Sold $ticker stock';
+    } else if (transaction.type == TransactionType.dividend) {
+      cashAmount = transaction.total_price;
+      cashType = 'DIVIDEND';
+      description = 'Dividend from $ticker';
+    }
+
+    // 4. Execute Writes
+    // We do them sequentially but quickly as data is ready
+    await repository.addTransaction(transaction);
+
+    if (cashAmount != 0) {
+      await repository.addCashTransaction(CashTransaction(
+        id: const Uuid().v4(),
+        userId: transaction.userId,
+        amount: cashAmount,
+        type: cashType,
+        description: description,
+        createdAt: transaction.date,
+      ));
     }
 
     await repository.upsertHolding(Holding(
-      id: existingHolding?.id ?? '',
-      userId: transaction.userId,
-      stockId: transaction.stockId,
-      avgPrice: newAvgPrice,
-      quantity: newQuantity,
-    ));
+        id: existingHolding?.id ?? '',
+        userId: transaction.userId,
+        stockId: transaction.stockId,
+        avgPrice: newQuantity == 0 ? 0 : newTotalPrice / newQuantity,
+        quantity: newQuantity,
+        profit: profit,
+        dividend: dividend));
   }
 }

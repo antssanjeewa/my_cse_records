@@ -8,7 +8,8 @@ class TransactionModel extends Transaction {
     required super.stockId,
     required super.type,
     required super.qty,
-    required super.price,
+    required super.unit_price,
+    required super.total_price,
     required super.date,
     super.stock,
   });
@@ -18,9 +19,13 @@ class TransactionModel extends Transaction {
       id: json['id'].toString(),
       userId: json['user_id'].toString(),
       stockId: json['stock_id'] as int? ?? 0,
-      type: json['type'] == 'BUY' ? TransactionType.buy : TransactionType.sell,
+      type: (TransactionType.values.firstWhere(
+        (e) => e.name.toUpperCase() == (json['type'] as String).toUpperCase(),
+        orElse: () => throw Exception('Invalid transaction type'),
+      )),
       qty: (json['qty'] as num?)?.toDouble() ?? 0.0,
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      unit_price: (json['unit_price'] as num?)?.toDouble() ?? 0.0,
+      total_price: (json['total_price'] as num?)?.toDouble() ?? 0.0,
       date: json['date'] != null
           ? DateTime.parse(json['date'])
           : DateTime.fromMillisecondsSinceEpoch(0),
@@ -31,11 +36,13 @@ class TransactionModel extends Transaction {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'user_id': userId,
       'stock_id': stockId,
-      'type': type == TransactionType.buy ? 'BUY' : 'SELL',
+      'type': type.name.toUpperCase(),
       'qty': qty,
-      'price': price,
+      'unit_price': unit_price,
+      'total_price': total_price,
       'date': date.toIso8601String(),
     };
   }

@@ -15,10 +15,7 @@ class BiometricService {
     try {
       final bool didAuthenticate = await _auth.authenticate(
         localizedReason: 'Please authenticate to log in to your CSE Portfolio',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
+        biometricOnly: true,
       );
       return didAuthenticate;
     } on PlatformException catch (e) {

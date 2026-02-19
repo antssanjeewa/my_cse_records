@@ -60,15 +60,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Icon
                 Center(
-                  child: Container(
-                    width: AppSizes.iconHero,
-                    height: AppSizes.iconHero,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(AppSizes.r16),
+                  child: Hero(
+                    tag: 'app_logo_hero',
+                    child: Container(
+                      width: AppSizes.iconHero,
+                      height: AppSizes.iconHero,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(AppSizes.r16),
+                      ),
+                      child: const Icon(Icons.trending_up,
+                          color: AppColors.primary, size: AppSizes.iconxxl),
                     ),
-                    child: const Icon(Icons.trending_up,
-                        color: AppColors.primary, size: AppSizes.iconxxl),
                   ),
                 ),
 

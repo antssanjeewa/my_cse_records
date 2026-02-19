@@ -15,6 +15,7 @@ abstract class PortfolioRepository {
   });
   Future<void> updateStock({
     required int stockId,
+    String? name,
     String? sector,
     required double lastPrice,
   });

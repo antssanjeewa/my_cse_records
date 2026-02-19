@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary Brand Colors
-  static const Color primary = Color(0xFF1337EC);
+  static const Color primary = Color(0xFF5369D4);
   static const Color primaryDark = Color(0xFF0B162C);
 
   // Backgrounds
@@ -24,6 +24,8 @@ class AppColors {
   static const Color error = Colors.redAccent;
   static const Color errorBg = Colors.red;
   static const Color successBg = Colors.green;
+  static const Color info = Colors.blueAccent;
+  static const Color warn = Colors.orangeAccent;
 
   // Overlays
   static final Color overlayDark = Colors.black.withValues(alpha: 0.5);

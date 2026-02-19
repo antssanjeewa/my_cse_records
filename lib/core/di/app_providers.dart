@@ -6,6 +6,7 @@ import '../../presentation/viewmodels/home_viewmodel.dart';
 import '../../presentation/viewmodels/portfolio_viewmodel.dart';
 import '../../presentation/viewmodels/transaction_history_viewmodel.dart';
 import '../../presentation/viewmodels/add_transaction_viewmodel.dart';
+import '../../presentation/viewmodels/theme_viewmodel.dart';
 
 class AppProviders {
   static List<SingleChildWidget> get providers => [
@@ -15,5 +16,6 @@ class AppProviders {
         ChangeNotifierProvider(
             create: (_) => getIt<TransactionHistoryViewModel>()),
         ChangeNotifierProvider(create: (_) => getIt<AddTransactionViewModel>()),
+        ChangeNotifierProvider(create: (_) => ThemeViewModel()),
       ];
 }

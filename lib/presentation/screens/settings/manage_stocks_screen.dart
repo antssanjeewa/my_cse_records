@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/constants.dart';
-import '../../core/utils/formatters.dart';
-import '../viewmodels/manage_stocks_viewmodel.dart';
-import '../../domain/entities/stock.dart';
-import '../widgets/widgets.dart';
+
+import '../../../core/constants/constants.dart';
+import '../../../core/utils/utils.dart';
+import '../../widgets/widgets.dart';
+import '../../viewmodels/manage_stocks_viewmodel.dart';
+import '../../../domain/entities/stock.dart';
 
 class ManageStocksScreen extends StatefulWidget {
   const ManageStocksScreen({super.key});
@@ -49,10 +50,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                   onChanged: (value) => viewModel.setSearchQuery(value),
                   style: const TextStyle(color: AppColors.textPrimary),
                   decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppColors.surface,
                     hintText: 'Search stocks...',
-                    hintStyle: const TextStyle(color: AppColors.textSecondary),
                     prefixIcon: const Icon(Icons.search,
                         color: AppColors.textSecondary),
                     suffixIcon: _searchController.text.isNotEmpty
@@ -65,15 +63,6 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                             },
                           )
                         : null,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppSizes.r12),
-                        borderSide: const BorderSide(color: AppColors.border)),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppSizes.r12),
-                        borderSide: const BorderSide(color: AppColors.border)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppSizes.r12),
-                        borderSide: const BorderSide(color: AppColors.primary)),
                   ),
                 ),
               ),
@@ -129,8 +118,8 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
               color: AppColors.surfaceLight,
               borderRadius: BorderRadius.circular(AppSizes.r12),
             ),
-            child:
-                const Icon(Icons.business, color: AppColors.primary, size: 24),
+            child: Icon(getSectorIcon(stock.sector),
+                color: AppColors.info, size: 24),
           ),
           const SizedBox(width: AppSizes.p16),
           Expanded(
@@ -148,7 +137,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                 if (stock.sector != null)
                   Text(stock.sector!,
                       style: TextStyle(
-                          color: AppColors.primary.withAlpha(178),
+                          color: AppColors.info,
                           fontSize: 10,
                           fontWeight: FontWeight.bold)),
               ],
@@ -253,13 +242,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
     final nameController = TextEditingController();
     final sectorController = TextEditingController();
     final priceController = TextEditingController();
-
-    void disposeControllers() {
-      sectorController.dispose();
-      priceController.dispose();
-      tickerController.dispose();
-      nameController.dispose();
-    }
+    final formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
@@ -271,103 +254,142 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
               title: const Text('Add New Stock',
                   style: TextStyle(color: AppColors.textPrimary)),
               content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const CustomLabel(text: 'Ticker Symbol'),
-                        const SizedBox(height: AppSizes.p8),
-                        CustomTextField(
-                          controller: tickerController,
-                          keyboardType: TextInputType.text,
-                          hint: 'e.g., SAMP.N0000',
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 16,
-                      width: MediaQuery.of(context).size.width * 0.8,
-                    ),
-                    TextField(
-                      controller: nameController,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(
-                        labelText: 'Company Name',
-                        labelStyle: TextStyle(color: AppColors.textSecondary),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const CustomLabel(text: 'Ticker Symbol'),
+                          const SizedBox(height: AppSizes.p8),
+                          CustomTextField(
+                            controller: tickerController,
+                            keyboardType: TextInputType.text,
+                            hint: 'e.g., SAMP.N0000',
+                            validator: AppValidators.validateText,
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: sectorController,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(
-                        labelText: 'Sector (Optional)',
-                        labelStyle: TextStyle(color: AppColors.textSecondary),
+                      const SizedBox(height: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const CustomLabel(text: 'Company Name'),
+                          const SizedBox(height: AppSizes.p8),
+                          CustomTextField(
+                            controller: nameController,
+                            keyboardType: TextInputType.text,
+                            hint: 'Company Name',
+                            validator: AppValidators.validateText,
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: priceController,
-                      keyboardType: TextInputType.number,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(
-                        labelText: 'Last Price',
-                        labelStyle: TextStyle(color: AppColors.textSecondary),
-                        prefixText: 'Rs. ',
+                      const SizedBox(height: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const CustomLabel(text: 'Sector'),
+                          const SizedBox(height: AppSizes.p8),
+                          DropdownButtonFormField<String>(
+                            value: sectorController.text.isNotEmpty
+                                ? sectorController.text
+                                : null,
+                            isExpanded: true,
+                            dropdownColor: AppColors.surface,
+                            style:
+                                const TextStyle(color: AppColors.textPrimary),
+                            decoration: InputDecoration(
+                              hintText: 'Select Sector',
+                              hintStyle: const TextStyle(
+                                  color: AppColors.textSecondary),
+                              filled: true,
+                              fillColor: AppColors.surfaceLight,
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(AppSizes.r12),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: AppSizes.p16,
+                                vertical: AppSizes.p16,
+                              ),
+                            ),
+                            items: appSectors.map((sector) {
+                              return DropdownMenuItem<String>(
+                                value: sector.name,
+                                child: Row(
+                                  children: [
+                                    Icon(sector.icon,
+                                        size: 18,
+                                        color: AppColors.textSecondary),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        sector.name,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                sectorController.text = value;
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const CustomLabel(text: 'Last Price'),
+                          const SizedBox(height: AppSizes.p8),
+                          CustomTextField(
+                            controller: priceController,
+                            hint: 'Last Price',
+                            prefixText: 'Rs. ',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    disposeControllers();
-                    Navigator.pop(context);
-                  },
+                  onPressed: () => Navigator.pop(context),
                   child: const Text('Cancel',
                       style: TextStyle(color: Colors.grey)),
                 ),
                 ElevatedButton(
                   onPressed: () async {
+                    if (!formKey.currentState!.validate()) return;
+
                     final ticker = tickerController.text.trim();
                     final name = nameController.text.trim();
                     final sector = sectorController.text.trim();
                     final price = double.tryParse(priceController.text);
 
-                    if (ticker.isNotEmpty &&
-                        name.isNotEmpty &&
-                        price != null &&
-                        price > 0) {
-                      try {
-                        await viewModel.addStock(
-                          ticker: ticker,
-                          name: name,
-                          sector: sector.isEmpty ? null : sector,
-                          lastPrice: price,
-                        );
-                        if (!context.mounted) return;
-                        disposeControllers();
-                        Navigator.pop(context);
-                      } catch (_) {
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Failed to add stock'),
-                            backgroundColor: Colors.redAccent,
-                          ),
-                        );
-                      }
+                    final error = await viewModel.addStock(
+                      ticker: ticker,
+                      name: name,
+                      sector: sector.isEmpty ? null : sector,
+                      lastPrice: price,
+                    );
+
+                    if (!context.mounted) return;
+
+                    if (error == null) {
+                      Navigator.pop(context);
+                      AppSnackBar.show(context,
+                          message: 'Stock added successfully');
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              'Please fill in all required fields with valid values'),
-                          backgroundColor: Colors.redAccent,
-                        ),
-                      );
+                      AppSnackBar.show(context, message: error, isError: true);
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -378,7 +400,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
               ],
             );
           }),
-    ).then((_) => disposeControllers());
+    );
   }
 
   void _showEditStockDialog(
@@ -386,11 +408,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
     final priceController =
         TextEditingController(text: stock.lastPrice.toString());
     final sectorController = TextEditingController(text: stock.sector ?? '');
-
-    void disposeControllers() {
-      sectorController.dispose();
-      priceController.dispose();
-    }
+    final nameController = TextEditingController(text: stock.name);
 
     showDialog(
       context: context,
@@ -402,12 +420,50 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: sectorController,
+              controller: nameController,
+              style: const TextStyle(color: AppColors.textPrimary),
+              decoration: const InputDecoration(
+                labelText: 'Company Name',
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              value: appSectors.any((s) => s.name == sectorController.text)
+                  ? sectorController.text
+                  : null,
+              isExpanded: true,
+              dropdownColor: AppColors.surface,
               style: const TextStyle(color: AppColors.textPrimary),
               decoration: const InputDecoration(
                 labelText: 'Sector',
                 labelStyle: TextStyle(color: AppColors.textSecondary),
+                border: OutlineInputBorder(),
               ),
+              items: appSectors.map((sector) {
+                return DropdownMenuItem<String>(
+                  value: sector.name,
+                  child: Row(
+                    children: [
+                      Icon(sector.icon,
+                          size: 18, color: AppColors.textSecondary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          sector.name,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  sectorController.text = value;
+                }
+              },
             ),
             const SizedBox(height: 16),
             TextField(
@@ -424,26 +480,26 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              disposeControllers();
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
             onPressed: () async {
               final price = double.tryParse(priceController.text);
               final sector = sectorController.text.trim();
+              final name = nameController.text.trim();
+
+              if (name.isEmpty) return;
 
               if (price != null && price > 0) {
                 try {
                   await viewModel.updateStock(
                     stockId: stock.id,
+                    name: name,
                     sector: sector.isEmpty ? null : sector,
                     lastPrice: price,
                   );
                   if (!context.mounted) return;
-                  disposeControllers();
                   Navigator.pop(context);
                 } catch (_) {
                   if (!context.mounted) return;
@@ -461,6 +517,6 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
           ),
         ],
       ),
-    ).then((_) => disposeControllers());
+    );
   }
 }

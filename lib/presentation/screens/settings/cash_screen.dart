@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/constants.dart';
-import '../../core/utils/formatters.dart';
-import '../../core/utils/snackbar_util.dart';
-import '../../domain/entities/cash_transaction.dart';
-import '../viewmodels/cash_viewmodel.dart';
-import '../widgets/widgets.dart';
+import '../../../core/constants/constants.dart';
+import '../../../core/utils/formatters.dart';
+import '../../../core/utils/snackbar_util.dart';
+import '../../../domain/entities/cash_transaction.dart';
+import '../../viewmodels/cash_viewmodel.dart';
+import '../../widgets/widgets.dart';
 
 class CashScreen extends StatelessWidget {
   const CashScreen({super.key});
@@ -51,17 +51,27 @@ class CashScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('Available Balance',
-                        style: TextStyle(color: Colors.white70, fontSize: 14)),
-                    const SizedBox(height: 8),
+                        style: TextStyle(
+                            color: AppColors.textSecondary, fontSize: 14)),
+                    const SizedBox(height: AppSizes.p8),
                     Text(
                       AppFormatters.formatCurrency(viewModel.balance),
                       style: GoogleFonts.inter(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSizes.p4),
+                    Text(
+                      AppFormatters.formatCurrency(viewModel.totalCash),
+                      style: GoogleFonts.inter(
+                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: AppSizes.p24),
                     Row(
                       children: [
                         _buildQuickAction(
@@ -71,7 +81,7 @@ class CashScreen extends StatelessWidget {
                           () => _showTransactionDialog(
                               context, viewModel, 'DEPOSIT'),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AppSizes.p12),
                         _buildQuickAction(
                           context,
                           'Withdraw',
@@ -168,7 +178,7 @@ class CashScreen extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              isCredit ? Icons.arrow_downward : Icons.arrow_upward,
+              isCredit ? Icons.arrow_upward : Icons.arrow_downward,
               color: isCredit ? AppColors.success : AppColors.error,
               size: 20,
             ),

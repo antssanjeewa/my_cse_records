@@ -31,6 +31,7 @@ abstract class RemoteDataSource {
   });
   Future<void> updateStock({
     required int stockId,
+    String? name,
     String? sector,
     required double lastPrice,
   });
@@ -214,10 +215,12 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
   @override
   Future<void> updateStock({
     required int stockId,
+    String? name,
     String? sector,
     required double lastPrice,
   }) async {
     final data = {
+      if (name != null) 'name': name,
       'sector': sector,
       'last_price': lastPrice,
     };
@@ -280,19 +283,21 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
       final response =
           await supabase.from('cash_transactions').select('amount');
 
-      final total = (response as List).fold<double>(
-          0.0, (sum, item) => sum + (item['amount'] as num).toDouble());
+      final total = (response as List).fold<double>(0.0, (sum, item) {
+        final amt = (item['amount'] as num?)?.toDouble() ?? 0.0;
+        return sum + amt;
+      });
       _log('RESPONSE', 'cash_balance', total);
       return total;
     } catch (e) {
       _log('ERROR', 'cash_balance', e);
-      rethrow;
+      return 0.0; // Return 0 instead of throwing to prevent UI crash
     }
   }
 
   void _log(String method, String table, [dynamic data]) {
     if (kDebugMode) {
-      debugPrint('DEBUG [Supabase $method] $table');
+      developer.log('DEBUG [Supabase $method] $table');
       if (data != null) {
         developer.log(table, name: method, error: data, level: 50);
       }

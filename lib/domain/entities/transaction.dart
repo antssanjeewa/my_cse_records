@@ -1,6 +1,34 @@
 import 'stock.dart';
 
-enum TransactionType { buy, sell }
+enum TransactionType { buy, sell, dividend }
+
+extension TransactionTypeExtension on TransactionType {
+  String get name {
+    switch (this) {
+      case TransactionType.buy:
+        return 'BUY';
+      case TransactionType.sell:
+        return 'SELL';
+      case TransactionType.dividend:
+        return 'DIVIDEND';
+    }
+  }
+
+  TransactionType get typeEnum {
+    {
+      switch (name) {
+        case 'BUY':
+          return TransactionType.buy;
+        case 'SELL':
+          return TransactionType.sell;
+        case 'DIVIDEND':
+          return TransactionType.dividend;
+        default:
+          throw Exception('Invalid transaction type name');
+      }
+    }
+  }
+}
 
 class Transaction {
   final String id;
@@ -8,7 +36,8 @@ class Transaction {
   final int stockId;
   final TransactionType type;
   final double qty;
-  final double price;
+  final double unit_price;
+  final double total_price;
   final DateTime date;
   final Stock? stock;
 
@@ -18,7 +47,8 @@ class Transaction {
     required this.stockId,
     required this.type,
     required this.qty,
-    required this.price,
+    required this.unit_price,
+    required this.total_price,
     required this.date,
     this.stock,
   });
@@ -27,6 +57,5 @@ class Transaction {
   String get ticker => stock?.ticker ?? 'N/A';
   String get name => stock?.name ?? 'Unknown';
   double get quantity => qty;
-  double get totalValue => qty * price;
-  String get typeString => type == TransactionType.buy ? 'Buy' : 'Sell';
+  String get typeString => type.name.toUpperCase();
 }

@@ -25,10 +25,12 @@ class CashTransactionModel extends CashTransaction {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'user_id': userId,
       'amount': amount,
       'type': type,
       'description': description,
+      'created_at': createdAt.toIso8601String(),
     };
   }
 }

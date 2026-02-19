@@ -72,12 +72,15 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  AppAssets.logo,
-                  width: 120,
-                  height: 120,
-                  errorBuilder: (_, __, ___) => const Icon(Icons.trending_up,
-                      color: AppColors.primary, size: 80),
+                Hero(
+                  tag: 'app_logo_hero',
+                  child: Image.asset(
+                    AppAssets.logo,
+                    width: 120,
+                    height: 120,
+                    errorBuilder: (_, __, ___) => const Icon(Icons.trending_up,
+                        color: AppColors.primary, size: 80),
+                  ),
                 ),
                 const SizedBox(height: AppSizes.p24),
                 Text(

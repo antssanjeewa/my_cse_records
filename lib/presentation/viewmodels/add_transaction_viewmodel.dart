@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import '../../core/constants/constants.dart';
+import '../../domain/entities/holding.dart';
 import '../../domain/entities/stock.dart';
 import '../../domain/entities/transaction.dart';
 import '../../domain/usecases/add_transaction.dart';
+import '../../domain/usecases/get_holding_by_stock.dart';
 import '../../domain/usecases/get_stocks.dart';
 import 'package:uuid/uuid.dart';
 
 class AddTransactionViewModel extends ChangeNotifier {
   final GetStocks getStocks;
   final AddTransaction addTransaction;
+  final GetHoldingByStock getHoldingByStock;
   final String userId;
 
   AddTransactionViewModel({
     required this.getStocks,
     required this.addTransaction,
+    required this.getHoldingByStock,
     required this.userId,
   }) {
     fetchStocks();
@@ -30,6 +35,9 @@ class AddTransactionViewModel extends ChangeNotifier {
   Stock? _selectedStock;
   Stock? get selectedStock => _selectedStock;
 
+  Holding? _currentHolding;
+  Holding? get currentHolding => _currentHolding;
+
   TransactionType _type = TransactionType.buy;
   TransactionType get type => _type;
 
@@ -42,21 +50,29 @@ class AddTransactionViewModel extends ChangeNotifier {
   DateTime _date = DateTime.now();
   DateTime get date => _date;
 
-  static const double feePercentage = 0.0114; // 1.14%
+  final double feePercentage = AppConfig.feePercentage;
 
   double get totalPrice {
     final subtotal = _quantity * _unitPrice;
     if (_type == TransactionType.buy) {
       return subtotal * (1 + feePercentage);
-    } else {
+    } else if (_type == TransactionType.sell) {
       return subtotal * (1 - feePercentage);
+    } else {
+      return subtotal;
     }
   }
 
-  void selectStock(Stock? stock) {
+  Future<void> selectStock(Stock? stock) async {
     _selectedStock = stock;
-    if (stock != null && _unitPrice == 0) {
-      _unitPrice = stock.lastPrice;
+    _currentHolding = null;
+
+    if (stock != null) {
+      try {
+        _currentHolding = await getHoldingByStock(userId, stock.id);
+      } catch (e) {
+        debugPrint('Error fetching holding: $e');
+      }
     }
     notifyListeners();
   }
@@ -126,11 +142,14 @@ class AddTransactionViewModel extends ChangeNotifier {
         stockId: _selectedStock!.id,
         type: _type,
         qty: _quantity,
-        price: _unitPrice,
+        unit_price: _unitPrice,
+        total_price: totalPrice,
         date: _date,
+        stock: _selectedStock,
       );
 
       await addTransaction(transaction);
+
       _isLoading = false;
       notifyListeners();
       return true;

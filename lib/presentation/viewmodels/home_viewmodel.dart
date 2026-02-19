@@ -1,50 +1,105 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../domain/entities/portfolio_summary.dart';
 import '../../domain/entities/holding.dart';
 import '../../domain/usecases/get_portfolio_summary.dart';
+import '../../domain/entities/transaction.dart';
+import '../../domain/usecases/get_transactions.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final GetPortfolioSummary getPortfolioSummary;
+  final GetTransactions getTransactions;
 
-  HomeViewModel({required this.getPortfolioSummary}) {
+  HomeViewModel({
+    required this.getPortfolioSummary,
+    required this.getTransactions,
+  }) {
     fetchSummary();
   }
 
   PortfolioSummary? _summary;
   PortfolioSummary? get summary => _summary;
 
-  // Also need holdings for Top 5 list
   final List<Holding> _topHoldings = [];
   List<Holding> get topHoldings => _topHoldings;
+
+  List<Transaction> _recentTransactions = [];
+  List<Transaction> get recentTransactions => _recentTransactions;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  bool _isMarketOpen = false;
+  bool get isMarketOpen => _isMarketOpen;
+
+  String _currentTime = '';
+  String get currentTime => _currentTime;
+  Timer? _timer;
+
   Future<void> fetchSummary() async {
     _isLoading = true;
+    _startClock();
     notifyListeners();
 
-    _summary = await getPortfolioSummary();
+    try {
+      final results = await Future.wait([
+        getPortfolioSummary(),
+        getTransactions(limit: 20), // Fetch more for activity chart
+      ]);
 
-    // In a real app, GetPortfolioSummary might encompass this or we call GetHoldings separately.
-    // implementation_detail: The UseCase was implemented to return a summary object.
-    // We implicitly also need the top holdings.
-    // Let's assume for Clean Arch strictness we should have separate UseCase or return explicit Composite object.
-    // For now, I will fetch holdings again via the repository in UseCase?
-    // Actually, let's keep it simple. The existing Home Screen needs holdings list too.
-    // I'll modify the viewmodel to maybe call getHoldings too if I had access, but for now let's rely on what we have.
-    // Wait, the prompt says "Code the Home Screen using a 'GetPortfolioSummary' UseCase injected into the HomeViewModel".
-    // I should strictly follow that.
+      _summary = results[0] as PortfolioSummary;
+      _recentTransactions = results[1] as List<Transaction>;
 
-    // I'll update GetPortfolioSummary to also return the list of holdings inside the summary or I'll inject GetHoldings as well?
-    // Let's modify GetPortfolioSummary to return a RichPortfolioSummary or just inject GetHoldings here too.
-    // But the instructions specifically mentioned GetPortfolioSummary.
-    // I'll stick to just GetPortfolioSummary returning the summary, and maybe I'll re-inject GetHoldings for the list?
-    // Or I'll update the UseCase to return the holdings list as well?
-    // Let's assume I need to inject GetHoldings here too for the list, OR
-    // simpler: update PortfolioSummary entity to include topHoldings.
+      // Update top holdings from summary
+      if (_summary != null) {
+        _topHoldings.clear();
+        final sorted = List<Holding>.from(_summary!.holdings)
+          ..sort((a, b) => b.totalPrice.compareTo(a.totalPrice));
+        _topHoldings.addAll(sorted.take(5));
+      }
+    } catch (e) {
+      debugPrint('Error fetching summary or transactions: $e');
+    }
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  void _startClock() {
+    final now = DateTime.now();
+    final secondsUntilNextMinute = 60 - now.second;
+
+    Timer(Duration(seconds: secondsUntilNextMinute), () {
+      _updateTimeAndStatus();
+      notifyListeners();
+
+      _timer = Timer.periodic(const Duration(minutes: 1), (_) {
+        _updateTimeAndStatus();
+        notifyListeners();
+      });
+    });
+  }
+
+  void _updateTimeAndStatus() {
+    final now = DateTime.now();
+
+    _currentTime =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+
+    const startMinutes = 9 * 60 + 30;
+    const endMinutes = 14 * 60 + 30;
+    final currentMinutes = now.hour * 60 + now.minute;
+
+    final isWeekday = now.weekday >= 1 && now.weekday <= 5;
+
+    _isMarketOpen = isWeekday &&
+        currentMinutes >= startMinutes &&
+        currentMinutes < endMinutes;
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/constants.dart';
-import '../../core/utils/formatters.dart';
-import '../../domain/entities/transaction.dart';
-import '../viewmodels/add_transaction_viewmodel.dart';
-import '../widgets/widgets.dart';
+import '../../../core/constants/constants.dart';
+import '../../../core/utils/formatters.dart';
+import '../../../core/utils/snackbar_util.dart';
+import '../../../domain/entities/transaction.dart';
+import '../../viewmodels/add_transaction_viewmodel.dart';
+import '../../viewmodels/portfolio_viewmodel.dart';
+import '../../viewmodels/transaction_history_viewmodel.dart';
+import '../../widgets/widgets.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -40,11 +43,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ),
         title: Text(
           'Add Transaction',
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: true,
       ),
@@ -65,8 +64,73 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               onStockSelected: (stock) {
                 viewModel.selectStock(stock);
               },
+              onClear: () {
+                viewModel.selectStock(null);
+                _qtyController.clear();
+                _priceController.clear();
+                viewModel.setQuantity(0);
+                viewModel.setUnitPrice(0);
+              },
             ),
             const SizedBox(height: AppSizes.p16),
+
+            // Current Holding Details Card
+            if (viewModel.selectedStock != null)
+              Container(
+                margin: const EdgeInsets.only(bottom: AppSizes.p24),
+                padding: const EdgeInsets.all(AppSizes.p16),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppSizes.r16),
+                  border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.2)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(AppSizes.p12),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(AppSizes.r12),
+                      ),
+                      child: const Icon(Icons.account_balance_wallet,
+                          color: AppColors.primary, size: 20),
+                    ),
+                    const SizedBox(width: AppSizes.p16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Your Current Position',
+                            style: GoogleFonts.inter(
+                              color: AppColors.primary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              _buildPositionStat(
+                                label: 'Quantity',
+                                value: AppFormatters.formatNumber(
+                                    viewModel.currentHolding?.quantity ?? 0),
+                              ),
+                              const SizedBox(width: 24),
+                              _buildPositionStat(
+                                label: 'Avg. Price',
+                                value: AppFormatters.formatCurrency(
+                                    viewModel.currentHolding?.avgPrice ?? 0),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
             // Quantity & Unit Price
             Row(
@@ -154,13 +218,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   : () async {
                       final success = await viewModel.saveTransaction();
                       if (success && mounted) {
+                        // Refresh portfolio and transaction history
+                        if (context.mounted) {
+                          context.read<PortfolioViewModel>().fetchHoldings();
+                          context
+                              .read<TransactionHistoryViewModel>()
+                              .fetchTransactions();
+                        }
                         Navigator.of(context).pop();
+                        AppSnackBar.show(context,
+                            message: 'Transaction added successfully',
+                            isError: false);
                       } else if (!success && mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(viewModel.errorMessage ??
-                                  'An unknown error occurred')),
-                        );
+                        AppSnackBar.show(context,
+                            message: viewModel.errorMessage ??
+                                'An unknown error occurred',
+                            isError: true);
                       }
                     },
               style: ElevatedButton.styleFrom(
@@ -222,6 +295,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               onTap: () => viewModel.setType(TransactionType.sell),
             ),
           ),
+          Expanded(
+            child: _buildTypeButton(
+              label: 'Dividend',
+              isSelected: viewModel.type == TransactionType.dividend,
+              onTap: () => viewModel.setType(TransactionType.dividend),
+            ),
+          ),
         ],
       ),
     );
@@ -257,6 +337,30 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPositionStat({required String label, required String value}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 10,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

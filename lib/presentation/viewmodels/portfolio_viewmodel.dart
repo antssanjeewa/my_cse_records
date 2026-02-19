@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/holding.dart';
-import '../../domain/usecases/get_holdings.dart';
+import '../../domain/usecases/get_portfolio_summary.dart';
 
 class PortfolioViewModel extends ChangeNotifier {
-  final GetHoldings getHoldings;
+  final GetPortfolioSummary getPortfolioSummary;
 
-  PortfolioViewModel({required this.getHoldings}) {
+  PortfolioViewModel({required this.getPortfolioSummary}) {
     fetchHoldings();
   }
 
   List<Holding> _holdings = [];
   List<Holding> get holdings => _holdings;
+
+  double _cashBalance = 0;
+  double get cashBalance => _cashBalance;
+
+  double get totalValue => _holdings.fold(0, (sum, h) => sum + h.totalPrice);
+
+  double get totalMarketValue =>
+      _holdings.fold(0, (sum, h) => sum + h.totalPrice + h.profit);
 
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
@@ -45,7 +53,7 @@ class PortfolioViewModel extends ChangeNotifier {
     if (_sortBy == 'Name') {
       list.sort((a, b) => a.name.compareTo(b.name));
     } else if (_sortBy == 'Price') {
-      list.sort((a, b) => b.marketPrice.compareTo(a.marketPrice));
+      list.sort((a, b) => b.totalPrice.compareTo(a.totalPrice));
     } else if (_sortBy == 'Quantity') {
       list.sort((a, b) => b.quantity.compareTo(a.quantity));
     } else if (_sortBy == 'Profit %') {
@@ -74,7 +82,13 @@ class PortfolioViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    _holdings = await getHoldings();
+    try {
+      final summary = await getPortfolioSummary();
+      _holdings = summary.holdings;
+      _cashBalance = summary.cashBalance;
+    } catch (e) {
+      debugPrint('Error fetching portfolio summary: $e');
+    }
 
     _isLoading = false;
     notifyListeners();

@@ -8,7 +8,6 @@ class HoldingModel extends Holding {
     required super.stockId,
     required super.avgPrice,
     required super.quantity,
-    super.totalPrice = 0,
     super.profit = 0,
     super.dividend = 0,
     super.stock,
@@ -21,7 +20,6 @@ class HoldingModel extends Holding {
       stockId: json['stock_id'] as int,
       avgPrice: (json['avg_price'] as num?)?.toDouble() ?? 0.0,
       quantity: (json['quantity'] as num?)?.toDouble() ?? 0.0,
-      totalPrice: (json['total_price'] as num?)?.toDouble() ?? 0.0,
       profit: (json['profit'] as num?)?.toDouble() ?? 0.0,
       dividend: (json['dividend'] as num?)?.toDouble() ?? 0.0,
       stock:
@@ -35,9 +33,8 @@ class HoldingModel extends Holding {
       'stock_id': stockId,
       'avg_price': avgPrice,
       'quantity': quantity,
-      'total_price': 0,
-      'profit': 0,
-      'dividend': 0,
+      'profit': profit,
+      'dividend': dividend,
     };
   }
 }

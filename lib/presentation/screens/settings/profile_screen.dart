@@ -4,12 +4,13 @@ import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/constants/constants.dart';
-import '../../core/routing/pages.dart';
-import '../../core/services/biometric_service.dart';
-import '../../core/services/secure_storage_service.dart';
-import '../../core/di/service_locator.dart';
-import '../viewmodels/auth_viewmodel.dart';
+import '../../../core/constants/constants.dart';
+import '../../../core/routing/pages.dart';
+import '../../../core/services/biometric_service.dart';
+import '../../../core/services/secure_storage_service.dart';
+import '../../../core/di/service_locator.dart';
+import '../../viewmodels/auth_viewmodel.dart';
+import '../../viewmodels/theme_viewmodel.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -19,7 +20,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool _darkMode = true;
   bool _displayPct = false;
   bool _biometricEnabled = false;
 
@@ -94,12 +94,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     width: 80,
                     height: 80,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.primary, width: 2),
-                      image: const DecorationImage(
-                        image: NetworkImage(AppAssets.userAvatar),
-                        fit: BoxFit.cover,
+                      // border: Border.all(color: AppColors.primary, width: 2),
+                      image: DecorationImage(
+                        image: AssetImage(AppAssets.logo),
+                        fit: BoxFit.fitWidth,
                       ),
                     ),
                   ),
@@ -152,8 +152,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildToggleItem(
                     icon: Icons.dark_mode,
                     label: 'Dark Mode',
-                    value: _darkMode,
-                    onChanged: (v) => setState(() => _darkMode = v),
+                    value: context.watch<ThemeViewModel>().isDarkMode,
+                    onChanged: (v) {
+                      context.read<ThemeViewModel>().toggleTheme();
+                    },
                     isLast: false,
                   ),
                   _buildToggleItem(

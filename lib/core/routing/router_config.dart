@@ -2,19 +2,22 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import '../../presentation/screens/splash_screen.dart';
 import '../../presentation/screens/login_screen.dart';
-import '../../presentation/screens/home_screen.dart';
-import '../../presentation/screens/portfolio_screen.dart';
+import '../../presentation/screens/home/home_screen.dart';
+import '../../presentation/screens/portfolio/portfolio_screen.dart';
 import '../app/main_shell.dart';
-import '../../presentation/screens/profile_screen.dart';
-import '../../presentation/screens/transaction_history_screen.dart';
-import '../../presentation/screens/add_transaction_screen.dart';
-import '../../presentation/screens/cash_screen.dart';
-import '../../presentation/screens/manage_stocks_screen.dart';
+import '../../presentation/screens/settings/profile_screen.dart';
+import '../../presentation/screens/transactions/transaction_history_screen.dart';
+import '../../presentation/screens/transactions/add_transaction_screen.dart';
+import '../../presentation/screens/settings/cash_screen.dart';
+import '../../presentation/screens/settings/manage_stocks_screen.dart';
 import '../../presentation/viewmodels/cash_viewmodel.dart';
 import '../../presentation/viewmodels/manage_stocks_viewmodel.dart';
-import '../di/service_locator.dart';
+import '../../presentation/screens/holding_details/holding_details_screen.dart';
+import '../../presentation/viewmodels/holding_details_viewmodel.dart';
+import '../../domain/entities/holding.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
+import '../di/service_locator.dart';
 import 'pages.dart';
 import '../constants/app_colors.dart';
 
@@ -111,6 +114,24 @@ final GoRouter router = GoRouter(
           path: Pages.profile.toPath(),
           name: Pages.profile.toPathName(),
           builder: (context, state) => const ProfileScreen(),
+        ),
+        GoRoute(
+          path: Pages.holdingDetails.toPath(),
+          name: Pages.holdingDetails.toPathName(),
+          builder: (context, state) {
+            final extras = state.extra as Map<String, dynamic>;
+            final holding = extras['holding'] as Holding;
+            final totalValue =
+                (extras['totalValue'] as num?)?.toDouble() ?? 0.0;
+            return ChangeNotifierProvider(
+              create: (context) => HoldingDetailsViewModel(
+                getTransactions: getIt(),
+                holding: holding,
+                totalPortfolioValue: totalValue,
+              ),
+              child: const HoldingDetailsScreen(),
+            );
+          },
         ),
       ],
     ),

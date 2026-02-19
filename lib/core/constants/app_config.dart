@@ -2,6 +2,7 @@ class AppConfig {
   static const String locale = 'en_LK';
   static const String currencySymbol = 'LKR ';
   static const String currencySymbolShort = 'Rs. ';
+  static const double feePercentage = 0.0114; // 1.14%
 
   // Supabase
   static const String supabaseUrl = 'https://koevusjggapfimievpld.supabase.co';
