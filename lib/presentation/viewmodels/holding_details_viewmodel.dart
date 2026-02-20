@@ -26,12 +26,15 @@ class HoldingDetailsViewModel extends ChangeNotifier {
   List<Transaction> get transactions {
     if (_currentFilter == TransactionFilter.all) return _allTransactions;
     return _allTransactions.where((t) {
-      if (_currentFilter == TransactionFilter.buy)
+      if (_currentFilter == TransactionFilter.buy) {
         return t.type == TransactionType.buy;
-      if (_currentFilter == TransactionFilter.sell)
+      }
+      if (_currentFilter == TransactionFilter.sell) {
         return t.type == TransactionType.sell;
-      if (_currentFilter == TransactionFilter.dividend)
+      }
+      if (_currentFilter == TransactionFilter.dividend) {
         return t.type == TransactionType.dividend;
+      }
       return true;
     }).toList();
   }

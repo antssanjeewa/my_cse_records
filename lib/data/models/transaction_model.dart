@@ -8,8 +8,8 @@ class TransactionModel extends Transaction {
     required super.stockId,
     required super.type,
     required super.qty,
-    required super.unit_price,
-    required super.total_price,
+    required super.unitPrice,
+    required super.totalPrice,
     required super.date,
     super.stock,
   });
@@ -24,8 +24,8 @@ class TransactionModel extends Transaction {
         orElse: () => throw Exception('Invalid transaction type'),
       )),
       qty: (json['qty'] as num?)?.toDouble() ?? 0.0,
-      unit_price: (json['unit_price'] as num?)?.toDouble() ?? 0.0,
-      total_price: (json['total_price'] as num?)?.toDouble() ?? 0.0,
+      unitPrice: (json['unit_price'] as num?)?.toDouble() ?? 0.0,
+      totalPrice: (json['total_price'] as num?)?.toDouble() ?? 0.0,
       date: json['date'] != null
           ? DateTime.parse(json['date'])
           : DateTime.fromMillisecondsSinceEpoch(0),
@@ -41,8 +41,8 @@ class TransactionModel extends Transaction {
       'stock_id': stockId,
       'type': type.name.toUpperCase(),
       'qty': qty,
-      'unit_price': unit_price,
-      'total_price': total_price,
+      'unit_price': unitPrice,
+      'total_price': totalPrice,
       'date': date.toIso8601String(),
     };
   }

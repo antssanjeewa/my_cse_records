@@ -26,18 +26,18 @@ class AddTransaction {
     final ticker = stock?.ticker ?? 'Unknown';
 
     double newQuantity = transaction.qty;
-    double newTotalPrice = transaction.total_price;
+    double newTotalPrice = transaction.totalPrice;
     double profit = existingHolding?.profit ?? 0;
     double dividend = existingHolding?.dividend ?? 0;
 
     if (transaction.type == TransactionType.buy) {
-      if (balance < transaction.total_price) {
+      if (balance < transaction.totalPrice) {
         throw Exception('Insufficient balance');
       }
 
       if (existingHolding != null) {
         newQuantity = existingHolding.quantity + transaction.qty;
-        newTotalPrice = existingHolding.totalPrice + transaction.total_price;
+        newTotalPrice = existingHolding.totalPrice + transaction.totalPrice;
       }
     } else if (transaction.type == TransactionType.sell) {
       if (existingHolding != null) {
@@ -49,7 +49,7 @@ class AddTransaction {
         final currentValue = existingHolding.avgPrice * transaction.qty;
         newTotalPrice = existingHolding.totalPrice - currentValue;
 
-        profit += (transaction.total_price - currentValue);
+        profit += (transaction.totalPrice - currentValue);
       } else {
         throw Exception('Cannot sell stock with no existing holdings');
       }
@@ -59,7 +59,7 @@ class AddTransaction {
             'Cannot receive dividend for stock with no existing holdings');
       }
 
-      dividend += transaction.total_price;
+      dividend += transaction.totalPrice;
       newTotalPrice = existingHolding.totalPrice;
       newQuantity = existingHolding.quantity;
     } else {
@@ -72,15 +72,15 @@ class AddTransaction {
     String description = '';
 
     if (transaction.type == TransactionType.buy) {
-      cashAmount = -transaction.total_price;
+      cashAmount = -transaction.totalPrice;
       cashType = 'BUY';
       description = 'Bought $ticker stock';
     } else if (transaction.type == TransactionType.sell) {
-      cashAmount = transaction.total_price;
+      cashAmount = transaction.totalPrice;
       cashType = 'SELL';
       description = 'Sold $ticker stock';
     } else if (transaction.type == TransactionType.dividend) {
-      cashAmount = transaction.total_price;
+      cashAmount = transaction.totalPrice;
       cashType = 'DIVIDEND';
       description = 'Dividend from $ticker';
     }

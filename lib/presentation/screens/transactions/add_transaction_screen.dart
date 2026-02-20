@@ -217,19 +217,19 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   ? null
                   : () async {
                       final success = await viewModel.saveTransaction();
-                      if (success && mounted) {
-                        // Refresh portfolio and transaction history
-                        if (context.mounted) {
-                          context.read<PortfolioViewModel>().fetchHoldings();
-                          context
-                              .read<TransactionHistoryViewModel>()
-                              .fetchTransactions();
-                        }
+                      if (!mounted) return;
+
+                      if (success) {
+                        context.read<PortfolioViewModel>().fetchHoldings();
+                        context
+                            .read<TransactionHistoryViewModel>()
+                            .fetchTransactions();
+
                         Navigator.of(context).pop();
                         AppSnackBar.show(context,
                             message: 'Transaction added successfully',
                             isError: false);
-                      } else if (!success && mounted) {
+                      } else {
                         AppSnackBar.show(context,
                             message: viewModel.errorMessage ??
                                 'An unknown error occurred',

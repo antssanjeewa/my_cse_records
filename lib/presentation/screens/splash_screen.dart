@@ -25,16 +25,19 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
 
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     final biometricEnabled = prefs.getBool('biometric_enabled') ?? false;
 
     // If biometric is enabled, we ALWAYS show the login page first for quick access
     if (biometricEnabled) {
+      if (!mounted) return;
       Pages.login.go(context);
       return;
     }
 
     // Otherwise, check if a session exists to skip login
     final session = Supabase.instance.client.auth.currentSession;
+    if (!mounted) return;
     if (session != null) {
       Pages.home.go(context);
     } else {

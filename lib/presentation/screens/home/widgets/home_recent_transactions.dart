@@ -129,7 +129,7 @@ class HomeRecentTransactions extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '${(t.type == TransactionType.sell || t.type == TransactionType.dividend) ? '+' : '-'} ${AppFormatters.formatCurrency(t.total_price)}',
+                          '${(t.type == TransactionType.sell || t.type == TransactionType.dividend) ? '+' : '-'} ${AppFormatters.formatCurrency(t.totalPrice)}',
                           style: TextStyle(
                             color: (t.type == TransactionType.sell ||
                                     t.type == TransactionType.dividend)

@@ -170,9 +170,9 @@ class _HomeTransactionChartState extends State<HomeTransactionChart> {
               t.date.month == date.month &&
               t.date.day == date.day) {
             if (t.type == TransactionType.buy) {
-              buyAmount += t.total_price;
+              buyAmount += t.totalPrice;
             } else if (t.type == TransactionType.sell) {
-              sellAmount += t.total_price;
+              sellAmount += t.totalPrice;
             }
           }
         }
@@ -209,9 +209,9 @@ class _HomeTransactionChartState extends State<HomeTransactionChart> {
           if (t.date.year == monthDate.year &&
               t.date.month == monthDate.month) {
             if (t.type == TransactionType.buy) {
-              buyAmount += t.total_price;
+              buyAmount += t.totalPrice;
             } else if (t.type == TransactionType.sell) {
-              sellAmount += t.total_price;
+              sellAmount += t.totalPrice;
             }
           }
         }
@@ -247,9 +247,9 @@ class _HomeTransactionChartState extends State<HomeTransactionChart> {
         for (var t in widget.transactions) {
           if (t.date.year == year) {
             if (t.type == TransactionType.buy) {
-              buyAmount += t.total_price;
+              buyAmount += t.totalPrice;
             } else if (t.type == TransactionType.sell) {
-              sellAmount += t.total_price;
+              sellAmount += t.totalPrice;
             }
           }
         }

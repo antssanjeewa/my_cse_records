@@ -133,7 +133,7 @@ class TransactionHistoryItem extends StatelessWidget {
                                       text: ' @ ',
                                       style: TextStyle(
                                           color: AppColors.textPrimary)),
-                                  TextSpan(text: t.unit_price.toString()),
+                                  TextSpan(text: t.unitPrice.toString()),
                                 ]),
                           ),
                         ],
@@ -147,7 +147,7 @@ class TransactionHistoryItem extends StatelessWidget {
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold)),
                           const SizedBox(height: 2),
-                          Text(AppFormatters.formatCurrency(t.total_price),
+                          Text(AppFormatters.formatCurrency(t.totalPrice),
                               style: TextStyle(
                                   color: color,
                                   fontWeight: FontWeight.bold,

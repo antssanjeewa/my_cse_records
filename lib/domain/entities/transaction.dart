@@ -36,8 +36,8 @@ class Transaction {
   final int stockId;
   final TransactionType type;
   final double qty;
-  final double unit_price;
-  final double total_price;
+  final double unitPrice;
+  final double totalPrice;
   final DateTime date;
   final Stock? stock;
 
@@ -47,8 +47,8 @@ class Transaction {
     required this.stockId,
     required this.type,
     required this.qty,
-    required this.unit_price,
-    required this.total_price,
+    required this.unitPrice,
+    required this.totalPrice,
     required this.date,
     this.stock,
   });

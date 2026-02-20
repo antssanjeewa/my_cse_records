@@ -142,8 +142,8 @@ class AddTransactionViewModel extends ChangeNotifier {
         stockId: _selectedStock!.id,
         type: _type,
         qty: _quantity,
-        unit_price: _unitPrice,
-        total_price: totalPrice,
+        unitPrice: _unitPrice,
+        totalPrice: totalPrice,
         date: _date,
         stock: _selectedStock,
       );

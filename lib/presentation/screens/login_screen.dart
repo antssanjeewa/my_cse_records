@@ -154,6 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             // Save credentials for future biometric login
                             await getIt<SecureStorageService>()
                                 .saveCredentials(email, password);
+                            if (!mounted) return;
                             Pages.home.go(context);
                           }
                         },
@@ -192,13 +193,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               await biometricService.isBiometricAvailable();
 
                           if (!isAvailable) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Biometric authentication is not available on this device.')),
-                              );
-                            }
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Biometric authentication is not available on this device.')),
+                            );
                             return;
                           }
 
@@ -213,16 +213,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 creds['password']!,
                               );
                               if (mounted && authViewModel.isAuthenticated) {
+                                if (!mounted) return;
                                 Pages.home.go(context);
                               }
                             } else {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'Please sign in with your email and password once to enable quick access.')),
-                                );
-                              }
+                              if (!mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Please sign in with your email and password once to enable quick access.')),
+                              );
                             }
                           }
                         },

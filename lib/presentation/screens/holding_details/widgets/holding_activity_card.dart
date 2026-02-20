@@ -72,7 +72,7 @@ class HoldingActivityCard extends StatelessWidget {
             children: [
               Text(
                 isDiv
-                    ? AppFormatters.formatCurrency(t.total_price)
+                    ? AppFormatters.formatCurrency(t.totalPrice)
                     : '${t.qty.toInt()} Shares',
                 style: GoogleFonts.inter(
                   color: isDiv ? Colors.blue : AppColors.textPrimary,
@@ -83,7 +83,7 @@ class HoldingActivityCard extends StatelessWidget {
               Text(
                 isDiv
                     ? 'Credited'
-                    : '@ ${AppFormatters.formatCurrency(t.unit_price)}',
+                    : '@ ${AppFormatters.formatCurrency(t.unitPrice)}',
                 style: GoogleFonts.inter(
                     color: Colors.grey,
                     fontSize: 10,

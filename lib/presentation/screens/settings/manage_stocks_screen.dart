@@ -359,7 +359,7 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                           const CustomLabel(text: 'Sector'),
                           const SizedBox(height: AppSizes.p8),
                           DropdownButtonFormField<String>(
-                            value: sectorController.text.isNotEmpty
+                            initialValue: sectorController.text.isNotEmpty
                                 ? sectorController.text
                                 : null,
                             isExpanded: true,
@@ -497,9 +497,10 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: appSectors.any((s) => s.name == sectorController.text)
-                  ? sectorController.text
-                  : null,
+              initialValue:
+                  appSectors.any((s) => s.name == sectorController.text)
+                      ? sectorController.text
+                      : null,
               isExpanded: true,
               dropdownColor: AppColors.surface,
               style: const TextStyle(color: AppColors.textPrimary),

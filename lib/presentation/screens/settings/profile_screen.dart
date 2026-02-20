@@ -243,9 +243,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onPressed: () async {
                     await getIt<SecureStorageService>().clearCredentials();
                     await authViewModel.logout();
-                    if (mounted) {
-                      Pages.login.go(context);
-                    }
+                    if (!mounted) return;
+                    Pages.login.go(context);
                   },
                   icon: const Icon(Icons.logout, color: Colors.redAccent),
                   label: const Text('Logout',

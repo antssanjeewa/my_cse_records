@@ -124,8 +124,8 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       stockId: transaction.stockId,
       type: transaction.type,
       qty: transaction.qty,
-      unit_price: transaction.unit_price,
-      total_price: transaction.total_price,
+      unitPrice: transaction.unitPrice,
+      totalPrice: transaction.totalPrice,
       date: transaction.date,
     ));
   }

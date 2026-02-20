@@ -84,7 +84,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget? _buildTitle(context) {
+  Widget? _buildTitle(BuildContext context) {
     if (title == null && subtitle == null) return null;
 
     return Column(
