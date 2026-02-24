@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/constants.dart';
@@ -143,6 +144,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       const SizedBox(height: AppSizes.p8),
                       CustomTextField(
                         controller: _qtyController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
                         hint: '0',
                         onChanged: (val) =>
                             viewModel.setQuantity(double.tryParse(val) ?? 0),
@@ -159,6 +164,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       const SizedBox(height: AppSizes.p8),
                       CustomTextField(
                         controller: _priceController,
+                        keyboardType: TextInputType.number,
                         hint: '0.00',
                         onChanged: (val) =>
                             viewModel.setUnitPrice(double.tryParse(val) ?? 0),

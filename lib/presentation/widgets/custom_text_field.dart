@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/constants/constants.dart';
 
 /// A custom text field widget with consistent styling
@@ -18,6 +19,7 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputAction? textInputAction;
   final int? maxLength;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     super.key,
@@ -35,6 +37,7 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.textInputAction,
     this.maxLength,
+    this.inputFormatters,
   });
 
   @override
@@ -52,6 +55,7 @@ class CustomTextField extends StatelessWidget {
         validator: validator,
         keyboardType: keyboardType,
         textInputAction: textInputAction,
+        inputFormatters: inputFormatters,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         style: const TextStyle(
           color: Colors.white,

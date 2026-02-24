@@ -224,6 +224,9 @@ class CashScreen extends StatelessWidget {
     final amountController = TextEditingController();
     final descController = TextEditingController();
 
+    // Reset date to now when opening dialog
+    viewModel.setDate(DateTime.now());
+
     showDialog(
       context: context,
       builder: (context) => ListenableBuilder(
@@ -243,6 +246,7 @@ class CashScreen extends StatelessWidget {
                       const SizedBox(height: AppSizes.p8),
                       CustomTextField(
                         controller: amountController,
+                        keyboardType: TextInputType.number,
                         hint: '0',
                         prefixText: 'Rs. ',
                       ),
@@ -259,8 +263,22 @@ class CashScreen extends StatelessWidget {
                       const SizedBox(height: AppSizes.p8),
                       CustomTextField(
                         controller: descController,
-                        keyboardType: TextInputType.text,
                         hint: '',
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const CustomLabel(text: 'Date'),
+                      const SizedBox(height: AppSizes.p8),
+                      CustomDateField(
+                        selectedDate: viewModel.date,
+                        onDateSelected: viewModel.setDate,
                       ),
                     ],
                   ),
@@ -284,6 +302,7 @@ class CashScreen extends StatelessWidget {
                             description: descController.text.isEmpty
                                 ? null
                                 : descController.text,
+                            date: viewModel.date,
                           );
 
                           if (context.mounted) {

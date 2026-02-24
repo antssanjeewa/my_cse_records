@@ -434,35 +434,49 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                       style: TextStyle(color: Colors.grey)),
                 ),
                 ElevatedButton(
-                  onPressed: () async {
-                    if (!formKey.currentState!.validate()) return;
+                  onPressed: viewModel.isLoading
+                      ? null
+                      : () async {
+                          if (!formKey.currentState!.validate()) return;
 
-                    final ticker = tickerController.text.trim();
-                    final name = nameController.text.trim();
-                    final sector = sectorController.text.trim();
-                    final price = double.tryParse(priceController.text);
+                          final ticker = tickerController.text.trim();
+                          final name = nameController.text.trim();
+                          final sector = sectorController.text.trim();
+                          final price = double.tryParse(priceController.text);
 
-                    final error = await viewModel.addStock(
-                      ticker: ticker,
-                      name: name,
-                      sector: sector.isEmpty ? null : sector,
-                      lastPrice: price,
-                    );
+                          final error = await viewModel.addStock(
+                            ticker: ticker,
+                            name: name,
+                            sector: sector.isEmpty ? null : sector,
+                            lastPrice: price,
+                          );
 
-                    if (!context.mounted) return;
+                          if (!context.mounted) return;
 
-                    if (error == null) {
-                      Navigator.pop(context);
-                      AppSnackBar.show(context,
-                          message: 'Stock added successfully');
-                    } else {
-                      AppSnackBar.show(context, message: error, isError: true);
-                    }
-                  },
+                          if (error == null) {
+                            Navigator.pop(context);
+                            AppSnackBar.show(context,
+                                message: 'Stock added successfully');
+                          } else {
+                            AppSnackBar.show(context,
+                                message: error, isError: true);
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary),
-                  child: const Text('Add Stock',
-                      style: TextStyle(color: Colors.white)),
+                    backgroundColor: AppColors.primary,
+                    disabledBackgroundColor: AppColors.primary.withAlpha(50),
+                  ),
+                  child: viewModel.isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Add Stock',
+                          style: TextStyle(color: Colors.white)),
                 ),
               ],
             );
@@ -548,60 +562,82 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
         ),
         actionsPadding: const EdgeInsets.all(AppSizes.p16),
         actions: [
-          Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.textSecondary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text('Cancel'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final price = double.tryParse(priceController.text);
-                    final sector = sectorController.text.trim();
-                    final name = nameController.text.trim();
-
-                    if (name.isEmpty) return;
-
-                    if (price != null && price > 0) {
-                      try {
-                        await viewModel.updateStock(
-                          stockId: stock.id,
-                          name: name,
-                          sector: sector.isEmpty ? null : sector,
-                          lastPrice: price,
-                        );
-                        if (!context.mounted) return;
-                        Navigator.pop(context);
-                        AppSnackBar.show(context,
-                            message: 'Stock updated successfully');
-                      } catch (_) {
-                        if (!context.mounted) return;
-                        AppSnackBar.show(context,
-                            message: 'Failed to update stock', isError: true);
-                      }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppSizes.r12),
+          ListenableBuilder(
+            listenable: viewModel,
+            builder: (context, child) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: viewModel.isLoading
+                          ? null
+                          : () => Navigator.pop(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.textSecondary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text('Cancel'),
                     ),
                   ),
-                  child: const Text('Update'),
-                ),
-              ),
-            ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: viewModel.isLoading
+                          ? null
+                          : () async {
+                              final price =
+                                  double.tryParse(priceController.text);
+                              final sector = sectorController.text.trim();
+                              final name = nameController.text.trim();
+
+                              if (name.isEmpty) return;
+
+                              if (price != null && price > 0) {
+                                try {
+                                  await viewModel.updateStock(
+                                    stockId: stock.id,
+                                    name: name,
+                                    sector: sector.isEmpty ? null : sector,
+                                    lastPrice: price,
+                                  );
+                                  if (!context.mounted) return;
+                                  Navigator.pop(context);
+                                  AppSnackBar.show(context,
+                                      message: 'Stock updated successfully');
+                                } catch (_) {
+                                  if (!context.mounted) return;
+                                  AppSnackBar.show(context,
+                                      message: 'Failed to update stock',
+                                      isError: true);
+                                }
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor:
+                            AppColors.primary.withAlpha(50),
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppSizes.r12),
+                        ),
+                      ),
+                      child: viewModel.isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text('Update'),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),

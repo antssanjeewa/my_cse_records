@@ -39,6 +39,7 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> fetchSummary() async {
     _isLoading = true;
+    _updateTimeAndStatus();
     _startClock();
     notifyListeners();
 

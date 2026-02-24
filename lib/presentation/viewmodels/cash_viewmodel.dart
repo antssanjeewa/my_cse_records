@@ -21,6 +21,14 @@ class CashViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  DateTime _date = DateTime.now();
+  DateTime get date => _date;
+
+  void setDate(DateTime date) {
+    _date = date;
+    notifyListeners();
+  }
+
   double get totalCash => _transactions
       .where((t) => t.type == 'DEPOSIT' || t.type == 'WITHDRAWAL')
       .fold(0.0, (sum, t) => sum + t.amount);
@@ -44,11 +52,11 @@ class CashViewModel extends ChangeNotifier {
     }
   }
 
-  Future<String?> addTransaction({
-    required double? amount,
-    required String type,
-    String? description,
-  }) async {
+  Future<String?> addTransaction(
+      {required double? amount,
+      required String type,
+      String? description,
+      DateTime? date}) async {
     if (_isLoading) {
       return 'Please wait for the previous transaction to complete';
     }
@@ -77,7 +85,7 @@ class CashViewModel extends ChangeNotifier {
         amount: type == 'DEPOSIT' ? normalizedAmount : -normalizedAmount,
         type: type,
         description: description,
-        createdAt: DateTime.now(),
+        createdAt: date ?? DateTime.now(),
       );
 
       await repository.addCashTransaction(transaction);
