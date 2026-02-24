@@ -18,6 +18,7 @@ import '../../presentation/viewmodels/portfolio_viewmodel.dart';
 import '../../presentation/viewmodels/transaction_history_viewmodel.dart';
 import '../../presentation/viewmodels/auth_viewmodel.dart';
 import '../../presentation/viewmodels/add_transaction_viewmodel.dart';
+import '../../presentation/viewmodels/settings_viewmodel.dart';
 
 final getIt = GetIt.instance;
 
@@ -61,6 +62,10 @@ void setupLocator() {
         getStocks: getIt(),
         addTransaction: getIt(),
         getHoldingByStock: getIt(),
+        userId: getIt<AuthViewModel>().currentUser?.id ?? '',
+      ));
+  getIt.registerFactory(() => SettingsViewModel(
+        repository: getIt(),
         userId: getIt<AuthViewModel>().currentUser?.id ?? '',
       ));
 }

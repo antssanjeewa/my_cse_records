@@ -10,8 +10,10 @@ import '../../../core/services/biometric_service.dart';
 import '../../../core/services/secure_storage_service.dart';
 import '../../../core/di/service_locator.dart';
 import '../../viewmodels/auth_viewmodel.dart';
+import '../../viewmodels/portfolio_viewmodel.dart';
 import '../../viewmodels/theme_viewmodel.dart';
 import '../../viewmodels/transaction_history_viewmodel.dart';
+import '../../viewmodels/settings_viewmodel.dart';
 import '../../../core/services/export_service.dart';
 import '../../../core/utils/snackbar_util.dart';
 import 'package:intl/intl.dart';
@@ -224,8 +226,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       isLast: false),
                   _buildActionItem(
                       icon: Icons.cloud_upload,
-                      label: 'Backup & Restore',
-                      onTap: () {},
+                      label: context.watch<SettingsViewModel>().isLoading
+                          ? 'Processing...'
+                          : 'Backup & Restore',
+                      onTap: () => _showBackupRestoreDialog(context),
                       isLast: false),
                   _buildActionItem(
                       icon: Icons.download,
@@ -513,6 +517,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showBackupRestoreDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: const Text('Backup & Restore',
+            style: TextStyle(color: AppColors.textPrimary)),
+        content: const Text(
+          'Backup your portfolio to a JSON file or restore it from a previous backup. This will help you keep your data safe outside the cloud.',
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+        ),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    context.read<SettingsViewModel>().runBackup().then((_) {
+                      final msg =
+                          context.read<SettingsViewModel>().statusMessage;
+                      if (msg != null && context.mounted) {
+                        AppSnackBar.show(context, message: msg);
+                      }
+                    });
+                  },
+                  child: const Text('BACKUP',
+                      style: TextStyle(color: AppColors.primary)),
+                ),
+              ),
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    context.read<SettingsViewModel>().runRestore().then((_) {
+                      final msg =
+                          context.read<SettingsViewModel>().statusMessage;
+                      if (msg != null && context.mounted) {
+                        AppSnackBar.show(context, message: msg);
+                        // Refresh everything
+                        context.read<PortfolioViewModel>().fetchHoldings();
+                        context
+                            .read<TransactionHistoryViewModel>()
+                            .fetchTransactions();
+                      }
+                    });
+                  },
+                  child: const Text('RESTORE',
+                      style: TextStyle(color: Colors.orangeAccent)),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
