@@ -54,10 +54,10 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                         bottom: AppSizes.p16),
                     child: SummaryCard(
                       title: 'Total Equity',
-                      mainValue: viewModel.totalMarketValue,
-                      leftLabel: 'Net Worth',
-                      leftValue:
-                          viewModel.totalMarketValue + viewModel.cashBalance,
+                      mainValue:
+                          viewModel.totalMarketValue - viewModel.totalValue,
+                      leftLabel: 'Total Portfolio',
+                      leftValue: viewModel.totalMarketValue,
                       rightLabel: 'Available balance',
                       rightValue: viewModel.cashBalance,
                     ),

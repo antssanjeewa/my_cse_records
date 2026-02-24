@@ -1,3 +1,4 @@
+import '../../core/utils/formatters.dart';
 import '../../domain/entities/cash_transaction.dart';
 
 class CashTransactionModel extends CashTransaction {
@@ -14,7 +15,8 @@ class CashTransactionModel extends CashTransaction {
     return CashTransactionModel(
       id: json['id']?.toString() ?? '',
       userId: json['user_id']?.toString() ?? '',
-      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      amount:
+          AppFormatters.roundTo((json['amount'] as num?)?.toDouble() ?? 0.0),
       type: json['type']?.toString() ?? 'DEPOSIT',
       description: json['description']?.toString(),
       createdAt: json['created_at'] != null
@@ -27,7 +29,7 @@ class CashTransactionModel extends CashTransaction {
     return {
       'id': id,
       'user_id': userId,
-      'amount': amount,
+      'amount': AppFormatters.roundTo(amount),
       'type': type,
       'description': description,
       'created_at': createdAt.toIso8601String(),

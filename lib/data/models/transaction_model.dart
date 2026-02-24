@@ -1,3 +1,4 @@
+import '../../core/utils/formatters.dart';
 import '../../domain/entities/transaction.dart';
 import 'stock_model.dart';
 
@@ -23,9 +24,11 @@ class TransactionModel extends Transaction {
         (e) => e.name.toUpperCase() == (json['type'] as String).toUpperCase(),
         orElse: () => throw Exception('Invalid transaction type'),
       )),
-      qty: (json['qty'] as num?)?.toDouble() ?? 0.0,
-      unitPrice: (json['unit_price'] as num?)?.toDouble() ?? 0.0,
-      totalPrice: (json['total_price'] as num?)?.toDouble() ?? 0.0,
+      qty: AppFormatters.roundTo((json['qty'] as num?)?.toDouble() ?? 0.0),
+      unitPrice: AppFormatters.roundTo(
+          (json['unit_price'] as num?)?.toDouble() ?? 0.0),
+      totalPrice: AppFormatters.roundTo(
+          (json['total_price'] as num?)?.toDouble() ?? 0.0),
       date: json['date'] != null
           ? DateTime.parse(json['date'])
           : DateTime.fromMillisecondsSinceEpoch(0),
@@ -40,9 +43,9 @@ class TransactionModel extends Transaction {
       'user_id': userId,
       'stock_id': stockId,
       'type': type.name.toUpperCase(),
-      'qty': qty,
-      'unit_price': unitPrice,
-      'total_price': totalPrice,
+      'qty': AppFormatters.roundTo(qty),
+      'unit_price': AppFormatters.roundTo(unitPrice),
+      'total_price': AppFormatters.roundTo(totalPrice),
       'date': date.toIso8601String(),
     };
   }

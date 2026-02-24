@@ -1,3 +1,4 @@
+import '../../core/utils/formatters.dart';
 import '../../domain/entities/stock.dart';
 
 class StockModel extends Stock {
@@ -15,7 +16,8 @@ class StockModel extends Stock {
       ticker: json['ticker']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       sector: json['sector']?.toString(),
-      lastPrice: (json['last_price'] as num?)?.toDouble() ?? 0.0,
+      lastPrice: AppFormatters.roundTo(
+          (json['last_price'] as num?)?.toDouble() ?? 0.0),
     );
   }
 
@@ -25,7 +27,7 @@ class StockModel extends Stock {
       'ticker': ticker,
       'name': name,
       'sector': sector,
-      'last_price': lastPrice,
+      'last_price': AppFormatters.roundTo(lastPrice),
     };
   }
 }

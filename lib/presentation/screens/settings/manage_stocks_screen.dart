@@ -590,26 +590,21 @@ class _ManageStocksScreenState extends State<ManageStocksScreen> {
                               final sector = sectorController.text.trim();
                               final name = nameController.text.trim();
 
-                              if (name.isEmpty) return;
+                              final error = await viewModel.updateStock(
+                                stockId: stock.id,
+                                name: name,
+                                sector: sector.isEmpty ? null : sector,
+                                lastPrice: price,
+                              );
 
-                              if (price != null && price > 0) {
-                                try {
-                                  await viewModel.updateStock(
-                                    stockId: stock.id,
-                                    name: name,
-                                    sector: sector.isEmpty ? null : sector,
-                                    lastPrice: price,
-                                  );
-                                  if (!context.mounted) return;
-                                  Navigator.pop(context);
-                                  AppSnackBar.show(context,
-                                      message: 'Stock updated successfully');
-                                } catch (_) {
-                                  if (!context.mounted) return;
-                                  AppSnackBar.show(context,
-                                      message: 'Failed to update stock',
-                                      isError: true);
-                                }
+                              if (!context.mounted) return;
+                              if (error == null) {
+                                Navigator.pop(context);
+                                AppSnackBar.show(context,
+                                    message: 'Stock updated successfully');
+                              } else {
+                                AppSnackBar.show(context,
+                                    message: error, isError: true);
                               }
                             },
                       style: ElevatedButton.styleFrom(

@@ -16,4 +16,8 @@ class AppFormatters {
 
   static String formatCurrency(double value) => currency.format(value);
   static String formatNumber(num value) => number.format(value);
+
+  static double roundTo(double value, [int precision = 4]) {
+    return double.parse(value.toStringAsFixed(precision));
+  }
 }

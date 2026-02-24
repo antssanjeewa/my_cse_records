@@ -84,12 +84,16 @@ class ManageStocksViewModel extends ChangeNotifier {
     return null;
   }
 
-  Future<void> updateStock({
+  Future<String?> updateStock({
     required int stockId,
     String? name,
     String? sector,
-    required double lastPrice,
+    double? lastPrice,
   }) async {
+    if (name == null || lastPrice == null || lastPrice <= 0) {
+      return 'Please fill in all required fields with valid values';
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -103,11 +107,11 @@ class ManageStocksViewModel extends ChangeNotifier {
 
       await fetchStocks();
     } catch (e) {
-      debugPrint('Error updating stock: $e');
       _isLoading = false;
       notifyListeners();
-      rethrow;
+      return AppErrorHandler.mapErrorToString(e);
     }
+    return null;
   }
 
   Future<void> deleteStock(int stockId) async {

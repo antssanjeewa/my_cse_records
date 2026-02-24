@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/utils/formatters.dart';
 import '../models/holding_model.dart';
 import '../models/stock_model.dart';
 import '../models/transaction_model.dart';
@@ -198,7 +199,7 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
       'ticker': ticker,
       'name': name,
       'sector': sector,
-      'last_price': lastPrice,
+      'last_price': AppFormatters.roundTo(lastPrice),
     };
     _log('INSERT', 'stocks', data);
     try {
@@ -222,7 +223,7 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
     final data = {
       if (name != null) 'name': name,
       'sector': sector,
-      'last_price': lastPrice,
+      'last_price': AppFormatters.roundTo(lastPrice),
     };
     _log('UPDATE', 'stocks', data);
     try {
@@ -287,8 +288,9 @@ class SupabaseDataSourceImpl implements RemoteDataSource {
         final amt = (item['amount'] as num?)?.toDouble() ?? 0.0;
         return sum + amt;
       });
-      _log('RESPONSE', 'cash_balance', total);
-      return total;
+      final roundedTotal = AppFormatters.roundTo(total);
+      _log('RESPONSE', 'cash_balance', roundedTotal);
+      return roundedTotal;
     } catch (e) {
       _log('ERROR', 'cash_balance', e);
       return 0.0;
