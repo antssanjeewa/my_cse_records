@@ -11,6 +11,10 @@ import '../../../core/services/secure_storage_service.dart';
 import '../../../core/di/service_locator.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/theme_viewmodel.dart';
+import '../../viewmodels/transaction_history_viewmodel.dart';
+import '../../../core/services/export_service.dart';
+import '../../../core/utils/snackbar_util.dart';
+import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -226,7 +230,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildActionItem(
                       icon: Icons.download,
                       label: 'Export to CSV',
-                      onTap: () {},
+                      onTap: () => _showExportMonthPicker(context),
                       isLast: true,
                       isPrimary: false,
                       iconCode: Icons.table_chart),
@@ -294,11 +298,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: AppSizes.p16),
             TextButton(
               onPressed: () {},
-              child: const Text(AppText.privacyPolicy,
+              child: Text(AppText.privacyPolicy,
                   style: TextStyle(
                       color: AppColors.primary,
                       fontSize: 12,
-                      decoration: TextDecoration.underline,
                       fontWeight: FontWeight.bold)),
             )
           ],
@@ -410,6 +413,104 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? Icons.download
                     : Icons.chevron_right,
                 color: isDestructive ? Colors.redAccent : Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showExportMonthPicker(BuildContext context) {
+    final now = DateTime.now();
+    int selectedMonth = now.month;
+    int selectedYear = now.year;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: AppColors.surface,
+          title: const Text('Export Trade History',
+              style: TextStyle(color: AppColors.textPrimary)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Select the month you want to export your trades for.',
+                  style:
+                      TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: DropdownButton<int>(
+                      value: selectedMonth,
+                      isExpanded: true,
+                      dropdownColor: AppColors.surface,
+                      items: List.generate(12, (index) => index + 1).map((m) {
+                        return DropdownMenuItem(
+                          value: m,
+                          child: Text(
+                              DateFormat('MMMM').format(DateTime(2024, m)),
+                              style: const TextStyle(
+                                  color: AppColors.textPrimary)),
+                        );
+                      }).toList(),
+                      onChanged: (v) =>
+                          setDialogState(() => selectedMonth = v!),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: DropdownButton<int>(
+                      value: selectedYear,
+                      isExpanded: true,
+                      dropdownColor: AppColors.surface,
+                      items: List.generate(5, (index) => now.year - index)
+                          .map((y) {
+                        return DropdownMenuItem(
+                          value: y,
+                          child: Text(y.toString(),
+                              style: const TextStyle(
+                                  color: AppColors.textPrimary)),
+                        );
+                      }).toList(),
+                      onChanged: (v) => setDialogState(() => selectedYear = v!),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                final viewModel = context.read<TransactionHistoryViewModel>();
+                final trades = await viewModel.getTransactionsForMonth(
+                    selectedMonth, selectedYear);
+
+                if (trades.isEmpty) {
+                  if (context.mounted) {
+                    AppSnackBar.show(context,
+                        message: 'No trades found for the selected month.',
+                        isError: true);
+                  }
+                  return;
+                }
+
+                final monthString = DateFormat('MMM_yyyy')
+                    .format(DateTime(selectedYear, selectedMonth));
+                await ExportService.exportTransactionsToCsv(
+                    trades, monthString);
+              },
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+              child:
+                  const Text('Export', style: TextStyle(color: Colors.white)),
+            ),
           ],
         ),
       ),

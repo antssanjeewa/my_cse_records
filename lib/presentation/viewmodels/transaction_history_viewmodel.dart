@@ -95,4 +95,15 @@ class TransactionHistoryViewModel extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<List<Transaction>> getTransactionsForMonth(int month, int year) async {
+    final startDate = DateTime(year, month, 1);
+    final endDate = DateTime(year, month + 1, 0, 23, 59, 59);
+
+    return await getTransactions(
+      startDate: startDate,
+      endDate: endDate,
+      limit: 1000,
+    );
+  }
 }
