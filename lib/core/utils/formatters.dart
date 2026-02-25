@@ -10,7 +10,7 @@ class AppFormatters {
 
   static final NumberFormat number = NumberFormat('#,##0');
 
-  static final DateFormat dateDetailed = DateFormat('MMM dd • hh:mm a');
+  static final DateFormat dateDetailed = DateFormat('yyyy MMM dd • hh:mm a');
   static final DateFormat dateSimple = DateFormat('MMM dd, yyyy');
   static final DateFormat dateOnly = DateFormat('MMM dd, yyyy');
 

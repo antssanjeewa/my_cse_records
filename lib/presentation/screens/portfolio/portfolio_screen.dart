@@ -57,7 +57,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                       mainValue:
                           viewModel.totalMarketValue - viewModel.totalValue,
                       leftLabel: 'Total Portfolio',
-                      leftValue: viewModel.totalMarketValue,
+                      leftValue: viewModel.totalValue,
                       rightLabel: 'Available balance',
                       rightValue: viewModel.cashBalance,
                     ),

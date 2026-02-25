@@ -25,7 +25,7 @@ class SettingsViewModel extends ChangeNotifier {
     try {
       final results = await Future.wait([
         repository.getHoldings(),
-        repository.getTransactions(limit: 10000),
+        repository.getTransactions(limit: 100),
         repository.getCashTransactions(),
       ]);
 

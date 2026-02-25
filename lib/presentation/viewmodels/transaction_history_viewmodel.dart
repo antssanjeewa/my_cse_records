@@ -29,7 +29,7 @@ class TransactionHistoryViewModel extends ChangeNotifier {
   DateTime? _endDate;
   DateTime? get endDate => _endDate;
 
-  int _limit = 20; // Default limit
+  int _limit = 10;
   int get limit => _limit;
 
   bool _hasMore = true;
@@ -55,7 +55,7 @@ class TransactionHistoryViewModel extends ChangeNotifier {
   }
 
   void loadMore() {
-    _limit += 20;
+    _limit += 10;
     fetchTransactions();
   }
 
@@ -103,7 +103,7 @@ class TransactionHistoryViewModel extends ChangeNotifier {
     return await getTransactions(
       startDate: startDate,
       endDate: endDate,
-      limit: 1000,
+      limit: 100,
     );
   }
 }

@@ -21,17 +21,31 @@ class AddTransactionScreen extends StatefulWidget {
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _qtyController = TextEditingController();
   final _priceController = TextEditingController();
+  final _stockController = TextEditingController();
+  bool _addAnother = false;
 
   @override
   void dispose() {
     _qtyController.dispose();
     _priceController.dispose();
+    _stockController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AddTransactionViewModel>();
+    final color = switch (viewModel.type) {
+      TransactionType.buy => AppColors.successBg,
+      TransactionType.sell => AppColors.errorBg,
+      TransactionType.dividend => AppColors.info,
+    };
+
+    final statusIcon = switch (viewModel.type) {
+      TransactionType.buy => Icons.add_circle_outline,
+      TransactionType.sell => Icons.remove_circle_outline,
+      TransactionType.dividend => Icons.payments_outlined,
+    };
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -77,59 +91,66 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
             // Current Holding Details Card
             if (viewModel.selectedStock != null)
-              Container(
-                margin: const EdgeInsets.only(bottom: AppSizes.p24),
-                padding: const EdgeInsets.all(AppSizes.p16),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppSizes.r16),
-                  border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.2)),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(AppSizes.p12),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(AppSizes.r12),
+              InkWell(
+                onTap: () {
+                  final qty = viewModel.currentHolding?.quantity ?? 0;
+                  if (qty > 0) {
+                    _qtyController.text = qty.toStringAsFixed(0);
+                    viewModel.setQuantity(qty);
+                  }
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: AppSizes.p24),
+                  padding: const EdgeInsets.all(AppSizes.p16),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppSizes.r16),
+                    border: Border.all(color: color.withValues(alpha: 0.2)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(AppSizes.p12),
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(AppSizes.r12),
+                        ),
+                        child: Icon(statusIcon, color: color, size: 20),
                       ),
-                      child: const Icon(Icons.account_balance_wallet,
-                          color: AppColors.primary, size: 20),
-                    ),
-                    const SizedBox(width: AppSizes.p16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Your Current Position',
-                            style: GoogleFonts.inter(
-                              color: AppColors.primary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                      const SizedBox(width: AppSizes.p16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              viewModel.selectedStock?.name ?? '-',
+                              style: GoogleFonts.inter(
+                                color: color,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              _buildPositionStat(
-                                label: 'Quantity',
-                                value: AppFormatters.formatNumber(
-                                    viewModel.currentHolding?.quantity ?? 0),
-                              ),
-                              const SizedBox(width: 24),
-                              _buildPositionStat(
-                                label: 'Avg. Price',
-                                value: AppFormatters.formatCurrency(
-                                    viewModel.currentHolding?.avgPrice ?? 0),
-                              ),
-                            ],
-                          ),
-                        ],
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                _buildPositionStat(
+                                  label: 'Quantity',
+                                  value: AppFormatters.formatNumber(
+                                      viewModel.currentHolding?.quantity ?? 0),
+                                ),
+                                const SizedBox(width: 24),
+                                _buildPositionStat(
+                                  label: 'Avg. Price',
+                                  value: AppFormatters.formatCurrency(
+                                      viewModel.currentHolding?.avgPrice ?? 0),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
 
@@ -217,31 +238,33 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             ),
             const SizedBox(height: AppSizes.p32),
 
+            // Add Another Checkbox
+            Theme(
+              data: Theme.of(context).copyWith(
+                unselectedWidgetColor: AppColors.textSecondary,
+              ),
+              child: CheckboxListTile(
+                value: _addAnother,
+                onChanged: (val) => setState(() => _addAnother = val ?? false),
+                title: const Text(
+                  'Add another transaction after saving',
+                  style: TextStyle(color: Colors.white, fontSize: 13),
+                ),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+                activeColor: AppColors.primary,
+                checkColor: Colors.white,
+                dense: true,
+                visualDensity: VisualDensity.compact,
+              ),
+            ),
+            const SizedBox(height: AppSizes.p8),
+
             // Save Button
             ElevatedButton(
               onPressed: viewModel.isLoading
                   ? null
-                  : () async {
-                      final success = await viewModel.saveTransaction();
-                      if (!mounted) return;
-
-                      if (success) {
-                        context.read<PortfolioViewModel>().fetchHoldings();
-                        context
-                            .read<TransactionHistoryViewModel>()
-                            .fetchTransactions();
-
-                        Navigator.of(context).pop();
-                        AppSnackBar.show(context,
-                            message: 'Transaction added successfully',
-                            isError: false);
-                      } else {
-                        AppSnackBar.show(context,
-                            message: viewModel.errorMessage ??
-                                'An unknown error occurred',
-                            isError: true);
-                      }
-                    },
+                  : () => _handleSave(context, viewModel),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
@@ -275,6 +298,33 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleSave(
+      BuildContext context, AddTransactionViewModel viewModel) async {
+    final success = await viewModel.saveTransaction(keepStock: _addAnother);
+    if (!mounted) return;
+
+    if (success) {
+      _qtyController.clear();
+      _priceController.clear();
+
+      if (!_addAnother) {
+        _stockController.clear();
+        // Refresh data in other screens
+        context.read<PortfolioViewModel>().fetchHoldings();
+        context.read<TransactionHistoryViewModel>().fetchTransactions();
+
+        Navigator.of(context).pop();
+      }
+
+      AppSnackBar.show(context,
+          message: 'Transaction added successfully', isError: false);
+    } else {
+      AppSnackBar.show(context,
+          message: viewModel.errorMessage ?? 'An unknown error occurred',
+          isError: true);
+    }
   }
 
   Widget _buildTypeToggle(AddTransactionViewModel viewModel) {

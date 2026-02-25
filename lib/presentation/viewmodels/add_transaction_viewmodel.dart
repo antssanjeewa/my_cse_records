@@ -97,6 +97,18 @@ class AddTransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearForm({bool keepStock = false}) {
+    if (!keepStock) {
+      _selectedStock = null;
+      _currentHolding = null;
+    }
+    _type = TransactionType.buy;
+    _quantity = 0;
+    _unitPrice = 0;
+    _errorMessage = null;
+    notifyListeners();
+  }
+
   Future<void> fetchStocks() async {
     _isLoading = true;
     notifyListeners();
@@ -111,7 +123,7 @@ class AddTransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> saveTransaction() async {
+  Future<bool> saveTransaction({bool keepStock = false}) async {
     _errorMessage = null;
 
     if (_selectedStock == null) {
@@ -149,6 +161,7 @@ class AddTransactionViewModel extends ChangeNotifier {
       );
 
       await addTransaction(transaction);
+      clearForm(keepStock: keepStock);
 
       _isLoading = false;
       notifyListeners();

@@ -37,25 +37,40 @@ class PositionSummaryCard extends StatelessWidget {
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2)),
-                GridView.count(
-                  padding: const EdgeInsets.only(top: AppSizes.p20),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  childAspectRatio: 2.8,
+                const SizedBox(height: AppSizes.p20),
+                Row(
                   children: [
-                    _buildSummaryItem(
-                        'Total Shares', AppFormatters.formatNumber(h.quantity)),
-                    _buildSummaryItem('Average Cost',
-                        AppFormatters.formatCurrency(h.avgPrice)),
-                    _buildSummaryItem('Invested Value',
-                        AppFormatters.formatCurrency(h.totalPrice)),
-                    _buildSummaryItem(
-                        'Current P/L',
-                        (isPositive ? '+' : '') +
-                            AppFormatters.formatCurrency(h.profit),
-                        color:
-                            isPositive ? AppColors.success : AppColors.error),
+                    Expanded(
+                      flex: 3,
+                      child: _buildSummaryItem('Total Shares',
+                          AppFormatters.formatNumber(h.quantity)),
+                    ),
+                    const SizedBox(width: AppSizes.p12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildSummaryItem('Average Cost',
+                          AppFormatters.formatCurrency(h.avgPrice)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSizes.p20),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: _buildSummaryItem('Invested Value',
+                          AppFormatters.formatCurrency(h.totalPrice)),
+                    ),
+                    const SizedBox(width: AppSizes.p12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildSummaryItem(
+                          'Current P/L',
+                          (isPositive ? '+' : '') +
+                              AppFormatters.formatCurrency(h.profit),
+                          color:
+                              isPositive ? AppColors.success : AppColors.error),
+                    ),
                   ],
                 ),
               ],

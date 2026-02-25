@@ -46,7 +46,7 @@ class HomeViewModel extends ChangeNotifier {
     try {
       final results = await Future.wait([
         getPortfolioSummary(),
-        getTransactions(limit: 20), // Fetch more for activity chart
+        getTransactions(limit: 10),
       ]);
 
       _summary = results[0] as PortfolioSummary;

@@ -18,6 +18,8 @@ class HoldingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     var profit = holding.profit;
     final profitPct = holding.profitPercent;
+    final activeColor =
+        holding.quantity > 0 ? AppColors.primary : AppColors.border;
 
     return GestureDetector(
       onTap: onTap,
@@ -25,9 +27,10 @@ class HoldingCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: AppSizes.p16),
         padding: const EdgeInsets.all(AppSizes.p16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color:
+              holding.quantity > 0 ? AppColors.surfaceLight : AppColors.surface,
           borderRadius: BorderRadius.circular(AppSizes.r16),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: activeColor),
         ),
         child: Column(
           children: [
