@@ -68,42 +68,43 @@ class TransactionHistoryItem extends StatelessWidget {
                   border: Border.all(color: color.withAlpha(100))),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(AppSizes.r4),
+                        ),
+                        child: Text(t.typeString.toUpperCase(),
+                            style: TextStyle(
+                                color: color,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                      const SizedBox(height: AppSizes.p4),
+                      Text(t.name,
+                          style: GoogleFonts.inter(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16)),
+                      const SizedBox(height: AppSizes.p4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: color.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(AppSizes.r4),
-                            ),
-                            child: Text(t.typeString.toUpperCase(),
-                                style: TextStyle(
-                                    color: color,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                          const SizedBox(height: AppSizes.p4),
-                          Text(t.name,
-                              style: GoogleFonts.inter(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16)),
                           Text(t.ticker,
                               style: const TextStyle(
                                   color: AppColors.textSecondary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600)),
+                          Text(AppFormatters.dateDetailed.format(t.date),
+                              style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 10)),
                         ],
                       ),
-                      Text(AppFormatters.dateDetailed.format(t.date),
-                          style: const TextStyle(
-                              color: AppColors.textSecondary, fontSize: 10)),
                     ],
                   ),
                   const SizedBox(height: AppSizes.p12),

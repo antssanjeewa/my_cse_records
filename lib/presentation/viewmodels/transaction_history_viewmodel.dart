@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
+import '../../domain/entities/stock.dart';
 import '../../domain/entities/transaction.dart';
+import '../../domain/usecases/get_stocks.dart';
 import '../../domain/usecases/get_transactions.dart';
 
 class TransactionHistoryViewModel extends ChangeNotifier {
   final GetTransactions getTransactions;
+  final GetStocks getStocks;
 
-  TransactionHistoryViewModel({required this.getTransactions}) {
+  TransactionHistoryViewModel({
+    required this.getTransactions,
+    required this.getStocks,
+  }) {
     fetchTransactions();
+    fetchStocks();
   }
 
   List<Transaction> _transactions = [];
   List<Transaction> get transactions => _transactions;
+
+  List<Stock> _stocks = [];
+  List<Stock> get stocks => _stocks;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -59,19 +69,22 @@ class TransactionHistoryViewModel extends ChangeNotifier {
     fetchTransactions();
   }
 
-  // We still need all tickers for the filter UI, but filtering should happen on server
-  // This can be optimized by a separate GetTickers usecase if list is huge
-  List<Map<String, dynamic>> get uniqueStocks {
-    final seen = <int>{};
-    return _transactions
-        .where((t) => seen.add(t.stockId))
-        .map((t) => {'id': t.stockId, 'ticker': t.ticker})
-        .toList()
-      ..sort(
-          (a, b) => (a['ticker'] as String).compareTo(b['ticker'] as String));
+  List<Stock> get uniqueStocks {
+    final list = List<Stock>.from(_stocks);
+    list.sort((a, b) => a.ticker.compareTo(b.ticker));
+    return list;
   }
 
   List<Transaction> get filteredTransactions => _transactions;
+
+  Future<void> fetchStocks() async {
+    try {
+      _stocks = await getStocks();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching stocks: $e');
+    }
+  }
 
   Future<void> fetchTransactions() async {
     _isLoading = true;

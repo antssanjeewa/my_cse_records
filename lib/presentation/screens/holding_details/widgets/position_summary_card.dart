@@ -42,8 +42,12 @@ class PositionSummaryCard extends StatelessWidget {
                   children: [
                     Expanded(
                       flex: 3,
-                      child: _buildSummaryItem('Total Shares',
-                          AppFormatters.formatNumber(h.quantity)),
+                      child: _buildSummaryItem(
+                          'Current P/L',
+                          (isPositive ? '+' : '') +
+                              AppFormatters.formatCurrency(h.profit),
+                          color:
+                              isPositive ? AppColors.success : AppColors.error),
                     ),
                     const SizedBox(width: AppSizes.p12),
                     Expanded(
@@ -64,12 +68,8 @@ class PositionSummaryCard extends StatelessWidget {
                     const SizedBox(width: AppSizes.p12),
                     Expanded(
                       flex: 2,
-                      child: _buildSummaryItem(
-                          'Current P/L',
-                          (isPositive ? '+' : '') +
-                              AppFormatters.formatCurrency(h.profit),
-                          color:
-                              isPositive ? AppColors.success : AppColors.error),
+                      child: _buildSummaryItem('Total Shares',
+                          AppFormatters.formatNumber(h.quantity)),
                     ),
                   ],
                 ),

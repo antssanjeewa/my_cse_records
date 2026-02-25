@@ -129,47 +129,180 @@ class TransactionFilterBar extends StatelessWidget {
   }
 
   void _showCompanyFilter(BuildContext context) {
-    final uniqueStocks = viewModel.uniqueStocks;
-
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.background,
+      isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSizes.r20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSizes.r24)),
       ),
       builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(AppSizes.p20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Filter by Company',
-                  style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: AppSizes.p16),
-              Flexible(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: uniqueStocks.length + 1,
-                  itemBuilder: (context, index) {
-                    final item = index == 0 ? null : uniqueStocks[index - 1];
-                    return ListTile(
-                      title: Text(item?['ticker'] ?? 'All Companies',
-                          style: const TextStyle(color: Colors.white)),
-                      onTap: () {
-                        viewModel.setStockFilter(item?['id'], item?['ticker']);
-                        Navigator.pop(context);
-                      },
-                      trailing: viewModel.tickerFilter == item?['ticker']
-                          ? const Icon(Icons.check, color: AppColors.primary)
-                          : null,
-                    );
+        return _CompanyFilterSheet(viewModel: viewModel);
+      },
+    );
+  }
+}
+
+class _CompanyFilterSheet extends StatefulWidget {
+  final TransactionHistoryViewModel viewModel;
+  const _CompanyFilterSheet({required this.viewModel});
+
+  @override
+  State<_CompanyFilterSheet> createState() => _CompanyFilterSheetState();
+}
+
+class _CompanyFilterSheetState extends State<_CompanyFilterSheet> {
+  String _searchQuery = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final stocks = widget.viewModel.uniqueStocks.where((s) {
+      final query = _searchQuery.toLowerCase();
+      return s.ticker.toLowerCase().contains(query) ||
+          s.name.toLowerCase().contains(query);
+    }).toList();
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
+      padding: const EdgeInsets.fromLTRB(
+          AppSizes.p20, AppSizes.p20, AppSizes.p20, 0),
+      child: Column(
+        children: [
+          // Handle Bar
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSizes.p20),
+
+          Text('Select Company', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: AppSizes.p20),
+
+          // Search Field
+          TextField(
+            onChanged: (val) => setState(() => _searchQuery = val),
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              hintText: 'Search ticker or company name...',
+              hintStyle: const TextStyle(color: AppColors.textSecondary),
+              prefixIcon:
+                  const Icon(Icons.search, color: AppColors.textSecondary),
+              filled: true,
+              fillColor: AppColors.surface,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppSizes.r12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 0),
+            ),
+          ),
+          const SizedBox(height: AppSizes.p12),
+
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.only(bottom: AppSizes.p32),
+              itemCount: stocks.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  final isSelected = widget.viewModel.tickerFilter == null;
+                  return _buildCompanyItem(
+                    title: 'All Companies',
+                    subtitle: 'Show all transactions',
+                    isSelected: isSelected,
+                    onTap: () {
+                      widget.viewModel.setStockFilter(null, null);
+                      Navigator.pop(context);
+                    },
+                  );
+                }
+
+                final stock = stocks[index - 1];
+                final isSelected =
+                    widget.viewModel.tickerFilter == stock.ticker;
+
+                return _buildCompanyItem(
+                  title: stock.ticker,
+                  subtitle: stock.name,
+                  trailing: stock.sector,
+                  isSelected: isSelected,
+                  onTap: () {
+                    widget.viewModel.setStockFilter(stock.id, stock.ticker);
+                    Navigator.pop(context);
                   },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompanyItem({
+    required String title,
+    required String subtitle,
+    String? trailing,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? AppColors.primary.withValues(alpha: 0.1)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(AppSizes.r12),
+        border: Border.all(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.3)
+              : Colors.transparent,
+        ),
+      ),
+      child: ListTile(
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? AppColors.primary : Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 12,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (trailing != null)
+              Text(
+                trailing,
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 10,
                 ),
               ),
-            ],
-          ),
-        );
-      },
+            if (isSelected)
+              const Icon(Icons.check_circle,
+                  color: AppColors.primary, size: 20),
+          ],
+        ),
+      ),
     );
   }
 }

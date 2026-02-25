@@ -89,24 +89,26 @@ class AddTransaction {
     // We do them sequentially but quickly as data is ready
     await repository.addTransaction(transaction);
 
-    if (cashAmount != 0) {
-      await repository.addCashTransaction(CashTransaction(
-        id: const Uuid().v4(),
-        userId: transaction.userId,
-        amount: cashAmount,
-        type: cashType,
-        description: description,
-        createdAt: transaction.date,
-      ));
-    }
+    if (transaction.type != TransactionType.dividend) {
+      if (cashAmount != 0) {
+        await repository.addCashTransaction(CashTransaction(
+          id: const Uuid().v4(),
+          userId: transaction.userId,
+          amount: cashAmount,
+          type: cashType,
+          description: description,
+          createdAt: transaction.date,
+        ));
+      }
 
-    await repository.upsertHolding(Holding(
-        id: existingHolding?.id ?? '',
-        userId: transaction.userId,
-        stockId: transaction.stockId,
-        avgPrice: newQuantity == 0 ? 0 : newTotalPrice / newQuantity,
-        quantity: newQuantity,
-        profit: profit,
-        dividend: dividend));
+      await repository.upsertHolding(Holding(
+          id: existingHolding?.id ?? '',
+          userId: transaction.userId,
+          stockId: transaction.stockId,
+          avgPrice: newQuantity == 0 ? 0 : newTotalPrice / newQuantity,
+          quantity: newQuantity,
+          profit: profit,
+          dividend: dividend));
+    }
   }
 }

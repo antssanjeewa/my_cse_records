@@ -101,8 +101,8 @@ class AddTransactionViewModel extends ChangeNotifier {
     if (!keepStock) {
       _selectedStock = null;
       _currentHolding = null;
+      _type = TransactionType.buy;
     }
-    _type = TransactionType.buy;
     _quantity = 0;
     _unitPrice = 0;
     _errorMessage = null;

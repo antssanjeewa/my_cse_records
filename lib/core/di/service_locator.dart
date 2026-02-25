@@ -56,8 +56,8 @@ void setupLocator() {
         getTransactions: getIt(),
       ));
   getIt.registerFactory(() => PortfolioViewModel(getPortfolioSummary: getIt()));
-  getIt.registerFactory(
-      () => TransactionHistoryViewModel(getTransactions: getIt()));
+  getIt.registerFactory(() => TransactionHistoryViewModel(
+      getTransactions: getIt(), getStocks: getIt()));
   getIt.registerFactory(() => AddTransactionViewModel(
         getStocks: getIt(),
         addTransaction: getIt(),
