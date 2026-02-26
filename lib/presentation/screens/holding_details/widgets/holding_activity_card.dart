@@ -73,7 +73,7 @@ class HoldingActivityCard extends StatelessWidget {
               Text(
                 isDiv
                     ? AppFormatters.formatCurrency(t.totalPrice)
-                    : '${t.qty.toInt()} Shares',
+                    : '${t.qty.toInt()} @ ${AppFormatters.formatCurrency(t.unitPrice)}',
                 style: GoogleFonts.inter(
                   color: isDiv ? Colors.blue : AppColors.textPrimary,
                   fontSize: 13,
@@ -82,8 +82,8 @@ class HoldingActivityCard extends StatelessWidget {
               ),
               Text(
                 isDiv
-                    ? 'Credited'
-                    : '@ ${AppFormatters.formatCurrency(t.unitPrice)}',
+                    ? '${t.totalPrice / t.quantity} per share'
+                    : AppFormatters.formatCurrency(t.totalPrice),
                 style: GoogleFonts.inter(
                     color: Colors.grey,
                     fontSize: 10,

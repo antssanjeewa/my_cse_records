@@ -122,13 +122,38 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              viewModel.selectedStock?.name ?? '-',
-                              style: GoogleFonts.inter(
-                                color: color,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  viewModel.selectedStock?.name ?? '-',
+                                  style: GoogleFonts.inter(
+                                    color: color,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (viewModel.currentHolding == null)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: AppSizes.p12,
+                                        vertical: AppSizes.p4),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          AppColors.info.withValues(alpha: 0.2),
+                                      borderRadius:
+                                          BorderRadius.circular(AppSizes.r12),
+                                    ),
+                                    child: Text(
+                                      'new',
+                                      style: GoogleFonts.inter(
+                                        color: AppColors.info,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                             const SizedBox(height: 4),
                             Row(
