@@ -7,6 +7,7 @@ class StockModel extends Stock {
     required super.ticker,
     required super.name,
     super.sector,
+    super.startYear,
     required super.lastPrice,
   });
 
@@ -16,6 +17,7 @@ class StockModel extends Stock {
       ticker: json['ticker']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       sector: json['sector']?.toString(),
+      startYear: json['start_year']?.toString(),
       lastPrice: AppFormatters.roundTo(
           (json['last_price'] as num?)?.toDouble() ?? 0.0),
     );
@@ -27,6 +29,7 @@ class StockModel extends Stock {
       'ticker': ticker,
       'name': name,
       'sector': sector,
+      'start_year': startYear,
       'last_price': AppFormatters.roundTo(lastPrice),
     };
   }

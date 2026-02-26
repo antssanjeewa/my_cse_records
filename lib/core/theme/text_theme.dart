@@ -64,17 +64,17 @@ class AppTextTheme {
       bodyLarge: GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w500,
-        color: AppColors.textSecondary,
+        color: AppColors.textPrimary,
       ),
       bodyMedium: GoogleFonts.inter(
         fontSize: 12,
         fontWeight: FontWeight.w500,
-        color: AppColors.textSecondary,
+        color: AppColors.textPrimary,
       ),
       bodySmall: GoogleFonts.inter(
         fontSize: 10,
         fontWeight: FontWeight.w400,
-        color: AppColors.textSecondary,
+        color: AppColors.textPrimary,
       ),
 
       // Label text

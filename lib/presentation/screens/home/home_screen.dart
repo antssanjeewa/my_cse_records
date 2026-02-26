@@ -70,10 +70,7 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(width: AppSizes.p8),
                           Text(
                             '• ${viewModel.currentTime}',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
                       )

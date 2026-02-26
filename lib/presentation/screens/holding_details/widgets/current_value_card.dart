@@ -16,7 +16,7 @@ class CurrentValueCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final h = viewModel.holding;
-    final marketPrice = h.stock?.lastPrice ?? 0.0;
+    final dividend = h.dividend;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -28,12 +28,19 @@ class CurrentValueCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Section: Name & Sector
-          Text(
-            h.name,
-            style: Theme.of(context).textTheme.displaySmall,
+          // Stock Name
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                h.name,
+                style: Theme.of(context).textTheme.displaySmall,
+              ),
+              Text(h.startYear)
+            ],
           ),
           const SizedBox(height: AppSizes.p4),
+          // Sector Name
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -84,7 +91,7 @@ class CurrentValueCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 4),
           Row(
             children: [
               Container(
@@ -97,12 +104,13 @@ class CurrentValueCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'MARKET PRICE: ${AppFormatters.formatCurrency(marketPrice)}',
-                style: GoogleFonts.inter(
-                    color: Colors.grey,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2),
+                'DIVIDEND:',
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                AppFormatters.formatCurrency(dividend),
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
           ),

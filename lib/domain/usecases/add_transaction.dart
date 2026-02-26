@@ -100,15 +100,15 @@ class AddTransaction {
           createdAt: transaction.date,
         ));
       }
-
-      await repository.upsertHolding(Holding(
-          id: existingHolding?.id ?? '',
-          userId: transaction.userId,
-          stockId: transaction.stockId,
-          avgPrice: newQuantity == 0 ? 0 : newTotalPrice / newQuantity,
-          quantity: newQuantity,
-          profit: profit,
-          dividend: dividend));
     }
+
+    await repository.upsertHolding(Holding(
+        id: existingHolding?.id ?? '',
+        userId: transaction.userId,
+        stockId: transaction.stockId,
+        avgPrice: newQuantity == 0 ? 0 : newTotalPrice / newQuantity,
+        quantity: newQuantity,
+        profit: profit,
+        dividend: dividend));
   }
 }
